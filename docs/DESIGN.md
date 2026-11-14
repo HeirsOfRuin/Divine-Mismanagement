@@ -160,6 +160,13 @@ stepped list.
 
 ## 5. Visual identity
 
+*Superseded 2026-11-14. The author: "kinda cute and fun, but it also can't look
+like a children's game". The palette, sprites and type below are style tile 1.
+Style tile 2 (`docs/style-tile.html`, `FRAME-management.md` section 2) is the
+current proposal: parchment and ink, dusk colours, smaller deadpan sprites,
+ledger and memo controls, no pixel lettering. The prop-per-trait rule and the
+sprite pipeline below still stand.*
+
 **Idea: a sunny morning in a small heaven.** Pastel, bright, roomy. Nothing
 like the dark manuscript and runestone looks of the earlier games.
 
@@ -295,6 +302,13 @@ plan above:
   `transmit()` as `steps`, not stored on the verse yet.
 - `phrases.data.js` holds threats and riders; sound-alikes and poetic glosses
   live beside the phrase they replace in `lexicon.data.js`.
+
+**No repeats (2026-11-14).** `src/engine/deck.js` holds the per-playthrough
+spent decks. `transmit()` and `applyTrait()` take and return `spent`; each step
+lists what it `drew`; `carve()` gives a verse a title no other verse in the run
+has and an aftermath line the run has not shown. 25 tests, one of them 200
+playthroughs of 20 Revelations failing on any repeat. `tools/telephone.mjs --run`
+prints one playthrough; `--run --stats` reports how often decks run dry.
 
 Everything else in `src/` is still the scaffold's placeholder game (24 turns,
 three actions). The telephone is not wired into a turn or a screen.

@@ -4,9 +4,9 @@
    that already padded the notch can zero them (Centennial Farm's embed build). */
 
 :root {
-  --bg: #fdf6e3;
+  --bg: #efe6d0;
   --panel: color-mix(in srgb, #fdf6e3 88%, #fff 12%);
-  --ink: #3b2a4a;
+  --ink: #2b2433;
   --ink-dim: #7a6a86;
   --accent: #f2b84b;
   --good: #4f8a5b;

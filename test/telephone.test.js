@@ -3,7 +3,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeRng, streamFor } from '../src/engine/rng.js';
-import { makeRevelation, applyTrait, transmit } from '../src/engine/telephone.js';
+import { makeRevelation, applyTrait, transmit, carve } from '../src/engine/telephone.js';
+import { spend } from '../src/engine/deck.js';
+import { playthrough } from '../tools/telephone.mjs';
 import { render, title, aftermath } from '../src/engine/render.js';
 import { makeFlock } from '../src/engine/followers.js';
 import { TEMPLATES, PHRASES, VERBS, POET_TAILS } from '../src/data/lexicon.data.js';
@@ -128,4 +130,36 @@ test('3,000 seeded chains: every step renders as a clean sentence', () => {
       assert.equal(s.changed, s.note !== null);
     }
   }
+});
+
+// The author: "I don't want any repeats of an event or scene in any play through."
+test('200 playthroughs of 20 Revelations: nothing authored is shown twice', () => {
+  for (let seed = 1; seed <= 200; seed++) {
+    const { out } = playthrough(seed, 20);
+    const drawn = new Set(), afters = new Set(), titles = new Set();
+    for (const { steps, carved } of out) {
+      for (const s of steps) for (const d of s.drew) {
+        const key = `${d.deck}/${d.id}`;
+        assert.ok(!drawn.has(key), `seed ${seed}: ${key} drawn twice`);
+        drawn.add(key);
+      }
+      if (carved.after) { assert.ok(!afters.has(carved.after), `seed ${seed}: "${carved.after}" twice`); afters.add(carved.after); }
+      assert.ok(!titles.has(carved.title), `seed ${seed}: ${carved.title} twice`); titles.add(carved.title);
+    }
+  }
+});
+
+test('a spent deck entry cannot be spent again, and the spent list is not changed in place', () => {
+  const a = {}; const b = spend(a, 'threat', 'pond');
+  assert.deepEqual(a, {});
+  assert.throws(() => spend(b, 'threat', 'pond'));
+});
+
+test('a second verse with the same name is numbered', () => {
+  const v = makeRevelation('wash', 'hands', 'before_meals');
+  const first = carve(v, v, {});
+  const second = carve(v, v, first.spent);
+  assert.equal(first.title, 'the Verse of the Hand');
+  assert.equal(second.title, 'the Second Verse of the Hand');
+  assert.notEqual(first.after, second.after);
 });

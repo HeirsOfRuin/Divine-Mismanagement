@@ -14,6 +14,13 @@
 - Tone is a rule, not a mood. Every phrase table is checked against the hard
   rules in `WORLD.md` section 6: invented gods only, no real verse or
   commandment quoted or paraphrased, warm, never cruel.
+- Nothing authored is shown twice in one playthrough. Every authored line has
+  an id in a deck (`src/engine/deck.js`); the spent list is in the save. A dry
+  deck leaves the prose out; it never repeats. New content systems use the
+  deck from their first commit.
+- `docs/FRAME-management.md` proposes the management layer (offices, Works,
+  Legends, defeating the rival) and the look. Check its Decision table before
+  building any of it.
 - A verse is stored as structure, never as a sentence. Its words and its
   effects are both computed from that one object.
 - Content lives in `src/data/` tables, separate from logic.

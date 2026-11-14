@@ -12,6 +12,13 @@ Next gate: the kill gate (section 11), results in `docs/KILLGATE.md`. Every
 number in this file is a starting guess, marked *(tuned)*, until the gate
 measures it.
 
+**Read `docs/FRAME-management.md` with this file.** On 2026-11-14 the author asked
+for a management sim, a look that is not a children's game, and no repeats in a
+playthrough. The frame proposes the changes; where it and this spec differ on
+acts per season, the village meters, the win condition or the v0.1 scope, the
+frame is the newer proposal and neither is settled until the author approves it.
+The no-repeat rule is not a proposal: it is built for the telephone and tested.
+
 Companion documents: `docs/WORLD.md` (setting, cast, story, tone and the satire
 dial) and `docs/DESIGN.md` (stack, engine, screens, look, build plan).
 
@@ -261,6 +268,7 @@ Newest first. Quote the author; give the numbers with their run counts.
 
 | Date | Decision |
 |---|---|
+| 2026-11-14 | **Three directions from the author** (`docs/FRAME-management.md`). "Make sure this isn't the only interaction with the devotees. I want this to feel like a satirical management sim that uses his misunderstanding devotees to build his faith, expand his influence, perform miracles, and defeat other gods." "I want you to make sure it looks kinda cute and fun, but it also can't look like a children's game." "I don't want any repeats of an event or scene in any play through". Done: the no-repeat rule is in the engine (`src/engine/deck.js`) and tested over 200 playthroughs of 20 Revelations with zero repeats; at the half-size Gate A tables it leaves a trait with nothing new to say in 8-12% of turns and 6.5% of carvings without an aftermath line (500 playthroughs). Style tile redrawn. Proposed, not approved: six ways to work through devotees, a staffing board of six offices, Works, Legends, Offerings, two acts a season, the rival can be defeated. No Gate A verdict was given with this message; the gate is still open. |
 | 2026-11-14 | **Gate A built.** 20 seeded chains in `docs/GATE-A.md`, awaiting the verdict. Two rules changed from this spec while building, both after reading the first print: a Zealot always produces at least "must" and a threat (section 3.3 said one step up), and Lazy prefers riders and threats over the object and the ending. Measured over 2,000 chains: six stock poetic endings supply about a quarter of all verse titles; 8.8% of verses exceed 140 characters; 0.1% arrive unchanged. |
 | 2026-11-14 | **Spec approved.** The author: "Approved, build Gate A and show me the 20 chains". No default in section 10 was changed, so all nine stand, including the 30-40% win-rate target, which is still the spec's guess and not the author's stated number. |
 | 2026-11-14 | **Tone and look.** The author: "I want it to be light, airy, fun, humorous, and full of fun/cute pixel art". Recorded as pillar 6 and as the visual identity in `DESIGN.md` section 5. |

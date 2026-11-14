@@ -141,6 +141,11 @@ most damage, and names the follower responsible.
 
 ## 6. Tone: the satire and sass dial
 
+*2026-11-14: the author asked that it not look like a children's game.
+`FRAME-management.md` section 2 proposes Sass 4, Bite 3, Darkness 2 and
+withdraws the "twelve-year-old" line in hard rule 7. The table below is the
+earlier setting until that is approved.*
+
 Settings on a five-point scale. These are the brief's "level of satire and
 sass" written down so every table of phrases can be checked against them.
 
@@ -219,6 +224,9 @@ sass" written down so every table of phrases can be checked against them.
   nothing."
 
 ## 7. Content this implies (the real cost of the game)
+
+*2026-11-14: the no-repeat rule raises several of these targets. The current
+table is in `FRAME-management.md` section 3.*
 
 The brief is right that the phrase library is the investment. Targets for v0.1:
 

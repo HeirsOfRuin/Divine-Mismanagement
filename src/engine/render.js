@@ -77,30 +77,38 @@ export function title(verse) {
   return `the Verse of ${capAll(verb.gerund)}`;
 }
 
-// The line under the carving. Gate A: authored flavour, chosen from what
-// survived in the verse. It claims no numbers; the Scripture effects system
-// (Gate B) will compute those from the same structure.
-export function aftermath(verse, original) {
-  if (verse.bare) return 'The whole teaching is now one word. It is chanted.';
-  if (verse.gist) return 'Nobody recalls the details. Something is done about it weekly, to be safe.';
-  if (verse.modal.negDropped) return 'The verse now commands what it was sent to forbid. Compliance is excellent.';
+// The lines that could go under the carving, best first, each with an id so a
+// playthrough shows it once (deck.js; telephone.js carve() picks the first one
+// this run has not used). Gate A: authored flavour, chosen from what survived
+// in the verse. They claim no numbers; the Scripture effects system (Gate B)
+// will compute those from the same structure.
+export function aftermathChoices(verse, original) {
+  const out = [];
+  const add = (id, text) => { if (text) out.push({ id, text }); };
+  if (verse.bare) add('bare', 'The whole teaching is now one word. It is chanted.');
+  else if (verse.gist) add('gist', 'Nobody recalls the details. Something is done about it weekly, to be safe.');
+  if (verse.modal.negDropped) add('negDropped', 'The verse now commands what it was sent to forbid. Compliance is excellent.');
   // Misheard and poetic phrases first: they are what the verse is named after.
   for (const slot of [verse.tail, verse.object]) {
     if (!slot || !slot.via) continue;
     const p = PHRASES[slot.cur];
-    if (slot.lit && p.litAfter) return p.litAfter;
-    if (p.after) return p.after;
+    if (slot.lit) add(`${slot.cur}:lit`, p.litAfter);
+    add(slot.cur, p.after);
   }
   const verb = VERBS[verse.verb.cur];
-  if (verse.verb.cur !== verse.verb.base && verb.after) return verb.after;
+  if (verse.verb.cur !== verse.verb.base) add(`verb:${verse.verb.cur}`, verb.after);
   for (const slot of [verse.tail, verse.object]) {
-    if (slot && slot.lit && PHRASES[slot.cur].litAfter) return PHRASES[slot.cur].litAfter;
+    if (slot && slot.lit) add(`${slot.cur}:lit`, PHRASES[slot.cur].litAfter);
   }
-  if (verse.rider) return fill(RIDER_AFTER, verse.rider);
-  if (verse.penalty) return 'The threat has not yet been carried out. People are being careful.';
-  if (verse.modal.lit) return 'It is observed to the letter. So are the complaints.';
-  if (!verse.object && !verse.tail) return 'Nobody is sure what, or when. They are doing it anyway.';
-  if (verse.modal.let) return 'It is recited beautifully. Nobody is sure whether it is a rule.';
-  if (original && render(original) === render(verse)) return 'It arrived exactly as you sent it. Pim has checked twice and is uneasy.';
-  return 'Close enough. The Registry has seen worse.';
+  if (verse.rider) add('rider', fill(RIDER_AFTER, verse.rider));
+  if (verse.penalty) add('threat', 'The threat has not yet been carried out. People are being careful.');
+  if (verse.modal.lit) add('modalLit', 'It is observed to the letter. So are the complaints.');
+  if (!verse.object && !verse.tail && !verse.gist && !verse.bare) add('empty', 'Nobody is sure what, or when. They are doing it anyway.');
+  if (verse.modal.let) add('let', 'It is recited beautifully. Nobody is sure whether it is a rule.');
+  if (original && render(original) === render(verse)) add('same', 'It arrived exactly as you sent it. Pim has checked twice and is uneasy.');
+  add('close', 'Close enough. The Registry has seen worse.');
+  // The same line can qualify twice (a literal reading of a misheard phrase).
+  return out.filter((a, n) => out.findIndex((b) => b.id === a.id) === n);
 }
+
+export const aftermath = (verse, original) => aftermathChoices(verse, original)[0].text;

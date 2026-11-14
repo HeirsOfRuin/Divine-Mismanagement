@@ -6,8 +6,9 @@ Status (2026-11-14): spec approved; Gate A (the telephone mechanic) is built
 and awaits the author's verdict in `docs/GATE-A.md`. Run `npm run telephone` to
 print 20 chains. There is no playable game yet: the page still shows the
 scaffold's placeholder. Read `docs/SPEC.md` (rules), `docs/WORLD.md` (setting, story, tone) and
-`docs/DESIGN.md` (engine, screens, look, build plan). Next: the verdict
-on Gate A, then Gate B (Scripture effects and the numbers-only sim).
+`docs/DESIGN.md` (engine, screens, look, build plan). Also read `docs/FRAME-management.md`: the proposal to make it a
+management sim, the redrawn look, and the no-repeat rule. Next: the verdict
+on Gate A and on that frame, then Gate B (Scripture effects and the numbers-only sim).
 
 ## Play as an app
 
