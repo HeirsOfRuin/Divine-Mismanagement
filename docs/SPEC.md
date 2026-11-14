@@ -3,10 +3,11 @@
 You are a minor god with twelve worshippers, and every one of them is an idiot.
 Grow your faith into a major religion, despite them.
 
-Status: **Stage 1 spec, drafted 2026-11-14, awaiting the author's approval.**
+Status: **Stage 1 spec, approved by the author 2026-11-14.** Gate A is built and
+awaits the author's verdict (`docs/GATE-A.md`).
 Source: the author's concept brief, kept verbatim in `docs/CONCEPT.md`. This
-spec answers the brief's open questions with a recommended default each; the
-defaults are proposals until the author approves them (section 10).
+spec answers the brief's open questions with a default each (section 10); the
+author approved the spec without changing one, so the defaults stand.
 Next gate: the kill gate (section 11), results in `docs/KILLGATE.md`. Every
 number in this file is a starting guess, marked *(tuned)*, until the gate
 measures it.
@@ -105,7 +106,7 @@ up to three more followers, one per household.
 | Ambitious | Adds a rider that benefits the speaker | Fast Faith income (they collect hard), at the price of a future rival priest |
 | Poet | Makes it beautiful and unclear | Mystery, and softening a verse you regret |
 | Lazy | Drops a slot | Trimming a rider or a threat off a verse |
-| Zealot | Raises the modal one step and widens WHO | Getting law out of a suggestion without spending Power |
+| Zealot | Raises the modal to at least "must", widens WHO and adds a threat | Getting law out of a suggestion without spending Power |
 
 Traits are hidden until a follower has carried one message; after that the
 trait is printed on their card for good *(answers brief question 3)*.
@@ -260,5 +261,7 @@ Newest first. Quote the author; give the numbers with their run counts.
 
 | Date | Decision |
 |---|---|
+| 2026-11-14 | **Gate A built.** 20 seeded chains in `docs/GATE-A.md`, awaiting the verdict. Two rules changed from this spec while building, both after reading the first print: a Zealot always produces at least "must" and a threat (section 3.3 said one step up), and Lazy prefers riders and threats over the object and the ending. Measured over 2,000 chains: six stock poetic endings supply about a quarter of all verse titles; 8.8% of verses exceed 140 characters; 0.1% arrive unchanged. |
+| 2026-11-14 | **Spec approved.** The author: "Approved, build Gate A and show me the 20 chains". No default in section 10 was changed, so all nine stand, including the 30-40% win-rate target, which is still the spec's guess and not the author's stated number. |
 | 2026-11-14 | **Tone and look.** The author: "I want it to be light, airy, fun, humorous, and full of fun/cute pixel art". Recorded as pillar 6 and as the visual identity in `DESIGN.md` section 5. |
 | 2026-11-14 | Spec drafted from the concept brief (`docs/CONCEPT.md`). The brief's five open questions are answered with defaults in sections 3, 8 and 10; none is approved yet. Repo scaffolded in shape B; the placeholder game is still in `src/`. |

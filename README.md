@@ -2,12 +2,12 @@
 
 You are a minor god with twelve worshippers, and every one of them is an idiot.
 
-Status (2026-11-14): design drafted, no game yet. The repository holds the
-scaffold (game-scaffold, shape B) with the kit's placeholder game still in
-`src/`. Read `docs/SPEC.md` (rules), `docs/WORLD.md` (setting, story, tone) and
-`docs/DESIGN.md` (engine, screens, look, build plan). Next: the author's
-approval of the spec, then Gate A, twenty mutated Revelations to judge whether
-the core joke is funny.
+Status (2026-11-14): spec approved; Gate A (the telephone mechanic) is built
+and awaits the author's verdict in `docs/GATE-A.md`. Run `npm run telephone` to
+print 20 chains. There is no playable game yet: the page still shows the
+scaffold's placeholder. Read `docs/SPEC.md` (rules), `docs/WORLD.md` (setting, story, tone) and
+`docs/DESIGN.md` (engine, screens, look, build plan). Next: the verdict
+on Gate A, then Gate B (Scripture effects and the numbers-only sim).
 
 ## Play as an app
 

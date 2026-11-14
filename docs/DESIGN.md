@@ -278,8 +278,23 @@ The rules questions are in `SPEC.md` section 10. These are the build questions.
 
 ---
 
-## 10. Phase 1, as built
+## 10. As built
 
-Not started. As of 2026-11-14 the repository holds the scaffold only: the
-kit's placeholder game (24 turns, three actions), its tests and tools, all
-passing `npm run check`. None of the game described above exists in `src/` yet.
+**Gate A (2026-11-14).** `telephone.js`, `render.js`, `followers.js` (names,
+trades, traits and households only) and the word tables exist, with 12 tests.
+Details and the measured readings are in `docs/GATE-A.md`. Differences from the
+plan above:
+
+- The six rewrites are functions in `telephone.js`, not rule lists in
+  `traits.data.js` (section 3.2). Each needed its own choice of what to act on,
+  and a rule language for six cases would have been more code than the cases.
+  The words are still all in data.
+- A verse has `object` and `tail` slots holding `{ base, cur, via, lit }`
+  rather than the flat ids of section 3.1, so it records whether a phrase was
+  misheard, made poetic or taken literally. `trail` is returned by
+  `transmit()` as `steps`, not stored on the verse yet.
+- `phrases.data.js` holds threats and riders; sound-alikes and poetic glosses
+  live beside the phrase they replace in `lexicon.data.js`.
+
+Everything else in `src/` is still the scaffold's placeholder game (24 turns,
+three actions). The telephone is not wired into a turn or a screen.
