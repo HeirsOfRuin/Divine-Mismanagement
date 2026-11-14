@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Divine Mismanagement — style tile</title>
+<!-- Style tile for approval (docs/DESIGN.md section 5). Not part of the game.
+     Every sprite here is drawn from code as a first pass to judge direction. -->
+<style>
+:root{
+  --sky:#bfe3f5; --cloud:#fff8e7; --ink:#3b2a4a; --ink-dim:#7a6a86; --halo:#f2b84b;
+  --rose:#f4a6b0; --mint:#a8dcc0; --lilac:#c9b6e8; --alarm:#d9604c; --grass:#9fd18b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cloud);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:390px;margin:0 auto;padding-bottom:24px}
+canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+h1,h2,.px{font-family:ui-monospace,"Courier New",monospace;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:18px;margin:0;padding:14px 16px 4px}
+h2{font-size:12px;color:var(--ink-dim);margin:22px 16px 8px}
+p.note{margin:0 16px 10px;color:var(--ink-dim);font-size:13px}
+.hud{display:flex;gap:6px;padding:10px 16px}
+.hud div{flex:1;background:#fff;border:2px solid var(--ink);border-radius:8px;padding:4px 6px;text-align:center;box-shadow:0 2px 0 var(--ink)}
+.hud b{display:block;font-size:17px}
+.hud span{font-size:10px}
+.hud small{font-size:11px;color:#3f7a4d}
+.pim{display:flex;gap:10px;align-items:flex-start;margin:4px 16px 10px}
+.bubble{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:8px 10px;font-size:14px;flex:1}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px}
+button{font:inherit;color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:10px;min-height:48px;padding:6px 10px;text-align:left;box-shadow:0 3px 0 var(--ink)}
+button small{display:block;color:var(--ink-dim);font-size:12px}
+button.primary{background:var(--halo);grid-column:1/3}
+.chain{margin:0 16px;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:10px}
+.step{display:flex;gap:10px;align-items:center;padding:6px 0;border-top:1px dashed #d9cfe0}
+.step:first-child{border-top:0}
+.step .who{font-size:12px;color:var(--ink-dim)}
+.step .said{font-size:15px}
+mark{background:var(--halo);color:var(--ink);border-radius:3px;padding:0 2px}
+s{color:var(--ink-dim)}
+.tablet{margin:0 16px;background:#efe6d2;border:2px solid var(--ink);border-radius:14px 14px 6px 6px;padding:12px 14px;box-shadow:0 3px 0 var(--ink)}
+.tablet .verse{font-size:17px;font-family:Georgia,"Times New Roman",serif}
+.tablet .counts{font-size:13px;margin-top:6px}
+.tablet .by{font-size:12px;color:var(--ink-dim);margin-top:4px}
+.sw{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:0 16px}
+.sw div{height:44px;border:2px solid var(--ink);border-radius:8px;font-size:9px;display:flex;align-items:flex-end;padding:2px 3px}
+.row{display:flex;gap:4px;padding:0 16px;flex-wrap:wrap}
+.card{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:4px 2px 2px;text-align:center;font-size:10px;width:56px}
+.card canvas{margin:0 auto}
+</style>
+</head>
+<body>
+<main>
+  <h1>Divine Mismanagement</h1>
+  <p class="note">Style tile. A sunny morning in a small heaven.</p>
+  <canvas id="scene" width="130" height="64" style="width:390px;height:192px"></canvas>
+
+  <div class="hud">
+    <div><span class="px">Faith</span><b>14</b><small>+4</small></div>
+    <div><span class="px">Power</span><b>3</b><small>+1</small></div>
+    <div><span class="px">Mystery</span><b>56</b><small>+6</small></div>
+    <div><span class="px">Spring</span><b>3</b><small>of 30</small></div>
+  </div>
+
+  <div class="pim">
+    <canvas id="pim" width="16" height="16" style="width:64px;height:64px"></canvas>
+    <div class="bubble">Faith is up four. I would like to say it was something you did.</div>
+  </div>
+
+  <div class="acts">
+    <button class="primary"><b>Send a Revelation</b><small>1 Power per link after your Prophet</small></button>
+    <button><b>Miracle</b><small>3 Power, Mystery falls</small></button>
+    <button><b>Answer a prayer</b><small>2 waiting</small></button>
+    <button><b>Anoint</b><small>Change who speaks</small></button>
+    <button><b>Stay silent</b><small>Mystery rises</small></button>
+  </div>
+
+  <h2>The telephone, played back</h2>
+  <div class="chain">
+    <div class="step"><canvas data-f="cloud" width="16" height="16" style="width:48px;height:48px"></canvas>
+      <div><div class="who">You said</div><div class="said">The faithful should wash their hands before meals.</div></div></div>
+    <div class="step"><canvas data-f="lazy" width="16" height="16" style="width:48px;height:48px"></canvas>
+      <div><div class="who">Odo the Miller · Lazy</div><div class="said">The faithful should wash <s>their hands</s> before meals.</div></div></div>
+    <div class="step"><canvas data-f="drunk" width="16" height="16" style="width:48px;height:48px"></canvas>
+      <div><div class="who">Brenna the Alewife · Drunk</div><div class="said">The faithful should wash before <mark>eels</mark>.</div></div></div>
+    <div class="step"><canvas data-f="zealot" width="16" height="16" style="width:48px;height:48px"></canvas>
+      <div><div class="who">Cuthwin the Shepherd · Zealot</div><div class="said"><mark>ALL must</mark> wash before eels<mark>, or be put in the pond</mark>.</div></div></div>
+  </div>
+
+  <h2>A Tablet</h2>
+  <div class="tablet">
+    <div class="px" style="font-size:11px">The Verse of the Eel</div>
+    <div class="verse">All must wash before eels, or be put in the pond.</div>
+    <div class="counts">Counts for: Mystery +6 a season · Cheer −1 · an eel in a tub (upkeep 1 Bread)</div>
+    <div class="by">Odo dropped the hands. Brenna heard eels. Cuthwin added the pond.</div>
+  </div>
+
+  <h2>Followers: one prop per trait</h2>
+  <div class="row" id="traits"></div>
+
+  <h2>Palette</h2>
+  <div class="sw" id="sw"></div>
+  <p class="note" style="margin-top:14px">Headings stand in for a self-hosted pixel face, to be chosen. Scripture is never set in pixels.</p>
+</main>
+<script>
+const C={sky:'#bfe3f5',cloud:'#fff8e7',ink:'#3b2a4a',halo:'#f2b84b',rose:'#f4a6b0',mint:'#a8dcc0',lilac:'#c9b6e8',alarm:'#d9604c',grass:'#9fd18b',
+  white:'#ffffff',skin:'#ffd9b8',skin2:'#e8b48c',brown:'#9a6b4a',wood:'#c99a6b',water:'#8ccbe8',hill:'#b9e2a0',stone:'#b8b0c4',cream:'#f6e7c4'};
+const P=(g,x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(x,y,w,h);};
+// Draw rects with a one-pixel ink outline: ink first, one pixel fatter, then the fill.
+function blob(g,ox,oy,rects,fill){
+  for(const [x,y,w,h] of rects) P(g,ox+x-1,oy+y-1,w+2,h+2,C.ink);
+  for(const [x,y,w,h,c] of rects) P(g,ox+x,oy+y,w,h,c||fill);
+}
+const HAIR=['#7a4a2b','#e8b84a','#3b2a4a','#c96a3a','#d8d0dc','#5a3a22'];
+const TUNIC=[C.mint,C.rose,C.lilac,C.halo];
+function follower(g,ox,oy,o){
+  const t=TUNIC[o.house%4], h=HAIR[o.hair%6], b=o.bob?1:0;
+  // feet
+  P(g,ox+5,oy+14,2,2,C.ink); P(g,ox+9,oy+14,2,2,C.ink);
+  // body
+  blob(g,ox,oy+b,[[5,10,6,4]],t);
+  P(g,ox+5,oy+12+b,6,1,C.ink+'22');
+  // arms
+  P(g,ox+3,oy+10+b,1,3,C.ink); P(g,ox+12,oy+10+b,1,3,C.ink);
+  // head
+  blob(g,ox,oy+b,[[4,3,8,6],[5,2,6,8]],o.skin||C.skin);
+  // hair
+  P(g,ox+4,oy+3+b,8,2,h); P(g,ox+5,oy+2+b,6,1,h); P(g,ox+4,oy+5+b,1,2,h); P(g,ox+11,oy+5+b,1,2,h);
+  // face
+  P(g,ox+6,oy+6+b,1,2,C.ink); P(g,ox+9,oy+6+b,1,2,C.ink);
+  P(g,ox+5,oy+8+b,1,1,C.rose); P(g,ox+10,oy+8+b,1,1,C.rose);
+  const p=o.prop;
+  if(p==='mug'){ blob(g,ox,oy+b,[[12,10,3,3]],C.wood); P(g,ox+12,oy+10+b,3,1,C.white); P(g,ox+15,oy+11+b,1,1,C.ink); P(g,ox+10,oy+8+b,1,1,C.alarm); P(g,ox+5,oy+8+b,1,1,C.alarm); }
+  if(p==='torch'){ P(g,ox+13,oy+8+b,1,6,C.brown); blob(g,ox,oy+b,[[12,5,3,3]],C.halo); P(g,ox+13,oy+6+b,1,2,C.alarm); P(g,ox+13,oy+3+b,1,1,C.halo);
+    P(g,ox+5,oy+5+b,2,1,C.ink); P(g,ox+9,oy+5+b,2,1,C.ink); }
+  if(p==='quill'){ blob(g,ox,oy+b,[[14,3,1,3],[13,5,1,3]],C.lilac); P(g,ox+13,oy+9+b,1,3,C.ink); }
+  if(p==='pillow'){ blob(g,ox,oy+b,[[11,10,4,3]],C.white); P(g,ox+12,oy+11+b,2,1,C.lilac);
+    P(g,ox+6,oy+6+b,1,2,o.skin||C.skin); P(g,ox+9,oy+6+b,1,2,o.skin||C.skin); P(g,ox+6,oy+7+b,2,1,C.ink); P(g,ox+9,oy+7+b,2,1,C.ink);
+    P(g,ox+13,oy+2,2,1,C.ink); P(g,ox+14,oy+3,1,1,C.ink); P(g,ox+13,oy+4,2,1,C.ink); }
+  if(p==='stick'){ blob(g,ox,oy+b,[[14,4,1,10]],C.halo); for(let i=0;i<5;i++) P(g,ox+14,oy+5+i*2+b,1,1,C.ink); }
+  if(p==='hat'){ blob(g,ox,oy+b,[[5,-1,6,3],[3,2,10,1]],C.lilac); P(g,ox+5,oy+1+b,6,1,C.halo); P(g,ox+8,oy-1+b,1,1,C.white); }
+}
+function cloudGod(g,ox,oy){
+  // halo
+  P(g,ox+4,oy,8,1,C.halo); P(g,ox+3,oy+1,1,1,C.halo); P(g,ox+12,oy+1,1,1,C.halo); P(g,ox+4,oy+2,8,1,C.halo);
+  blob(g,ox,oy,[[3,7,10,6],[1,9,14,4],[5,5,6,4]],C.white);
+  P(g,ox+2,oy+12,12,1,C.sky);
+  P(g,ox+5,oy+8,1,2,C.ink); P(g,ox+10,oy+8,1,2,C.ink);
+  P(g,ox+4,oy+10,1,1,C.rose); P(g,ox+11,oy+10,1,1,C.rose);
+  P(g,ox+7,oy+10,2,1,C.ink);
+}
+function pim(g,ox,oy){
+  blob(g,ox,oy,[[1,7,2,3],[13,7,2,3]],C.white);              // wings
+  blob(g,ox,oy,[[4,5,8,7],[5,4,6,9]],C.cloud);                // body
+  P(g,ox+6,oy+1,4,1,C.halo); P(g,ox+5,oy+2,1,1,C.halo); P(g,ox+10,oy+2,1,1,C.halo); // halo
+  P(g,ox+5,oy+6,2,2,C.sky); P(g,ox+9,oy+6,2,2,C.sky);         // spectacles: two lenses and a bridge
+  P(g,ox+6,oy+7,1,1,C.ink); P(g,ox+9,oy+7,1,1,C.ink); P(g,ox+7,oy+6,2,1,C.ink);
+  P(g,ox+4,oy+9,1,1,C.rose); P(g,ox+11,oy+9,1,1,C.rose);
+  P(g,ox+7,oy+10,2,1,C.ink);
+  blob(g,ox,oy,[[11,10,3,4]],C.wood); P(g,ox+12,oy+11,1,1,C.white); P(g,ox+12,oy+13,1,1,C.white); // clipboard
+}
+function vellamine(g,ox,oy){
+  for(const [x,y] of [[7,0],[7,14],[0,7],[14,7],[2,2],[12,2],[2,12],[12,12]]) P(g,ox+x,oy+y,2,2,C.halo);
+  blob(g,ox,oy,[[4,4,8,8],[5,3,6,10],[3,5,10,6]],C.rose);
+  P(g,ox+5,oy+7,2,1,C.ink); P(g,ox+9,oy+7,2,1,C.ink); P(g,ox+5,oy+6,1,1,C.ink); P(g,ox+10,oy+6,1,1,C.ink);
+  P(g,ox+7,oy+10,2,1,C.ink); P(g,ox+9,oy+9,1,1,C.ink);
+  P(g,ox+12,oy+3,1,1,C.white); P(g,ox+11,oy+2,1,1,C.white);
+}
+function house(g,x,y,c){
+  blob(g,x,y,[[1,6,12,8]],C.cream);
+  blob(g,x,y,[[0,4,14,2],[2,2,10,2],[4,0,6,2]],c);
+  blob(g,x,y,[[5,9,3,5]],C.brown); P(g,x+10,y+8,2,2,C.sky); P(g,x+9,y+7,4,1,C.ink); P(g,x+9,y+10,4,1,C.ink);P(g,x+9,y+8,1,2,C.ink);P(g,x+12,y+8,1,2,C.ink);
+}
+function puff(g,x,y,w){ P(g,x+2,y,w-4,2,C.white); P(g,x,y+2,w,3,C.white); P(g,x+3,y+5,w-7,1,C.white); }
+function scene(){
+  const g=document.getElementById('scene').getContext('2d');
+  P(g,0,0,130,64,C.sky); P(g,0,30,130,6,'#d3ecf7'); P(g,0,36,130,6,'#e4f3f9');
+  puff(g,6,6,20); puff(g,96,10,26); puff(g,60,2,14);
+  // hills
+  for(let x=0;x<130;x++){ const h=Math.round(5*Math.sin(x/17)+3*Math.sin(x/7+1)); P(g,x,40-h,1,24+h,C.hill); }
+  P(g,0,50,130,14,C.grass); P(g,0,50,130,1,'#86bd72');
+  for(const [x,y] of [[4,56],[30,60],[52,55],[77,61],[101,56],[123,60]]){ P(g,x,y,1,1,C.white); P(g,x+3,y+2,1,1,C.halo); }
+  house(g,2,36,C.rose); house(g,22,37,C.lilac);
+  // standing stone
+  blob(g,0,0,[[45,40,4,10],[46,38,2,2]],C.stone);
+  // pond with the eel
+  blob(g,0,0,[[104,54,18,5],[107,53,12,7]],C.water); P(g,110,56,5,1,C.ink); P(g,115,55,1,1,C.ink); P(g,109,57,1,1,C.ink);
+  // you and the rival, up in the sky
+  cloudGod(g,34,6); vellamine(g,82,20);
+  // the flock
+  follower(g,52,44,{house:0,hair:0,prop:'pillow'});
+  follower(g,66,45,{house:1,hair:3,prop:'mug',bob:1});
+  follower(g,80,44,{house:2,hair:2,prop:'torch'});
+  follower(g,10,47,{house:3,hair:1,prop:'quill',bob:1});
+  follower(g,28,48,{house:0,hair:4,prop:'hat',skin:C.skin2});
+}
+scene();
+pim(document.getElementById('pim').getContext('2d'),0,0);
+document.querySelectorAll('canvas[data-f]').forEach(c=>{
+  const g=c.getContext('2d'), f=c.dataset.f;
+  if(f==='cloud') cloudGod(g,0,1);
+  if(f==='lazy') follower(g,0,0,{house:0,hair:0,prop:'pillow'});
+  if(f==='drunk') follower(g,0,0,{house:1,hair:3,prop:'mug'});
+  if(f==='zealot') follower(g,0,0,{house:2,hair:2,prop:'torch'});
+});
+const T=[['Literalist','stick',3,5],['Drunk','mug',1,3],['Ambitious','hat',0,4],['Poet','quill',3,1],['Lazy','pillow',0,0],['Zealot','torch',2,2]];
+const row=document.getElementById('traits');
+T.forEach(([n,p,h,hr],i)=>{
+  const d=document.createElement('div'); d.className='card';
+  const c=document.createElement('canvas'); c.width=16; c.height=18; c.style.width='48px'; c.style.height='54px';
+  follower(c.getContext('2d'),0,2,{house:h,hair:hr,prop:p,skin:i%3===2?C.skin2:C.skin});
+  d.append(c, n); row.append(d);
+});
+const sw=document.getElementById('sw');
+for(const k of ['sky','cloud','halo','rose','mint','lilac','grass','alarm','ink']){
+  const d=document.createElement('div'); d.style.background=C[k]; d.textContent=k; if(k==='ink'||k==='alarm') d.style.color='#fff'; sw.append(d);
+}
+</script>
+</body>
+</html>
