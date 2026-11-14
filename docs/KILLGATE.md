@@ -1,5 +1,10 @@
 # Kill gate B: are the decisions real?
 
+**Retired 2026-11-14.** The engine now runs the same tables (`npm run gate`,
+`sim/gate.mjs`) and its results are in `docs/BALANCE.md`, which supersedes
+the numbers below. `prototypes/killgate/` is kept as the Stage 2 record and is
+not maintained.
+
 Stage 2 of the workflow. A numbers-only model of the management game proposed
 in `FRAME-management.md`: two gods, one village of 36, twelve named devotees
 each, six offices, three miracles, six Works, Scripture carved by the real

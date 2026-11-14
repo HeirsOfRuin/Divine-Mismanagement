@@ -2,17 +2,34 @@
 
 You are a minor god with twelve worshippers, and every one of them is an idiot.
 
-Status (2026-11-14): both kill gates passed; no playable game yet (the page
-still shows the scaffold's placeholder).
+Status (2026-11-14): **playable v0.1 engine and screens.** One village of 36,
+one rival, thirty seasons, the six offices, eight acts, Scripture carved by the
+telephone, miracles told by a Witness, Works, rulings, the Registry and the
+Review. Nothing authored is shown twice in a playthrough. Not yet played by the
+author; the balance is measured, not felt (`docs/BALANCE.md`).
 
-- Gate A: the telephone mechanic is funny (`docs/GATE-A.md`; `npm run telephone`).
-- Gate B: the management decisions are real, with six faults open
-  (`docs/KILLGATE.md`; `npm run gate`).
+Read `docs/SPEC.md` (rules and every decision), `docs/FRAME-management.md` (the
+approved management design and look), `docs/WORLD.md` (setting, story, tone),
+`docs/DESIGN.md` (engine and screens, with an as-built section) and
+`docs/BALANCE.md` (what the instruments measured, and what is still open).
 
-Read `docs/SPEC.md` (rules), `docs/FRAME-management.md` (the approved
-management-sim design, the look, the no-repeat rule), `docs/WORLD.md` (setting,
-story, tone) and `docs/DESIGN.md` (engine, screens, build plan). Next: the
-engine.
+## How to play
+
+Each season you do one thing. You cannot speak to anyone directly.
+
+- **Flock**: post your twelve people to six offices. Who holds an office
+  decides how it is done; a trait shows once someone has worked an office,
+  carried a message or been sent a dream.
+- **Village**: rule on any problem brought to you, then take the season's act:
+  a Revelation, a miracle, an answered prayer, a dream, a festival, a
+  disputation, answering one of her neglected people, or silence.
+- **Scripture**: what reaches the end of a Revelation's chain is carved and
+  does what it now says, every season.
+- **Heavens**: where you stand against the Review, and what she is up to.
+
+Win by passing the Review after season 30, or by bringing the rival under four
+souls for two seasons. Lose by falling under the Registry's line two years
+running, or by her taking the village.
 
 ## Play as an app
 
@@ -40,21 +57,28 @@ Must pass before every commit.
 
 | Command | Question |
 |---|---|
-| `npm test` | Is it true? Invariants and the save contract |
-| `npm run sim -- --runs=200 --by=difficulty` | Is it balanced? Batch runs by cell, ±1 SE (game-measure) |
-| `npm run sim -- --trace --seed=3` | One game, turn by turn |
+| `npm test` | Is it true? Invariants (ledger, souls, bounds, determinism), save contract, telephone, no repeats in 100 playthroughs |
+| `npm run gate` | Are the decisions real? Policies, who suits which office, what stops a god (`--only=policies,offices,review`) |
+| `npm run fork` | Which act is best from a given position? Plays every act from the same mid-game state |
+| `npm run telephone` | Twenty chains to read; `--run` one playthrough; `--stats` repetition and length |
+| `npm run sim -- --runs=200 --by=policy` | Batch runs by policy, ±1 SE (game-measure) |
+| `npm run sim -- --trace --seed=3` | One game, season by season |
 | `npm run smoke` | Does the real page work at 390px? |
 
 ## Layout
 
 ```
-src/data/     logic-free tables
-src/engine/   pure: rng, state (save contract), turn, derive, ledger
-src/ui/       screens; read the engine, compute nothing
-sim/          bot, adapter, game-measure kit
-test/         invariants, save contract, fixtures
-tools/        bundle, check-bundle, smoke, icons, stamp, browser
+src/data/          logic-free tables: config, offices, lexicon, phrases, followers, traits
+src/data/content/  authored lines: wants, incidents, legends, rulings, memos, rival, endings
+src/engine/        pure: state, turn, acts, offices, scripture, meters, rival, derive,
+                   telephone, render, deck, content, rng
+src/ui/            screens and sprites; read the engine, compute nothing
+sim/               bot policies, adapter, gate tables, fork tool, game-measure kit
+prototypes/        the retired kill-gate model (Stage 2 record)
+test/              invariants, save contract, telephone, fixtures
+tools/             bundle, check-bundle, smoke, telephone, make-fixture, icons, stamp, browser
 ```
 
 ## Sources
-<!-- Real figures and their sources; "rounded for a game, do not cite". -->
+
+None. The setting is invented and no figure in it is historical.

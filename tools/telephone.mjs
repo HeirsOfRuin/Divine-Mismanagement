@@ -16,6 +16,7 @@ import { makeRevelation, transmit, carve } from '../src/engine/telephone.js';
 import { render, title, aftermath } from '../src/engine/render.js';
 import { TEMPLATES } from '../src/data/lexicon.data.js';
 import { TRAITS } from '../src/data/traits.data.js';
+import { CONFIG } from '../src/data/config.data.js';
 
 const arg = (k, d) => {
   const hit = process.argv.find((a) => a.startsWith(`--${k}=`));
@@ -102,7 +103,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       const { rev, final } = chainFor(SEED, i);
       const text = render(final);
       lens.push(text.length);
-      if (text.length > 140) over++;
+      if (text.length > CONFIG.verseCap) over++;
       if (text === render(rev)) same++;
       count(afters, aftermath(final, rev)); count(titles, title(final));
     }
@@ -111,7 +112,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const top = (m, n) => [...m].sort((a, b) => b[1] - a[1]).slice(0, n).map(([k, v]) => `  ${pct(v).padStart(6)}  ${k}`).join('\n');
     console.log(`${runs} chains, seed ${SEED}`);
     console.log(`arrived unchanged: ${pct(same)}`);
-    console.log(`verse length: median ${lens[runs >> 1]}, 90th pct ${lens[Math.floor(runs * 0.9)]}, max ${lens[runs - 1]}; over 140 characters: ${pct(over)}`);
+    console.log(`verse length: median ${lens[runs >> 1]}, 90th pct ${lens[Math.floor(runs * 0.9)]}, max ${lens[runs - 1]}; over the ${CONFIG.verseCap}-character cap: ${pct(over)}`);
     console.log(`distinct titles: ${titles.size}; distinct aftermath lines: ${afters.size}`);
     console.log(`most common titles:\n${top(titles, 5)}`);
     console.log(`most common aftermath lines:\n${top(afters, 5)}`);

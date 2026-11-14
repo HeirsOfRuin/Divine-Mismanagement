@@ -169,8 +169,9 @@ sass" written down so every table of phrases can be checked against them.
    player recognises in themselves or their workplace.
 5. **The joke is in the system first.** A phrase table entry must be funny in
    more than one context or it is a one-off and belongs in an event.
-6. **Short.** A verse fits on a phone in two lines (140 characters). A Pim line
-   is one or two sentences.
+6. **Short.** A verse is at most 240 characters (raised from 140 on the
+   author's word, 2026-11-14; in play half are under 105 and 99% under 201).
+   A Pim line is one or two sentences.
 7. **No cruelty, no crudeness, no real-world politics.** Written for adults,
    with nothing in it that needs hiding.
 8. **Clever, not trying.** The author on the Gate A chains: "Yes, but don't try

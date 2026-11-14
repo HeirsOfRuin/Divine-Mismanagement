@@ -1,39 +1,52 @@
 // New game, the save contract, and migrations.
 //
-// The save KEY is a contract: renaming it orphans every save on every device
-// (Silk Road kept its old key after the retitle on purpose). The payload carries
-// `v`; MIGRATIONS[v] upgrades version v to v + 1. Every version that ever
-// shipped gets a fixture in test/fixtures/ that must load and play on
-// (test/save-contract.test.js). Ids and counters live IN STATE, never in module
-// variables, or one seed gives different games in a batch (Centennial Farm).
+// The save KEY is a contract: renaming it orphans every save on every device.
+// The payload carries `v`; MIGRATIONS[v] upgrades version v to v + 1. Every
+// version that ever shipped gets a fixture in test/fixtures/ that must load
+// and play on. No build has shipped yet: v1 was the scaffold's placeholder and
+// was redefined as this game on 2026-11-14, before anyone could have saved one.
 
-import { CONFIG, DIFFICULTY } from '../data/config.data.js';
+import { CONFIG } from '../data/config.data.js';
+import { NAMES } from '../data/followers.data.js';
+import { streamFor } from './rng.js';
+import { makeFlock } from './followers.js';
 
 export const SAVE_KEY = 'divine-mismanagement.save.v1'; // never rename
 export const SAVE_VERSION = 1;
 export const CODE_PREFIX = 'DVMM1.';
 
-export function newGame({ seed = 1, difficulty = 'normal' } = {}) {
-  if (!DIFFICULTY[difficulty]) throw new Error(`unknown difficulty: ${difficulty}`);
+function newGod(name, flock, start) {
   return {
-    v: SAVE_VERSION,
-    seed: seed >>> 0,
-    difficulty,
-    turn: 1,
-    money: CONFIG.startMoney,
-    strength: CONFIG.startStrength,
-    ledger: [{ turn: 0, amount: CONFIG.startMoney, reason: 'start' }],
-    history: [],
-    over: false,
-    outcome: null,
-    nextId: 1,
+    name, ...structuredClone(start),
+    heresy: 0, entitlement: 0, charm: 0, guard: 1, blunt: 1, bluntPrev: 1,
+    flock: flock.map((f) => ({ ...f, known: false, office: null, settling: 0, want: null })),
+    tablets: [], apocrypha: [], legends: [], works: {}, building: null,
+    prayers: [], missionaryOut: 0, low: 0, strikes: 0, seen: {},
+    n: {},
   };
 }
 
+export function newGame({ seed = 1, name = 'the God of Doors That Stick' } = {}) {
+  seed = seed >>> 0;
+  const rng = streamFor(seed, 0, 'flock');
+  const names = rng.shuffle([...NAMES]);
+  const s = {
+    v: SAVE_VERSION, seed, season: 1, over: false, outcome: null, nextId: 1,
+    unbothered: CONFIG.village - CONFIG.start.souls - CONFIG.rivalStart.souls,
+    gods: [
+      newGod(name, makeFlock(rng, names.slice(0, 12), 'f'), CONFIG.start),
+      newGod('Vellamine', makeFlock(rng, names.slice(12, 24), 'r'), CONFIG.rivalStart),
+    ],
+    ledger: [],
+    spent: {},
+    event: null,
+    chronicle: [],
+  };
+  return s;
+}
+
 /** MIGRATIONS[v](save) returns the save at version v + 1. Add one per version bump. */
-export const MIGRATIONS = {
-  // 1: (s) => ({ ...s, v: 2, newField: defaultValue }),
-};
+export const MIGRATIONS = {};
 
 export function migrate(save) {
   let s = save;
@@ -50,7 +63,6 @@ export function migrate(save) {
 export const serialize = (state) => JSON.stringify(state);
 export const deserialize = (text) => migrate(JSON.parse(text));
 
-/** A save as text, to move between devices or between itch and the Pages copy. */
 export function toCode(state) {
   const b64 = btoa(unescape(encodeURIComponent(serialize(state))));
   return CODE_PREFIX + b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');

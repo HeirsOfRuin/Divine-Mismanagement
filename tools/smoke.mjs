@@ -10,15 +10,33 @@
 // ---- ADAPT THESE to the game's screens (the rest is generic) ---------------
 export const START = ['[data-act="new"]'];           // clicks that begin a game
 export const CLOCK = '.hud .turn';                    // element whose text is the game clock
-export const TABS = ['[data-tab="play"]', '[data-tab="ledger"]', '[data-tab="menu"]'];
+export const TABS = ['[data-tab="village"]', '[data-tab="flock"]', '[data-tab="scripture"]', '[data-tab="heavens"]', '[data-tab="menu"]'];
 export const TURNS = Number(process.env.TURNS || 10);
 
-/** Take one turn the way a player would; return true if the clock moved. */
-export async function advanceOnce(page) {
+/** Take one season the way a player would; return true if the clock moved.
+ *  Rules on any problem first; on the first two seasons posts a Prophet and
+ *  sends a Revelation through the composer, otherwise takes the first act on offer. */
+export async function advanceOnce(page, i = 0) {
   const before = (await page.locator(CLOCK).textContent())?.trim();
-  const btn = page.locator('[data-action]:not([disabled])').first();
-  if (!(await btn.count())) return false;
-  await btn.click();
+  for (let g = 0; g < 2 && (await page.locator('[data-ruling]:not([disabled])').count()); g++) {
+    await page.locator('[data-ruling]:not([disabled])').first().click();
+    if (await page.locator('.scrim [data-act="close"]').count()) await page.locator('.scrim [data-act="close"]').first().click();
+  }
+  if (i === 0) {
+    await page.click('[data-tab="flock"]');
+    await page.selectOption('select[data-post="prophet"]', { index: 1 });
+    await page.selectOption('select[data-post="preacher"]', { index: 2 });
+    await page.click('[data-tab="village"]');
+  }
+  if (i <= 1 && (await page.locator('[data-act="compose-reveal"]:not([disabled])').count())) {
+    await page.click('[data-act="compose-reveal"]');
+    await page.locator('[data-chain]:not([disabled])').nth(1).click();
+    await page.locator('[data-action="reveal"]').click();
+  } else {
+    const btn = page.locator('[data-action]:not([disabled])').first();
+    if (!(await btn.count())) return false;
+    await btn.click();
+  }
   for (let g = 0; g < 4 && (await page.locator('.scrim [data-act="close"]').count()); g++) {
     await page.locator('.scrim [data-act="close"]').first().click();
   }
@@ -50,7 +68,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   flush('start');
   let turns = 0;
   for (let i = 0; i < TURNS; i++) {
-    if (!(await advanceOnce(page))) { check(`clock advanced on turn ${i + 1}`, false); break; }
+    if (!(await advanceOnce(page, i))) { check(`clock advanced on turn ${i + 1}`, false); break; }
     turns++;
     if (await page.locator('[data-act="new"]').count()) break;
   }

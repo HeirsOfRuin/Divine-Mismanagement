@@ -7,7 +7,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { SAVE_VERSION, MIGRATIONS, deserialize, serialize, toCode, fromCode, newGame } from '../src/engine/state.js';
-import { advance, view } from '../src/engine/turn.js';
+import { advance } from '../src/engine/turn.js';
+import { decide } from '../sim/bot.js';
 
 const dir = new URL('./fixtures/', import.meta.url);
 const fixtures = readdirSync(dir).filter((f) => /^v\d+-save\.json$/.test(f)).sort();
@@ -25,8 +26,8 @@ for (const f of fixtures) {
     let s = deserialize(readFileSync(new URL(f, dir), 'utf8'));
     assert.equal(s.v, SAVE_VERSION);
     for (let i = 0; i < 3 && !s.over; i++) {
-      const a = view(s).actions.find((x) => x.ok);
-      s = advance(s, { action: a.id }).state;
+      const d = decide(s, 'adaptive');
+      s = advance(d.state, d.input).state;
     }
   });
 }

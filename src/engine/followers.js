@@ -9,8 +9,9 @@ export const HOUSEHOLDS = 4;
 export const PER_HOUSEHOLD = 3;
 const SECOND_TRAIT = 0.2; // tuned, not measured
 
-export function makeFlock(rng) {
-  const names = rng.shuffle([...NAMES]);
+// `names` lets two gods share one draw of names so nobody appears in both
+// flocks; `prefix` keeps their ids apart.
+export function makeFlock(rng, names = rng.shuffle([...NAMES]), prefix = 'f') {
   const flock = [];
   for (let i = 0; i < HOUSEHOLDS * PER_HOUSEHOLD; i++) {
     const traits = [rng.pick(TRAIT_IDS)];
@@ -19,7 +20,7 @@ export function makeFlock(rng) {
       traits.push(other);
     }
     flock.push({
-      id: `f${String(i + 1).padStart(2, '0')}`,
+      id: `${prefix}${String(i + 1).padStart(2, '0')}`,
       name: names[i],
       trade: rng.pick(TRADES),
       household: Math.floor(i / PER_HOUSEHOLD),

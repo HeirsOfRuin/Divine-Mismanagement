@@ -10,6 +10,7 @@ import { render, title, aftermath } from '../src/engine/render.js';
 import { makeFlock } from '../src/engine/followers.js';
 import { TEMPLATES, PHRASES, VERBS, POET_TAILS } from '../src/data/lexicon.data.js';
 import { TRAIT_IDS } from '../src/data/traits.data.js';
+import { CONFIG } from '../src/data/config.data.js';
 
 const F = { id: 'f01', name: 'Wilf', trade: { id: 'carpenter', label: 'the Carpenter', good: 'a stool' }, household: 0, traits: [] };
 const base = () => makeRevelation('wash', 'hands', 'before_meals');
@@ -126,6 +127,7 @@ test('3,000 seeded chains: every step renders as a clean sentence', () => {
       assert.doesNotMatch(text, /undefined|null|NaN|[{}]|  | ,|,,|\.\./, text);
     }
     for (const s of steps) {
+      assert.ok(s.text.length <= CONFIG.verseCap, `${s.text.length} characters: ${s.text}`);
       assert.match(s.text, /^[A-Z].*\.$/, s.text);
       assert.equal(s.changed, s.note !== null);
     }

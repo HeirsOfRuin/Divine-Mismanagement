@@ -21,6 +21,10 @@
   an id in a deck (`src/engine/deck.js`); the spent list is in the save. A dry
   deck leaves the prose out; it never repeats. New content systems use the
   deck from their first commit.
+- The engine is built (`docs/DESIGN.md` section 10). `docs/BALANCE.md` holds
+  every measurement and the faults still open. Re-run `npm run gate` after any
+  change to `src/data/offices.data.js`, `config.data.js` or the acts, and put
+  the numbers, with their run counts, in the commit message.
 - `docs/FRAME-management.md` is the approved design of the management layer
   (offices, Works, Legends, defeating the rival) and the look. Where it differs
   from `SPEC.md` it wins; where `KILLGATE.md` measured something, that wins.

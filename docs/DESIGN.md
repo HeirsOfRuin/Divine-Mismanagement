@@ -287,28 +287,60 @@ The rules questions are in `SPEC.md` section 10. These are the build questions.
 
 ## 10. As built
 
-**Gate A (2026-11-14).** `telephone.js`, `render.js`, `followers.js` (names,
-trades, traits and households only) and the word tables exist, with 12 tests.
-Details and the measured readings are in `docs/GATE-A.md`. Differences from the
-plan above:
+Where this section differs from the plan above, this section wins.
 
-- The six rewrites are functions in `telephone.js`, not rule lists in
-  `traits.data.js` (section 3.2). Each needed its own choice of what to act on,
-  and a rule language for six cases would have been more code than the cases.
-  The words are still all in data.
-- A verse has `object` and `tail` slots holding `{ base, cur, via, lit }`
-  rather than the flat ids of section 3.1, so it records whether a phrase was
-  misheard, made poetic or taken literally. `trail` is returned by
-  `transmit()` as `steps`, not stored on the verse yet.
-- `phrases.data.js` holds threats and riders; sound-alikes and poetic glosses
-  live beside the phrase they replace in `lexicon.data.js`.
+### Gate A (2026-11-14)
+`telephone.js`, `render.js`, the word tables. See `docs/GATE-A.md`. A verse
+has `object` and `tail` slots holding `{ base, cur, via, lit }`; the six
+rewrites are functions in `telephone.js`; the words are all in data.
 
-**No repeats (2026-11-14).** `src/engine/deck.js` holds the per-playthrough
-spent decks. `transmit()` and `applyTrait()` take and return `spent`; each step
-lists what it `drew`; `carve()` gives a verse a title no other verse in the run
-has and an aftermath line the run has not shown. 25 tests, one of them 200
-playthroughs of 20 Revelations failing on any repeat. `tools/telephone.mjs --run`
-prints one playthrough; `--run --stats` reports how often decks run dry.
+### The engine (2026-11-14)
+The placeholder game is gone. One season is one call to `advance()`.
 
-Everything else in `src/` is still the scaffold's placeholder game (24 turns,
-three actions). The telephone is not wired into a turn or a screen.
+| Module | What it does |
+|---|---|
+| `src/engine/state.js` | New game, save contract (key `divine-mismanagement.save.v1`, code `DVMM1.`) |
+| `src/engine/turn.js` | The season pipeline in nine written steps; `post`, `commission`, `orders`, `ruleOn` (standing orders and rulings, which cost no act); dawn (prayers, wants, the next problem); Pim's memo and the rival's line |
+| `src/engine/acts.js` | The eight acts: `preview()` (cost, allowed, the reason if not) and `resolve()`. Both gods use them |
+| `src/engine/offices.js` | Postings, the Builder's commission, conversion, the offices working each season |
+| `src/engine/scripture.js` | What a Tablet does, computed from its structure every season, never stored |
+| `src/engine/meters.js` | The only place a number changes; one ledger row per change |
+| `src/engine/rival.js` | Vellamine's written policy, through the same `preview`/`resolve` |
+| `src/engine/derive.js` | Every number and phrase the screens show that is not a plain meter |
+| `src/engine/content.js`, `deck.js` | Drawing authored lines; each is spent for the playthrough |
+| `src/data/offices.data.js` | The trait-by-office table, miracles, witnesses, Works, verse effects |
+| `src/data/content/` | Wants and prayers, office incidents, legends, rulings, memos, rival lines, endings |
+| `src/ui/app.js`, `sprites.js`, `styles.css` | Five tabs (Village, Flock, Scripture, Heavens, Menu) and the sheets; pixel art drawn from state in the tile 2 palette |
+| `sim/bot.js`, `adapter.js`, `gate.mjs`, `fork.mjs` | Thirteen written policies, the game-measure adapter, the Gate B tables on the engine, and the position-forking tool |
+
+Differences from the plan above, all for a measured reason (`docs/BALANCE.md`):
+
+- **One act a season**, not two (the author's decision, from Gate B).
+- **Rulings come first.** A problem brought to you is settled with `ruleOn()`
+  before the act is chosen, on a card on the Village page, not a modal. The
+  bot hit an act the ruling had made unaffordable; a player would have too.
+- **Bread and Cheer are gone**; the flock's devotion does their work.
+  **Offerings** and **souls** are meters. Every meter of both gods equals its
+  start plus its ledger rows, tested every season.
+- **Forgotten** is the Registry's rising minimum: under it at two year-ends
+  running. **The Review** asks Faith 150, 21 souls, Heresy under 8 and three
+  Tablets that do good.
+- **Disputations** once a year per god, one soul to the winner; **answering
+  her neglected followers** needs a prayer she has left for three seasons.
+  Both were unlimited at first and won games on their own.
+- **The rival** learns her people after a year and staffs by the loudest,
+  answers her people before you can, reveals when she lacks doctrine, and
+  smites your missionary when you take her people.
+- **Prayers** arrive about every other season, not every season: with one act
+  a season, answering them took every act the rival had.
+- **Legends**: a reported miracle is retold for some seasons, paying a little
+  each season, by Witness (fault 4).
+- **The verse cap is 240 characters**, raised from 140 on the author's word.
+- Rivals' devotees have no wants and the rival gets no rulings: their prayers
+  are a count. Said here because the world is meant to play by the player's
+  rules, and these two do not yet.
+
+Not built yet: domains, generations, saints, schism as an ending, the Vale,
+more rivals, sound, a tutorial beyond Pim's first memo and the How it works
+sheet, an animated playback (the report shows each step as a list), a
+chapter jump for playtesting late seasons.
