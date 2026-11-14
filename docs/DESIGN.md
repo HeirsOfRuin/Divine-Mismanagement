@@ -160,10 +160,10 @@ stepped list.
 
 ## 5. Visual identity
 
-*Superseded 2026-11-14. The author: "kinda cute and fun, but it also can't look
+*Superseded 2026-11-14, and tile 2 approved ("Looks better!"). The author: "kinda cute and fun, but it also can't look
 like a children's game". The palette, sprites and type below are style tile 1.
 Style tile 2 (`docs/style-tile.html`, `FRAME-management.md` section 2) is the
-current proposal: parchment and ink, dusk colours, smaller deadpan sprites,
+approved direction: parchment and ink, dusk colours, smaller deadpan sprites,
 ledger and memo controls, no pixel lettering. The prop-per-trait rule and the
 sprite pipeline below still stand.*
 

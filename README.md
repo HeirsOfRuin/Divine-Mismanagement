@@ -2,13 +2,17 @@
 
 You are a minor god with twelve worshippers, and every one of them is an idiot.
 
-Status (2026-11-14): spec approved; Gate A (the telephone mechanic) is built
-and awaits the author's verdict in `docs/GATE-A.md`. Run `npm run telephone` to
-print 20 chains. There is no playable game yet: the page still shows the
-scaffold's placeholder. Read `docs/SPEC.md` (rules), `docs/WORLD.md` (setting, story, tone) and
-`docs/DESIGN.md` (engine, screens, look, build plan). Also read `docs/FRAME-management.md`: the proposal to make it a
-management sim, the redrawn look, and the no-repeat rule. Next: the verdict
-on Gate A and on that frame, then Gate B (Scripture effects and the numbers-only sim).
+Status (2026-11-14): both kill gates passed; no playable game yet (the page
+still shows the scaffold's placeholder).
+
+- Gate A: the telephone mechanic is funny (`docs/GATE-A.md`; `npm run telephone`).
+- Gate B: the management decisions are real, with six faults open
+  (`docs/KILLGATE.md`; `npm run gate`).
+
+Read `docs/SPEC.md` (rules), `docs/FRAME-management.md` (the approved
+management-sim design, the look, the no-repeat rule), `docs/WORLD.md` (setting,
+story, tone) and `docs/DESIGN.md` (engine, screens, build plan). Next: the
+engine.
 
 ## Play as an app
 

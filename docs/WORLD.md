@@ -141,10 +141,8 @@ most damage, and names the follower responsible.
 
 ## 6. Tone: the satire and sass dial
 
-*2026-11-14: the author asked that it not look like a children's game.
-`FRAME-management.md` section 2 proposes Sass 4, Bite 3, Darkness 2 and
-withdraws the "twelve-year-old" line in hard rule 7. The table below is the
-earlier setting until that is approved.*
+*Approved by the author 2026-11-14 (was Sass 3, Bite 2, Darkness 1), after
+asking that it not look like a children's game.*
 
 Settings on a five-point scale. These are the brief's "level of satire and
 sass" written down so every table of phrases can be checked against them.
@@ -153,9 +151,9 @@ sass" written down so every table of phrases can be checked against them.
 |---|---|---|
 | **Warmth** | 4 / 5 | The village is likeable. Insults are affectionate. Nobody is humiliated for being poor, old, ill or slow |
 | **Absurdity** | 4 / 5 | Logic is followed carefully to a silly place. The eel is treated with full seriousness by everyone |
-| **Sass** | 3 / 5 | Pim and the rival get the dry lines. The narration does not wink at the player or mention being a game |
-| **Bite** | 2 / 5 | Targets are bureaucracy, zealotry, ego and doctrine creep. It stings the way a good workplace joke stings |
-| **Darkness** | 1 / 5 | Nobody suffers on screen. Smiting is slapstick (singed eyebrows). Death is "gone to file his paperwork" |
+| **Sass** | 4 / 5 | Pim and the rival get the dry lines. The narration does not wink at the player or mention being a game |
+| **Bite** | 3 / 5 | Targets are bureaucracy, zealotry, ego and doctrine creep. It stings the way a good workplace joke stings |
+| **Darkness** | 2 / 5 | People drink, skim the tithe, hold grudges and die of old age off screen; a funeral may be funny. Nobody suffers on screen. Smiting is slapstick (singed eyebrows) |
 
 ### Hard rules
 
@@ -173,8 +171,13 @@ sass" written down so every table of phrases can be checked against them.
    more than one context or it is a one-off and belongs in an event.
 6. **Short.** A verse fits on a phone in two lines (140 characters). A Pim line
    is one or two sentences.
-7. **No cruelty, no crudeness, no real-world politics.** A twelve-year-old and
-   a parish treasurer should both be able to play it.
+7. **No cruelty, no crudeness, no real-world politics.** Written for adults,
+   with nothing in it that needs hiding.
+8. **Clever, not trying.** The author on the Gate A chains: "Yes, but don't try
+   too hard, it should be clever." Understate. Follow the logic one step
+   further than is sensible and report it flatly. No wacky words chosen for
+   being wacky, no exclamation marks, no line that explains its own joke. If a
+   line would work as a parish notice, it is right; if it is reaching, cut it.
 
 ### Voice samples
 

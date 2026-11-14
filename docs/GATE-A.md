@@ -4,7 +4,8 @@ The first kill gate (`SPEC.md` section 11), and the brief's own first test: "Mut
 single Revelation must be funny on its own. If it isn't, nothing else will save
 the game."
 
-**Status: built 2026-11-14, awaiting the author's verdict.** No instrument can
+**Status: passed, 2026-11-14.** The author: "Yes, but don't try too hard, it
+should be clever." No instrument can
 judge this; a person reads the chains below and says yes, no, or which parts.
 
 ## What was built
@@ -402,4 +403,4 @@ Recorded because the first version was worse and the reasons are design rules:
 
 | Date | The author's words | Decision |
 |---|---|---|
-| | | |
+| 2026-11-14 | "Yes, but don't try too hard, it should be clever." | Pass. The mechanic stands. The condition is on the writing: understatement over effort. Recorded as hard rule 8 in `WORLD.md` section 6; the phrase tables get a pass against it when they are written to full size. The three questions asked with the chains (the 140-character cap, where three Lazy links end up) were not answered and stay open. |

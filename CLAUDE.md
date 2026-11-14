@@ -8,9 +8,12 @@
 - Built with the HeirsOfRuin game-building skills (`Game-Workshop/skills/`).
   Read `game-building/SKILL.md` before writing game logic. Follow its stages
   and gates; skipping a stage is allowed, skipping it silently is not.
-- The first gate is a human one: the author reads 20 mutated Revelations and
-  says whether they are funny (`SPEC.md` section 11). No other system is built
-  before that verdict.
+- Both kill gates are passed: Gate A (`docs/GATE-A.md`, the author found the
+  chains funny) and Gate B (`docs/KILLGATE.md`, the numbers). Gate B left six
+  design faults open; read them before designing any system they touch, and do
+  not tune one away without measuring it.
+- The author on the writing: "don't try too hard, it should be clever."
+  Understate; report the absurd flatly; cut anything that is reaching.
 - Tone is a rule, not a mood. Every phrase table is checked against the hard
   rules in `WORLD.md` section 6: invented gods only, no real verse or
   commandment quoted or paraphrased, warm, never cruel.
@@ -18,9 +21,9 @@
   an id in a deck (`src/engine/deck.js`); the spent list is in the save. A dry
   deck leaves the prose out; it never repeats. New content systems use the
   deck from their first commit.
-- `docs/FRAME-management.md` proposes the management layer (offices, Works,
-  Legends, defeating the rival) and the look. Check its Decision table before
-  building any of it.
+- `docs/FRAME-management.md` is the approved design of the management layer
+  (offices, Works, Legends, defeating the rival) and the look. Where it differs
+  from `SPEC.md` it wins; where `KILLGATE.md` measured something, that wins.
 - A verse is stored as structure, never as a sentence. Its words and its
   effects are both computed from that one object.
 - Content lives in `src/data/` tables, separate from logic.

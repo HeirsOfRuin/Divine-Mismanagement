@@ -1,9 +1,10 @@
 # Frame: a management sim, a grown-up look, and no repeats
 
-Drafted 2026-11-14. **Status: proposal, awaiting the author's approval.** One
-part is already built and measured (section 3, the no-repeat rule in the
-telephone); the rest is design, to be tested by Gate B before any of it is
-built.
+Drafted 2026-11-14. **Status: approved by the author the same day** (option B,
+style tile 2, the tone dial; see Decision at the end). The no-repeat rule is
+built. The management layer has been through Gate B (`docs/KILLGATE.md`), which
+passed it with six faults open; where that file and this one differ on a
+number or a claim, that file is the measurement.
 
 ## The author's request
 
@@ -286,4 +287,4 @@ needing 180 unique paragraphs.
 
 | Date | The author's words | Decision |
 |---|---|---|
-| | | |
+| 2026-11-14 | On scope: "Start with your recommendation". On style tile 2: "Looks better!". On the tone dial: "Yes". | Option B: six interactions, six offices, Works, Legends, one village and one rival in v0.1; the Vale after. Style tile 2 is the direction. Tone is Warmth 4, Absurdity 4, Sass 4, Bite 3, Darkness 2. The two readings of "no repeats" (authored prose only; within one playthrough) were not objected to and stand. |
