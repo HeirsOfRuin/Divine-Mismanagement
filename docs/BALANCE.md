@@ -1,0 +1,123 @@
+# Balance: what the instruments measured on the engine
+
+The Gate B tables (`docs/KILLGATE.md`, now retired) re-run on the real game,
+2026-11-14. Commands: `npm run gate` (`--only=policies|offices|review`,
+`--runs=N`, `--office=`, `--policy=`) and `npm run fork`. Every rate carries one
+standard error. The noise floor between two cells is about 6 points at 500
+seeds, 7 at 400 and 8 at 300; a gap under it is not a result.
+
+Nothing here has been checked by a person playing. These are the numbers a
+careful playtest should argue with.
+
+## Table 1: policies (500 seeds each, 30 seasons, one act a season)
+
+Win means promoted at the Review, or the rival fell.
+
+| Policy | The rule | Win | Promoted | Rival fell | Passed over | Absorbed | Forgotten |
+|---|---|---|---|---|---|---|---|
+| silent | Posts nobody, does nothing | 0% ±0.2 | 0 | 0 | 0 | 0 | 100 |
+| staff_blind | Six postings without looking; no acts | 1% ±0.3 | 0 | 1 | 17 | 16 | 67 |
+| staff_aware | Best known fit; no acts | 1% ±0.3 | 0 | 1 | 24 | 2 | 73 |
+| no_staff | Never posts anyone; otherwise careful | 2% ±0.7 | 0 | 2 | 18 | 73 | 7 |
+| random | Random postings, acts and rulings | 3% ±0.8 | 0 | 3 | 30 | 34 | 32 |
+| long_chain | Revelations through all four households | 4% ±0.8 | 1 | 2 | 29 | 61 | 6 |
+| miracles | A miracle every season it can afford | 6% ±1.0 | 0 | 6 | 32 | 6 | 56 |
+| short_chain | Revelations through two people | 7% ±1.2 | 4 | 3 | 49 | 42 | 2 |
+| no_scripture | Careful, but never a Revelation | 7% ±1.1 | 0 | 7 | 62 | 2 | 29 |
+| crusader | Careful postings; Power on the rival first | 34% ±2.1 | 4 | 31 | 45 | 5 | 15 |
+| rests_third | Careful, silent every third season | 50% ±2.2 | 34 | 16 | 33 | 16 | 1 |
+| never_silent | Careful, fills every season with something | 63% ±2.2 | 34 | 29 | 27 | 10 | 0 |
+| adaptive | Careful postings, aimed chains, miracles when awe is high | 65% ±2.1 | 36 | 29 | 25 | 10 | 0 |
+
+- **Both halves are needed.** Staffing alone wins 1%; acts with no staff 2%;
+  everything but Scripture 7%. The management sim and the telephone each carry
+  half the game.
+- **Aiming the idiots matters.** Careful play wins 65%; the same acts through
+  blind chains win 4-7%.
+- **Attacking the rival is a different game, not a better one.** It wins half
+  as often, is rarely absorbed (5%), and is Forgotten 15% of the time because
+  it neglects Faith.
+
+## Table 2: who should hold which office (400 seeds a cell)
+
+Careful play with one office held all game by one devotee given one trait.
+
+| Office | Literalist | Drunk | Ambitious | Poet | Lazy | Zealot | Spread |
+|---|---|---|---|---|---|---|---|
+| Prophet | **69** | 38 | 68 | 36 | 41 | **69** | 34 |
+| Preacher | 47 | 53 | 44 | 46 | **67** | 46 | 24 |
+| Missionary | 61 | **71** | 62 | 56 | 59 | 65 | 15 |
+| Collector | 56 | 56 | **75** | 41 | 38 | 61 | 36 |
+| Builder | **69** | 53 | 55 | 30 | 40 | 68 | 39 |
+| Witness | 63 | 56 | 56 | 57 | 60 | **67** | 10 |
+
+(The Witness row was measured in its own run after the last change to it;
+the others in one run, all on the committed numbers.)
+
+- Five of six traits are the best, or tied best, somewhere: Literalist
+  (Prophet, Builder), Drunk (Missionary), Ambitious (Collector), Lazy
+  (Preacher), Zealot (Prophet, Builder, Witness).
+- No trait is a disaster anywhere. The worst cell is 30%; in Gate B a Poet
+  missionary won 6%.
+- Under miracle-heavy play (`--policy=miracles`) the Witness row spreads 12
+  points, Zealot best (13%) and Poet second (7%), on a low base.
+
+## Table 3: what stops a god (300 seeds)
+
+Among games that reached the Review, the share missing each line; then how
+many ended early.
+
+| Policy | Reached | Missed Faith | Missed souls | Missed Heresy | Missed doctrine | Forgotten | Absorbed early |
+|---|---|---|---|---|---|---|---|
+| adaptive | 211 | 37% | 31% | 8% | 0% | 0% | 3% |
+| never_silent | 214 | 39% | 34% | 7% | 0% | 0% | 3% |
+| crusader | 155 | 93% | 48% | 4% | 5% | 15% | 3% |
+| short_chain | 264 | 93% | 80% | 7% | 0% | 1% | 9% |
+| random | 183 | 99% | 92% | 7% | 1% | 33% | 2% |
+
+## Table 4: the best act, position by position (`npm run fork`)
+
+196 mid-game positions (seeds 1-50 at seasons 6, 12, 18, 24). From each, every
+act on a fixed menu is played for one season and careful play finishes the
+game; same seed, so only the act differs. Ties go to acting.
+
+| Best act | Positions |
+|---|---|
+| Revelation | 24.0% |
+| Bounty | 19.9% |
+| Answer a prayer | 15.8% |
+| Smiting | 11.7% |
+| Sign | 8.7% |
+| Festival | 8.7% |
+| Disputation | 7.7% |
+| Silence | 3.6% |
+
+Every act on the menu is the best one somewhere. Miracles together are best in
+40% of positions, though careful play works only about four a game: the bot
+under-uses them (game-building F13), which is why the Witness looks weak in
+Table 2.
+
+## The six Gate B faults, now
+
+| # | Fault | Status | Evidence |
+|---|---|---|---|
+| 1 | Silence is never right | **Partly answered** | Silence is the best act in 3.6% of positions (7 of 196). As a strategy, never resting (63%) and resting when awe is low (65%) are level within noise. A mechanic that banked attention for the next act was built, measured inert (6.3% best with and without it), and removed |
+| 2 | A second act is worth less than nothing | **Closed by decision** | One act a season (the author, 2026-11-14) |
+| 3 | Ambitious best at nothing; Poet and Lazy missionaries catastrophic | **Mostly closed** | Ambitious is the best collector (75%); worst cell 30% (was 6%). **Poet is still best at nothing** |
+| 4 | The Witness does not matter | **Partly answered** | Spread 10 points under careful play (floor 7), 12 under miracle-heavy play. Legends now pay for seasons. The rest looks like a bot that under-uses miracles (Table 4) |
+| 5 | Forgotten never happens | **Closed** | The Registry's rising line: silent 100%, random 33%, crusader 15%, careful play 0% |
+| 6 | Faith is never what binds | **Closed** | Faith is the Review line most often missed by every policy (37-99%) |
+
+## Open, in order of what matters most
+
+1. **Careful play wins 65%**, against the spec's target of 30-40%. Raising the
+   Review line moves wins into "passed over" (measured at Faith 150 and 165);
+   the rival falling (29%) does not move with it. The next step is a rival who
+   defends her last few souls, then the Review line, measured together.
+2. **Poet is best at nothing.** The Poet's currency is Mystery, and Mystery is
+   not scarce enough to be worth a post.
+3. **The reference bot under-uses miracles.** A bot that works them in the
+   positions the fork tool favours would show whether the Witness matters.
+4. **Rival devotees have no wants and the rival gets no rulings.** Her world is
+   a little simpler than yours.
+5. **None of this has been played by a person.**
