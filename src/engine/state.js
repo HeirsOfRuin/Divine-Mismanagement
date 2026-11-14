@@ -15,7 +15,7 @@ import { matchFrom, layout, personasFor } from './world.js';
 
 export const SAVE_KEY = 'divine-mismanagement.save.v1'; // never rename
 export const SAVE_VERSION = 1;
-export const CODE_PREFIX = 'DVMM1.';
+export const CODE_PREFIX = 'DVMM2.';
 
 function newGod(name, flock, start, extra = {}) {
   return {
@@ -73,14 +73,57 @@ export function migrate(save) {
 export const serialize = (state) => JSON.stringify(state);
 export const deserialize = (text) => migrate(JSON.parse(text));
 
-export function toCode(state) {
-  const b64 = btoa(unescape(encodeURIComponent(serialize(state))));
-  return CODE_PREFIX + b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+// ---- save codes --------------------------------------------------------------
+// A code moves a game between devices, or into a message. Playtest 2 found the
+// old code was about 200,000 characters by season 30 (three quarters of it the
+// ledger and every season's report) and arrived cut off, unloadable. So a code
+// now carries the game, not its whole history, and is compressed:
+//   - ledger rows before the current season are folded into one
+//     "brought forward" row per god and meter, so start + ledger == meter still holds;
+//   - the season records keep the last 12 (Pim's file shows 12), and only the
+//     last keeps its account;
+//   - DVMM2. is deflate + base64url. DVMM1. (plain) still loads, and is written
+//     where the browser has no CompressionStream.
+// The save in this browser's storage is untouched and keeps everything.
+
+export const CODE_PREFIX_PLAIN = 'DVMM1.';
+const KEEP_RECORDS = 12;
+
+export function compactForCode(state) {
+  const s = JSON.parse(JSON.stringify(state));
+  const keep = [], carried = {};
+  for (const r of s.ledger) {
+    if (r[0] >= s.season) { keep.push(r); continue; }
+    const k = `${r[1]}|${r[2]}`;
+    carried[k] = (carried[k] || 0) + r[3];
+  }
+  const forward = Object.entries(carried).map(([k, a]) => { const [gi, m] = k.split('|'); return [s.season - 1, Number(gi), m, a, 'brought forward']; });
+  s.ledger = [...forward, ...keep];
+  s.chronicle = s.chronicle.slice(-KEEP_RECORDS).map((r, i, all) => (i === all.length - 1 ? r : { ...r, account: {} }));
+  return s;
 }
 
-export function fromCode(code) {
-  const text = String(code).trim();
-  if (!text.startsWith(CODE_PREFIX.slice(0, -2))) throw new Error('That is not a save code for this game.');
-  const body = text.slice(text.indexOf('.') + 1).replace(/-/g, '+').replace(/_/g, '/');
-  return deserialize(decodeURIComponent(escape(atob(body))));
+const b64url = (bytes) => { let bin = ''; for (const b of bytes) bin += String.fromCharCode(b); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+const unb64url = (text) => { const bin = atob(text.replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(bin, (c) => c.charCodeAt(0)); };
+async function pipe(bytes, stream) { return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer()); }
+
+/** A save code for this game. Async: compression is a stream in browsers. */
+export async function toCode(state) {
+  const json = serialize(compactForCode(state));
+  if (typeof CompressionStream === 'undefined') return CODE_PREFIX_PLAIN + b64url(new TextEncoder().encode(json));
+  return CODE_PREFIX + b64url(await pipe(new TextEncoder().encode(json), new CompressionStream('deflate')));
+}
+
+export async function fromCode(code) {
+  const text = String(code).replace(/\s+/g, '');
+  const damaged = 'That save code is incomplete or damaged. Copy all of it, from DVMM to the last character.';
+  if (text.startsWith(CODE_PREFIX_PLAIN)) {
+    try { return deserialize(new TextDecoder().decode(unb64url(text.slice(CODE_PREFIX_PLAIN.length)))); } catch { throw new Error(damaged); }
+  }
+  if (!text.startsWith(CODE_PREFIX)) throw new Error('That is not a save code for this game.');
+  if (typeof DecompressionStream === 'undefined') throw new Error('This browser cannot read compressed save codes.');
+  let json;
+  try { json = new TextDecoder().decode(await pipe(unb64url(text.slice(CODE_PREFIX.length)), new DecompressionStream('deflate'))); }
+  catch { throw new Error(damaged); }
+  return deserialize(json);
 }

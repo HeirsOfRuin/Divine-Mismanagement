@@ -32,10 +32,42 @@ for (const f of fixtures) {
   });
 }
 
-test('a save code round-trips', () => {
+test('a save code round-trips at the start', async () => {
   const s = newGame({ seed: 99 });
-  assert.deepEqual(fromCode(toCode(s)), s);
+  assert.deepEqual(await fromCode(await toCode(s)), s);
   assert.deepEqual(deserialize(serialize(s)), s);
+});
+
+// Playtest 2: a season-30 code was ~200,000 characters and arrived cut off.
+test('a late-game code is short, loads, keeps the ledger true, and plays the same as the full save', async () => {
+  let s = newGame({ seed: 5 });
+  for (let i = 0; i < 25 && !s.over; i++) { const d = decide(s, 'adaptive'); s = advance(d.state, d.input).state; }
+  const code = await toCode(s);
+  assert.ok(code.startsWith('DVMM2.'));
+  assert.ok(code.length < 25000, `${code.length} characters`);
+  const back = await fromCode(code);
+  const start = newGame({ seed: 5 }).gods;
+  for (let gi = 0; gi < back.gods.length; gi++) for (const m of ['faith', 'power', 'mystery', 'offerings', 'devotion', 'heresy', 'entitlement', 'souls']) {
+    const sum = back.ledger.filter((r) => r[1] === gi && r[2] === m).reduce((a, r) => a + r[3], start[gi][m] || 0);
+    assert.ok(Math.abs(sum - back.gods[gi][m]) < 1e-6, `${m} of god ${gi}`);
+  }
+  // Same decisions from the full save and from the code give the same game.
+  let a = s, b = back;
+  for (let i = 0; i < 5 && !a.over; i++) { const da = decide(a, 'adaptive'), db = decide(b, 'adaptive'); a = advance(da.state, da.input).state; b = advance(db.state, db.input).state; }
+  assert.deepEqual([a.outcome, a.season, a.gods.map((g) => [g.souls, g.faith])], [b.outcome, b.season, b.gods.map((g) => [g.souls, g.faith])]);
+});
+
+test('an old plain DVMM1 code still loads', async () => {
+  const s = newGame({ seed: 7 });
+  const old = 'DVMM1.' + btoa(unescape(encodeURIComponent(serialize(s)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  assert.deepEqual(await fromCode(old), s);
+});
+
+test('a code cut off in the middle is refused with a reason, not loaded wrongly', async () => {
+  const code = await toCode(newGame({ seed: 8 }));
+  await assert.rejects(fromCode(code.slice(0, Math.floor(code.length / 2))), /incomplete|damaged/);
+  const old = 'DVMM1.' + btoa(unescape(encodeURIComponent(serialize(newGame({ seed: 8 }))))).replace(/=+$/, '');
+  await assert.rejects(fromCode(old.slice(0, 301)), /incomplete|damaged/);
 });
 
 test('a save from a newer build is refused with a reason, not loaded wrongly', () => {

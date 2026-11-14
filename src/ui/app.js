@@ -287,7 +287,8 @@ function bookHtml() {
     <p class="hint center">${esc(b.compiled)}</p>
     ${b.chapters.map((c, i) => {
       const now = renderVerse(c.verse), carved = renderVerse(c.carved);
-      return `<section class="chapter"><div class="caps">${roman(i + 1)}. ${esc(c.title.replace(/^the /, 'The '))}</div>
+      const was = c.formerly && c.formerly.replace(/^the /, 'The ') !== c.title.replace(/^the /, 'The ') ? `<small class="formerly">formerly ${esc(c.formerly.replace(/^the /, 'the '))}</small>` : '';
+      return `<section class="chapter"><div class="caps">${roman(i + 1)}. ${esc(c.title.replace(/^the /, 'The '))} ${was}</div>
         <p class="serif verse-text"><span class="vnum">1</span> ${diffHtml(carved, now)}</p>
         <p class="footnote">You said: ${esc(c.said)}${carved !== c.said ? `<br>It was carved: ${esc(carved)}` : ''}${c.notes.length ? `<br>${c.notes.map((n) => `${esc(who(n.by).name)} (${TRAITS[n.trait].label}) ${esc(n.note)}`).join('; ')}.` : '<br>The scribes copied this one faithfully.'}</p></section>`;
     }).join('')}
@@ -649,6 +650,7 @@ function onClick(e) {
       else if (a === 'close') { sheet = null; }
       else if (a === 'dismiss') { banner = null; }
       else if (a === 'note-ok') { seenNote = state.season; }
+      else if (a === 'copy-code') { const t = document.getElementById('codeout'); t?.select(); navigator.clipboard?.writeText(t.value).catch(() => {}); }
       else if (a === 'quit') { state = null; sheet = null; }
       else if (a === 'install') { install?.(); }
       else if (a === 'how') { sheet = { kind: 'text', html: HOW }; }
@@ -665,14 +667,14 @@ function onClick(e) {
       else if (a === 'next-step') { sheet.step++; }
       else if (a === 'skip-playback') { sheet.step = 99; }
       else if (a === 'to-report') { sheet = { kind: 'report', record: sheet.record }; }
-      else if (a === 'export') { sheet = { kind: 'text', html: `<h2>Save code</h2><textarea readonly rows="6">${esc(toCode(state))}</textarea><button class="primary" data-act="close">Done</button>` }; }
+      else if (a === 'export') { showCode(); }
       else if (a === 'copy-scripture') { sheet = { kind: 'text', html: `<h2>Your Scripture</h2><textarea readonly rows="12">${esc(scriptureText())}</textarea><button class="primary" data-act="close">Done</button>` }; }
       // An in-page box, not prompt(): some hosts (the artifact viewer, some app
       // views) never show browser dialogs, and the button would silently do nothing.
       else if (a === 'load-code') { sheet = { kind: 'text', html: '<h2>Load a save code</h2><textarea id="savecode" rows="6" placeholder="DVMM1..."></textarea><div class="row"><button data-act="close">Cancel</button><button class="primary" data-act="load-now">Load</button></div>' }; }
       else if (a === 'load-now') {
         const code = (document.getElementById('savecode')?.value || '').trim();
-        if (code) { try { state = fromCode(code); setup = null; save(); tab = 'village'; sheet = null; } catch (err) { sheet = null; banner = err.message; } }
+        if (code) loadCode(code);
       }
     }
     render();
@@ -695,12 +697,25 @@ function onChange(e) {
   } catch (err) { fail(err); } finally { busy = false; }
 }
 
+// Save codes are made and read asynchronously (compression is a stream).
+function showCode() {
+  sheet = { kind: 'text', html: '<h2>Save code</h2><p class="hint">Preparing…</p>' };
+  toCode(state).then((code) => {
+    sheet = { kind: 'text', html: `<h2>Save code</h2><p class="hint">${code.length.toLocaleString()} characters. Copy all of it, from DVMM to the end.</p><textarea id="codeout" readonly rows="6">${esc(code)}</textarea><div class="row"><button data-act="copy-code">Copy</button><button class="primary" data-act="close">Done</button></div>` };
+    render();
+  }).catch(fail);
+}
+function loadCode(code) {
+  sheet = { kind: 'text', html: '<p class="hint">Reading the code…</p>' };
+  fromCode(code).then((s) => { state = s; setup = null; save(); tab = 'village'; sheet = null; render(); })
+    .catch((err) => { sheet = null; banner = err.message; render(); });
+}
+
 function fail(err) {
   console.error(err);
   sheet = { kind: 'text', html: `<h2>Something went wrong</h2>
     <p>${esc(err?.message || err)}</p>
-    <p>Your game was saved before this. Copy this code somewhere safe, then reload:</p>
-    <textarea readonly rows="4">${state ? esc(toCode(state)) : ''}</textarea>
+    <p>Your game was saved before this. If it keeps happening, copy a save code from the Menu and send it: it lets the game be replayed exactly.</p>
     <button class="primary" data-act="close">Close</button>` };
   render();
 }

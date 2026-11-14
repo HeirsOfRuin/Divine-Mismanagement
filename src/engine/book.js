@@ -5,8 +5,11 @@
 // misinterpreted commandments all brought together after some more
 // mistranslations". So: at the first dawn from season BOOK.from with at
 // least BOOK.verses carved (or at the backstop season with any), two of your
-// people copy out every verse you ever gave them, Apocrypha included, and each
-// copy passes through both scribes' first traits: the telephone once more.
+// people copy out every verse you ever gave them, Apocrypha included, taking
+// alternate chapters, and each copy passes through its scribe's first trait:
+// the telephone once more. (Playtest 2: with both scribes on every chapter,
+// one Poet turned all six chapters into "Let..."; alternating shows two hands.)
+// Each chapter is retitled by what it now says; the old title is kept.
 // Every chapter keeps what you said, what was carved, and what the Book now
 // says. Like a Tablet, a chapter is stored as structure and rendered on demand.
 
@@ -15,6 +18,7 @@ import { BOOK_LINES } from '../data/content/grand.data.js';
 import { applyTrait } from './telephone.js';
 import { verseEffects } from './scripture.js';
 import { fill } from './content.js';
+import { title } from './render.js';
 
 export const shortName = (name) => name.replace(/^the (God|Goddess) of /i, '').replace(/^the /i, '');
 
@@ -30,15 +34,19 @@ export function compileBook(s, rng) {
   const scribes = rng.shuffle([...g.flock]).slice(0, BOOK.scribes);
   for (const f of scribes) f.known = true;
   const all = [...g.apocrypha, ...g.tablets].sort((a, b) => a.season - b.season);
-  const chapters = all.map((t) => {
+  const named = {};
+  const chapters = all.map((t, i) => {
     let v = t.verse;
     const notes = [];
-    for (const f of scribes) {
+    for (const f of [scribes[i % scribes.length]]) {
       const r = applyTrait(v, f.traits[0], rng, f, s.spent);
       if (r.note) { s.spent = r.spent; v = r.verse; notes.push({ by: f.id, trait: f.traits[0], note: r.note }); }
     }
     g.exasperation += notes.length;
-    return { tablet: t.id, title: t.title, said: t.said, carved: t.verse, verse: v, households: t.households, notes };
+    const base = title(v).replace(/^the /, 'The ');
+    named[base] = (named[base] || 0) + 1;
+    const name = named[base] === 1 ? base : base.replace(/^The /, `The ${['', 'Second ', 'Third ', 'Fourth ', 'Fifth '][named[base] - 1] || `${named[base]}th `}`);
+    return { tablet: t.id, title: name, formerly: t.title, said: t.said, carved: t.verse, verse: v, households: t.households, notes, by: scribes[i % scribes.length].id };
   });
   s.book = {
     title: `The Book of ${shortName(g.name)}`, season: s.season, scribes: scribes.map((f) => f.id), chapters,
