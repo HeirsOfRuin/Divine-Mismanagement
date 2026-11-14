@@ -81,7 +81,8 @@ if (SINGLE) {
   check('reloads with the network off', offline.length > 20, `${offline.length} chars`);
   if (offline.length > 20) {
     if (advanceOnce) {
-      for (const sel of START) if (await page.locator(sel).count()) { await page.click(sel); break; }
+      // Every start click in order (this game: New game, then Begin on the setup screen).
+      for (const sel of START) if (await page.locator(sel).count()) await page.click(sel);
       check('plays a turn offline', await advanceOnce(page));
     } else console.log('--  plays a turn offline: skipped (tools/smoke.mjs exports no advanceOnce)');
   }

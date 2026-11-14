@@ -9,6 +9,66 @@ seeds, 7 at 400 and 8 at 300; a gap under it is not a result.
 Nothing here has been checked by a person playing. These are the numbers a
 careful playtest should argue with.
 
+## Round 2 (2026-11-14): rare acts, ranks, many gods and regions
+
+After `docs/FRAME-expansion.md`. Story Chapter 1, 400 seeds a policy (floor ~7):
+
+| Policy | Win | Promoted | Rival fell | Passed over | Absorbed | Forgotten |
+|---|---|---|---|---|---|---|
+| silent | 0% ±0.3 | 0 | 0 | 0 | 0 | 100 |
+| staff_blind / staff_aware | 0% ±0.3 | 0 | 0 | 13-15 | 1-11 | 77-84 |
+| short_chain / long_chain | 1% ±0.4 | 0 | 1 | 25-46 | 53-70 | 1-5 |
+| random | 1% ±0.4 | 0 | 1 | 30 | 32 | 38 |
+| miracles | 2% ±0.7 | 0 | 2 | 31 | 6 | 61 |
+| no_staff | 3% ±0.8 | 0 | 3 | 25 | 68 | 5 |
+| no_scripture | 3% ±0.9 | 0 | 3 | 52 | 1 | 45 |
+| crusader | 16% ±1.8 | 1 | 14 | 69 | 6 | 10 |
+| rests_third | 21% ±2.0 | 14 | 7 | 62 | 17 | 0 |
+| never_silent | 41% ±2.5 | 25 | 16 | 49 | 10 | 0 |
+| **adaptive** | **41% ±2.5** | 25 | 16 | 49 | 10 | 0 |
+| no_rare (adaptive without the rare acts) | 43% ±2.5 | 23 | 21 | 47 | 10 | 0 |
+
+- **On target.** Careful play wins 41%, the edge of the spec's 30-40%.
+- **The rare acts pay for themselves, no more.** With them 41%, without 43%,
+  within noise. They move wins from the rival falling (16% against 21%) to
+  promotion (25% against 23%). Before the Saint's pilgrims and the bot's Faith
+  reserve they cost 27 points (39% against 66% at the old Review line): the
+  bot spent Faith the Review needed.
+
+Offices (300 seeds a cell, floor ~8):
+
+| Office | Literalist | Drunk | Ambitious | Poet | Lazy | Zealot |
+|---|---|---|---|---|---|---|
+| Prophet | 43 | 23 | 51 | 21 | 19 | **54** |
+| Preacher | 23 | 27 | 30 | 22 | **42** | 32 |
+| Missionary | 26 | **47** | 37 | 26 | 33 | 44 |
+| Collector | 30 | 35 | **55** | 19 | 23 | 35 |
+| Builder | 40 | 29 | 34 | 16 | 24 | **42** |
+| Witness | 33 | 31 | 38 | 39 | 41 | **42** |
+
+Lazy, Drunk and Ambitious each own an office; Poet is now level with the best
+Witness (within noise); Literalist is within noise of the best Builder; Zealot
+is best or level in three. Every trait is best or level-best somewhere.
+
+Silence (`npm run fork`, 155 positions): the best act in 7.1%, up from 3.6%,
+mostly where the flock is entitled (1.7 against 1.1 overall). A Sign is now the
+most common best act (21%).
+
+Other shapes (careful play, 150 games each; random play wins 1-3% in every one):
+
+| Shape | Careful play | Promoted | Passed over | Absorbed |
+|---|---|---|---|---|
+| Chapter 2: 2 rivals, 3 regions, 40 seasons | 25% | 24% | 66% | 9% |
+| Chapter 3: 4 rivals, 5 regions, 50 seasons | 41% | 41% | 49% | 10% |
+| Custom: 2 rivals, 2 regions, lean, 30 | 25% | 25% | 49% | 25% |
+| Custom: 5 rivals, 5 regions, rich, 60 | 66% | 66% | 3% | 31% |
+
+With linear threshold scaling, Chapters 2 and 3 were won 2% and 0%; the gentler
+scaling in `world.js` is what made them playable. They are lightly measured,
+not balanced; the setup screen says so.
+
+# Round 1 (superseded where round 2 differs)
+
 ## Table 1: policies (500 seeds each, 30 seasons, one act a season)
 
 Win means promoted at the Review, or the rival fell.

@@ -7,7 +7,7 @@ export const axes = { policy: Object.keys(POLICIES) };
 export const defaults = { policy: 'adaptive' };
 
 export function play(seed, opts = {}) {
-  let s = newGame({ seed });
+  let s = newGame({ seed, ...(opts.match || {}) });
   if (opts.setup) s = opts.setup(s);
   for (let guard = 0; !s.over && guard < 100; guard++) {
     const d = decide(s, opts.policy || 'adaptive', opts.fixed ? opts.fixed(s) : {});
@@ -33,11 +33,12 @@ export function metrics(s) {
     absorbed: s.outcome === 'absorbed', forgotten: s.outcome === 'forgotten',
     seasons: s.chronicle.length, faith: g.faith, souls: g.souls, heresy: g.heresy, mystery: g.mystery,
     reveal: n('reveal'), miracle: n('miracle'), silent: n('silent'), works: Object.keys(g.works).length,
+    rank: g.rank, saints: g.saints.length, artifacts: g.artifacts.length, wonders: n('wonder'), book: Boolean(s.book), exasperation: g.exasperation,
   };
 }
 
 export const digest = (s) => JSON.stringify([s.outcome, s.season, s.gods.map((g) => [g.souls, g.faith.toFixed(6)])]);
 
 export function trace(s) {
-  return s.chronicle.map((r) => `S${String(r.season).padStart(2)} ${r.me.act.kind.padEnd(8)} souls ${String(r.souls.me).padStart(2)} faith ${r.faith.toFixed(1).padStart(6)} | rival ${r.her.act.kind}${r.ruling ? ` | ruled: ${r.ruling.chose}` : ''}${r.registry ? ` | Registry: ${r.registry.faith.toFixed(0)} vs ${r.registry.min}` : ''}`).join('\n') + `\n${s.outcome}`;
+  return s.chronicle.map((r) => `S${String(r.season).padStart(2)} ${r.me.act.kind.padEnd(8)} souls ${String(r.souls.me).padStart(2)} faith ${r.faith.toFixed(1).padStart(6)} | rivals ${Object.values(r.rivals).map((x) => x.act.kind).join(',')}${r.ruling ? ` | ruled: ${r.ruling.chose}` : ''}${r.registry ? ` | Registry: ${r.registry.faith.toFixed(0)} vs ${r.registry.min}` : ''}`).join('\n') + `\n${s.outcome}`;
 }

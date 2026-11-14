@@ -9,11 +9,12 @@ import { METERS } from '../src/engine/meters.js';
 import { CONFIG } from '../src/data/config.data.js';
 import { decide } from '../sim/bot.js';
 
-const START = [CONFIG.start, CONFIG.rivalStart];
+// Story Chapter 1, and two other shapes of match, so every invariant holds for any world.
+const SHAPES = [{}, { mode: 'story', chapter: 'ch2' }, { mode: 'custom', rivals: 4, regions: 3, wealth: 'rich', seasons: 40 }];
 
-function playThrough(seed, policy = 'adaptive', each = () => {}) {
-  let s = newGame({ seed });
-  for (let i = 0; !s.over && i < 60; i++) {
+function playThrough(seed, policy = 'adaptive', each = () => {}, shape = SHAPES[seed % SHAPES.length]) {
+  let s = newGame({ seed, ...shape });
+  for (let i = 0; !s.over && i < 80; i++) {
     const d = decide(s, policy);
     s = advance(d.state, d.input).state;
     each(s);
@@ -22,23 +23,31 @@ function playThrough(seed, policy = 'adaptive', each = () => {}) {
 }
 
 const POLICIES = ['adaptive', 'random', 'miracles', 'crusader', 'silent'];
+const shapeOf = (s) => (s.match.mode === 'story' ? { mode: 'story', chapter: s.match.chapter } : { mode: 'custom', rivals: s.match.rivals, regions: s.match.regions, wealth: s.match.wealth, seasons: s.match.seasons });
 
-test('every meter of both gods equals its start plus its ledger, every season', () => {
+test('every meter of every god equals its start plus its ledger, every season', () => {
   for (let seed = 1; seed <= 25; seed++) {
+    let start = null;
     playThrough(seed, POLICIES[seed % POLICIES.length], (s) => {
-      for (const gi of [0, 1]) for (const m of METERS) {
-        const sum = s.ledger.filter((r) => r[1] === gi && r[2] === m).reduce((a, r) => a + r[3], START[gi][m] || 0);
+      start ||= newGame({ seed: s.seed, ...shapeOf(s) }).gods;
+      for (let gi = 0; gi < s.gods.length; gi++) for (const m of METERS) {
+        const sum = s.ledger.filter((r) => r[1] === gi && r[2] === m).reduce((a, r) => a + r[3], start[gi][m] || 0);
         assert.ok(Math.abs(sum - s.gods[gi][m]) < 1e-6, `seed ${seed} season ${s.season} god ${gi} ${m}: ${s.gods[gi][m]} vs ledger ${sum}`);
       }
     });
   }
 });
 
-test('nobody is created or lost: your souls, hers and the Unbothered always make the village', () => {
+test('nobody is created or lost: in every region the gods and the Unbothered make the whole; a god is the sum of its regions', () => {
   for (let seed = 1; seed <= 25; seed++) {
+    let sizes = null;
     playThrough(seed, POLICIES[seed % POLICIES.length], (s) => {
-      assert.equal(s.gods[0].souls + s.gods[1].souls + s.unbothered, CONFIG.village, `seed ${seed} season ${s.season}`);
-      assert.ok(s.unbothered >= 0 && Number.isInteger(s.unbothered));
+      const size = s.regions.map((r) => r.unbothered + r.held.reduce((a, b) => a + b, 0));
+      sizes ||= size;
+      assert.deepEqual(size, sizes, `seed ${seed} season ${s.season}: a region changed size`);
+      for (const r of s.regions) { assert.ok(r.unbothered >= 0 && Number.isInteger(r.unbothered)); for (const h of r.held) assert.ok(h >= 0 && Number.isInteger(h)); }
+      s.gods.forEach((g, gi) => assert.equal(g.souls, s.regions.reduce((a, r) => a + r.held[gi], 0), `seed ${seed} god ${gi}`));
+      s.gods.forEach((g) => { if (g.fallen) assert.equal(g.souls, 0); });
     });
   }
 });
@@ -73,7 +82,7 @@ test('every game ends by the last season, and the clock moves every season', () 
     let last = 0;
     const s = playThrough(seed, POLICIES[seed % POLICIES.length], (st) => { assert.ok(st.chronicle.length > last); last = st.chronicle.length; });
     assert.ok(s.over, `seed ${seed} never ended`);
-    assert.ok(s.chronicle.length <= CONFIG.seasons);
+    assert.ok(s.chronicle.length <= s.match.seasons);
     assert.ok(['ascended', 'rival_fell', 'passed_over', 'absorbed', 'forgotten'].includes(s.outcome));
   }
 });
@@ -114,13 +123,14 @@ test('no authored line is shown twice in a playthrough (100 games, every kind of
     for (const r of s.chronicle) {
       const at = `season ${r.season}`;
       once(r.memo, `${at} memo`);
-      once(r.her.line, `${at} rival`);
       if (r.ruling) { once(r.ruling.text, `${at} ruling`); once(r.ruling.after, `${at} ruling outcome`); }
-      once(r.me.act.text, `${at} answered prayer`);
+      if (r.me.act.kind === 'answer') once(r.me.act.text, `${at} answered prayer`);
       for (const o of r.me.offices || []) once(o.text, `${at} ${o.office}`);
     }
     for (const L of s.gods[0].legends) once(L.text, `legend ${L.id}`);
-    for (const t of [...s.gods[0].tablets, ...s.gods[0].apocrypha, ...s.gods[1].tablets, ...s.gods[1].apocrypha]) {
+    for (const L of s.gods[0].artifacts) once(L.how, `holy object ${L.id}`);
+    for (const r of s.chronicle) { once(r.headdesk, `season ${r.season} head in hands`); once(r.rankText, `season ${r.season} rank`); once(r.me.act.kind === 'canonize' ? r.me.act.text : null, `season ${r.season} saint`); once(r.line && r.line.text, `season ${r.season} rival`); }
+    for (const t of s.gods.flatMap((g) => [...g.tablets, ...g.apocrypha])) {
       once(t.title, `title of ${t.id}`);
       once(t.after, `aftermath of ${t.id}`);
     }

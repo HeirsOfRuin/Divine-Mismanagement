@@ -8,41 +8,50 @@
 
 import { CONFIG } from '../data/config.data.js';
 import { NAMES } from '../data/followers.data.js';
+import { CUSTOM } from '../data/match.data.js';
 import { streamFor } from './rng.js';
 import { makeFlock } from './followers.js';
+import { matchFrom, layout, personasFor } from './world.js';
 
 export const SAVE_KEY = 'divine-mismanagement.save.v1'; // never rename
 export const SAVE_VERSION = 1;
 export const CODE_PREFIX = 'DVMM1.';
 
-function newGod(name, flock, start) {
+function newGod(name, flock, start, extra = {}) {
   return {
-    name, ...structuredClone(start),
+    name, ...structuredClone(start), ...extra,
     heresy: 0, entitlement: 0, charm: 0, guard: 1, blunt: 1, bluntPrev: 1,
     flock: flock.map((f) => ({ ...f, known: false, office: null, settling: 0, want: null })),
     tablets: [], apocrypha: [], legends: [], works: {}, building: null,
     prayers: [], missionaryOut: 0, low: 0, strikes: 0, seen: {},
+    rank: 0, artifacts: [], saints: [], cooldowns: {}, exasperation: 0, fallen: false,
     n: {},
   };
 }
 
-export function newGame({ seed = 1, name = 'the God of Doors That Stick' } = {}) {
+/**
+ * A new game. `mode` 'story' with `chapter`, or 'custom' with `rivals`,
+ * `regions`, `wealth` (your starting resources) and `seasons`.
+ * Story Chapter 1 is the default and the measured game.
+ */
+export function newGame({ seed = 1, name = 'the God of Doors That Stick', ...opts } = {}) {
   seed = seed >>> 0;
+  const match = matchFrom(opts);
   const rng = streamFor(seed, 0, 'flock');
   const names = rng.shuffle([...NAMES]);
-  const s = {
+  const regions = layout(match);
+  const w = CUSTOM.wealth[match.wealth];
+  const mine = { ...CONFIG.start, faith: CONFIG.start.faith * w.faith, power: Math.round(CONFIG.start.power * w.power), offerings: CONFIG.start.offerings * w.offerings };
+  const gods = [newGod(name, makeFlock(rng, names.slice(0, 12), 'f'), mine, { home: 0, field: 0 })];
+  personasFor(match).forEach((p, i) => {
+    const gi = i + 1;
+    gods.push(newGod(p.name, makeFlock(rng, names.slice(12 * gi, 12 * gi + 12), `r${gi}-`), CONFIG.rivalStart, { persona: p.id, home: gi % match.regions, field: gi % match.regions }));
+  });
+  return {
     v: SAVE_VERSION, seed, season: 1, over: false, outcome: null, nextId: 1,
-    unbothered: CONFIG.village - CONFIG.start.souls - CONFIG.rivalStart.souls,
-    gods: [
-      newGod(name, makeFlock(rng, names.slice(0, 12), 'f'), CONFIG.start),
-      newGod('Vellamine', makeFlock(rng, names.slice(12, 24), 'r'), CONFIG.rivalStart),
-    ],
-    ledger: [],
-    spent: {},
-    event: null,
-    chronicle: [],
+    match, regions, gods,
+    ledger: [], spent: {}, event: null, chronicle: [], book: null,
   };
-  return s;
 }
 
 /** MIGRATIONS[v](save) returns the save at version v + 1. Add one per version bump. */

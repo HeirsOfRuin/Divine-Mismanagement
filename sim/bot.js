@@ -11,6 +11,8 @@ import { OFFICE_IDS, WORK_IDS } from '../src/data/offices.data.js';
 import { CONFIG } from '../src/data/config.data.js';
 import { preview, orders, rulingOptions, ruleOn } from '../src/engine/turn.js';
 import { streamFor } from '../src/engine/rng.js';
+import { leaderAgainst, thresholds } from '../src/engine/world.js';
+import { registryMinimum } from '../src/engine/derive.js';
 
 const seen = (f) => (f.known ? f.traits[0] : null);
 
@@ -78,22 +80,43 @@ function aimedReveal(g, template) {
   return { kind: 'reveal', template, chain: chain.map((f) => f.id) };
 }
 
-function adaptive(s, { rest = true } = {}) {
-  const [g, o] = s.gods, c = CONFIG.costs;
+// Faith the god can spend on a rare act and still clear the Registry's next line, and
+// be on course for the Review's, with room.
+const spare = (s) => s.gods[0].faith - Math.max(registryMinimum(s), thresholds(s).review.faith * (s.season / s.match.seasons) ** 0.5) - 15;
+
+// The rare acts, when they are open and affordable: a High Prophet who is known
+// not to be a liability, a holy object, a Wonder, a Saint (the best-known Lazy
+// or Literalist, as their virtues are the safest).
+function grand(s) {
+  const g = s.gods[0], out = [];
+  const prophet = g.flock.find((f) => f.office === 'prophet' && f.known && !['drunk', 'poet', 'lazy'].includes(f.traits[0]));
+  if (prophet && spare(s) >= 15) out.push({ kind: 'anoint', id: prophet.id });
+  out.push({ kind: 'artifact' });
+  if (spare(s) >= 20) out.push({ kind: 'wonder' });
+  const saint = g.flock.filter((f) => f.known && !f.saint).sort((a, b) => ['literalist', 'lazy', 'ambitious', 'zealot', 'drunk', 'poet'].indexOf(a.traits[0]) - ['literalist', 'lazy', 'ambitious', 'zealot', 'drunk', 'poet'].indexOf(b.traits[0]))[0];
+  if (saint && spare(s) >= 40) out.push({ kind: 'canonize', id: saint.id });
+  return out;
+}
+
+function adaptive(s, { rest = true, rare = true } = {}) {
+  const g = s.gods[0], c = CONFIG.costs;
+  const o = s.gods[leaderAgainst(s, 0) ?? 0];
   if (rest && g.mystery < 35) return { kind: 'silent' };
   const t = need(g);
   const tries = [];
+  if (rare) tries.push(...grand(s));
   if (t && g.power >= 2) tries.push(aimedReveal(g, t));
   tries.push({ kind: 'festival' });
   if (g.power >= c.poach + 1) tries.push({ kind: 'poach' });
-  if (g.mystery >= 55 && g.entitlement < 2) tries.push({ kind: 'miracle', miracle: s.unbothered >= 1 ? 'sign' : o.missionaryOut === 0 ? 'smite' : 'bounty' });
+  // Miracles when awe can bear it (Table 4 of docs/BALANCE.md: best in about 40% of positions).
+  if (g.mystery >= 50 && g.entitlement < 2) tries.push({ kind: 'miracle', miracle: o.missionaryOut === 0 && o !== g ? 'smite' : 'bounty' }, { kind: 'miracle', miracle: 'sign' });
   if (g.prayers.length >= 2 && g.entitlement < 2.5) tries.push({ kind: 'answer', prayer: g.prayers[0].id });
   tries.push({ kind: 'dispute' });
   return tries;
 }
 
 function crusade(s) {
-  const [g, o] = s.gods;
+  const o = s.gods[leaderAgainst(s, 0) ?? 0];
   const tries = [];
   tries.push({ kind: 'poach' });
   if (o.missionaryOut === 0) tries.push({ kind: 'miracle', miracle: 'smite' });
@@ -115,6 +138,7 @@ export const POLICIES = {
   short_chain:  { note: 'Blind postings; a Revelation through two people when one is missing', staff: staffBlind, act: (s) => [plainReveal(s.gods[0], 2)], build: buildNext },
   long_chain:   { note: 'Blind postings; a Revelation through all four households', staff: staffBlind, act: (s) => [plainReveal(s.gods[0], 4)], build: buildNext },
   no_staff:     { note: 'Never posts anyone; otherwise adaptive', staff: staffNone, act: (s) => adaptive(s) },
+  no_rare:      { note: 'Adaptive, but never uses the rare acts', staff: (g) => staffAware(g), act: (s) => adaptive(s, { rare: false }), build: buildNext },
   no_scripture: { note: 'Adaptive, but never a Revelation', staff: (g) => staffAware(g), act: (s) => [].concat(adaptive(s)).filter((a) => a.kind !== 'reveal'), build: buildNext },
   adaptive:     { note: 'Aware postings, aimed chains, miracles when awe is high, rests when it is low', staff: (g) => staffAware(g), act: (s) => adaptive(s), build: buildNext },
   never_silent: { note: 'Adaptive, but never silent: with nothing better to do it answers a prayer or sends a dream', staff: (g) => staffAware(g), act: (s) => [...[].concat(adaptive(s, { rest: false })), ...fillers(s)], build: buildNext },

@@ -29,6 +29,8 @@ export const CONFIG = {
   drawAbove: 7, drawRate: 0.2,
   fallBelow: 4, fallSeasons: 2,
   poachFactor: 0.5,
+  closeRanks: 0.45,         // a god with fewer souls than this share of a fair share is half as easy to convert from
+                            // (8 of 18 in Chapter 1): a small flock closes ranks. The same for every god.
   tablets: 7,
   verseCap: 240,            // characters. Was 140; the author: "raise the cap as you need" (2026-11-14).
                             // Measured in play: median 105, 99% under 201, longest 234 (200 games).
@@ -43,7 +45,7 @@ export const CONFIG = {
   registry: [8, 20, 34, 48, 62, 76, 90],
   registryStrikes: 2,
   // The Review after the last season.
-  review: { faith: 150, souls: 21, heresy: 8, doctrine: 3 },
+  review: { faith: 185, souls: 23, heresy: 8, doctrine: 3 },
 
   costs: { link: 1, bounty: 3, sign: 4, smite: 3, answer: 1, poach: 3, dream: 1, festival: 4, dispute: 2 },
 };

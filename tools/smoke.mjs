@@ -8,7 +8,7 @@
 // It also proves PROGRESS through the UI: the clock must move on every turn.
 //
 // ---- ADAPT THESE to the game's screens (the rest is generic) ---------------
-export const START = ['[data-act="new"]'];           // clicks that begin a game
+export const START = ['[data-act="new"]', '[data-act="start"]'];           // clicks that begin a game
 export const CLOCK = '.hud .turn';                    // element whose text is the game clock
 export const TABS = ['[data-tab="village"]', '[data-tab="flock"]', '[data-tab="scripture"]', '[data-tab="heavens"]', '[data-tab="menu"]'];
 export const TURNS = Number(process.env.TURNS || 10);

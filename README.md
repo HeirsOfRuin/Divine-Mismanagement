@@ -2,7 +2,12 @@
 
 You are a minor god with twelve worshippers, and every one of them is an idiot.
 
-Status (2026-11-14): **playable v0.1 engine and screens.** One village of 36,
+**Playtest build:** https://claude.ai/artifact/8jDtk9gwMTvE1joPgCJ3jA (private to the author until shared).
+
+Status (2026-11-14): **playable, with match setup.** Story (three chapters) or
+Custom (1-5 rivals, 1-5 regions, starting resources, 30-60 seasons). Rank, the
+rare acts (High Prophet, holy objects, Wonders, Saints) and the Holy Book are in
+(`docs/FRAME-expansion.md`). Earlier: One village of 36,
 one rival, thirty seasons, the six offices, eight acts, Scripture carved by the
 telephone, miracles told by a Witness, Works, rulings, the Registry and the
 Review. Nothing authored is shown twice in a playthrough. Not yet played by the

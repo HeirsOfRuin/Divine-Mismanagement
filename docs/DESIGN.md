@@ -340,6 +340,19 @@ Differences from the plan above, all for a measured reason (`docs/BALANCE.md`):
   are a count. Said here because the world is meant to play by the player's
   rules, and these two do not yet.
 
+### Godhood, rare acts, the Book, the wider world (2026-11-14)
+
+See `docs/FRAME-expansion.md` for the request and the defaults. New modules:
+`src/engine/world.js` (match shape, regions, thresholds scaled to the world),
+`src/engine/book.js` (the Holy Book), `src/data/match.data.js` (story chapters,
+custom options, rival personas, regions, ranks, rare acts),
+`src/data/content/grand.data.js` (holy objects, patronages, Wonders, head-in-
+hands lines, the Book's lines, rank memos). Souls now live per region
+(`region.held[god]`), and `moveSouls` always names a region; a god's souls are
+the sum of its regions, tested every season. Acts aimed at another god take a
+`target`. Every rival runs the same policy weighted by persona, settles her own
+troubles, and can bless objects and work Wonders.
+
 Not built yet: domains, generations, saints, schism as an ending, the Vale,
 more rivals, sound, a tutorial beyond Pim's first memo and the How it works
 sheet, an animated playback (the report shows each step as a list), a

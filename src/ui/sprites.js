@@ -4,6 +4,8 @@
 // followers get twelve generated sprites, and a trait shows as a prop once it
 // is known. The UI reads the state; it computes nothing about the game.
 
+import { RIVALS } from '../data/match.data.js';
+
 export const PAL = {
   paper: '#efe6d0', ink: '#2b2433', ochre: '#c98f1f', oxblood: '#9c3d34', verdigris: '#4f8f83', woad: '#3f5a8a',
   plum: '#6b4a73', stone: '#cfc8b8', skin: '#e6c3a0', skin2: '#b98a66', skin3: '#8a5f45', wood: '#8a6242', cream: '#e9dcba',
@@ -42,6 +44,9 @@ export function follower(g, ox, oy, f, { bob = 0 } = {}) {
   if (p === 'pillow') { blob(g, ox, y, [[12, 12, 3, 3]], PAL.white); P(g, ox + 6, y + 6, 1, 1, sk); P(g, ox + 9, y + 6, 1, 1, sk); P(g, ox + 6, y + 6, 2, 1, PAL.ink); P(g, ox + 9, y + 6, 2, 1, PAL.ink); }
   if (p === 'stick') { blob(g, ox, y, [[14, 5, 1, 11]], PAL.ochre); for (let i = 0; i < 5; i++) P(g, ox + 14, y + 6 + i * 2, 1, 1, PAL.ink); }
   if (p === 'hat') { blob(g, ox, y, [[6, 0, 4, 3], [4, 3, 8, 1]], PAL.plum); P(g, ox + 6, y + 2, 4, 1, PAL.ochre); }
+  // A Saint has a halo; a High Prophet a small gold band.
+  if (f.saint) { P(g, ox + 5, y, 6, 1, PAL.lamp); P(g, ox + 4, y + 1, 1, 1, PAL.lamp); P(g, ox + 11, y + 1, 1, 1, PAL.lamp); }
+  if (f.high) P(g, ox + 5, y + 3, 6, 1, PAL.ochre);
 }
 
 /** You: a small cloud, halo slightly askew, unimpressed. 16 x 14. */
@@ -53,6 +58,16 @@ export function cloudGod(g, ox, oy) {
   P(g, ox + 7, oy + 11, 2, 1, PAL.ink);
 }
 
+/** You, with your head in your hands. 16 x 14. */
+export function facepalm(g, ox, oy) {
+  P(g, ox + 5, oy, 7, 1, PAL.ochre); P(g, ox + 3, oy + 1, 1, 1, PAL.ochre); P(g, ox + 4, oy + 2, 7, 1, PAL.ochre);
+  blob(g, ox, oy, [[3, 7, 10, 6], [1, 9, 14, 4], [5, 5, 6, 4]], PAL.white);
+  P(g, ox + 2, oy + 12, 12, 1, '#d9cfc0');
+  blob(g, ox, oy, [[4, 7, 8, 2]], PAL.cream);   // the hand
+  P(g, ox + 5, oy + 8, 1, 1, PAL.ink); P(g, ox + 7, oy + 8, 1, 1, PAL.ink); P(g, ox + 9, oy + 8, 1, 1, PAL.ink);
+  P(g, ox + 7, oy + 11, 3, 1, PAL.ink);
+}
+
 /** Pim: a seraph, third class, in spectacles. 16 x 14. */
 export function pim(g, ox, oy) {
   blob(g, ox, oy, [[1, 7, 2, 3], [13, 7, 2, 3]], PAL.white);
@@ -62,10 +77,12 @@ export function pim(g, ox, oy) {
   P(g, ox + 7, oy + 11, 2, 1, PAL.ink);
 }
 
-/** Vellamine: a low sun with half-closed eyes. 16 x 16. */
-export function vellamine(g, ox, oy, tired = false) {
-  for (const [x, y] of [[7, 0], [7, 14], [0, 7], [14, 7], [2, 2], [12, 2], [2, 12], [12, 12]]) P(g, ox + x, oy + y, 2, 2, PAL.lamp);
-  blob(g, ox, oy, [[4, 4, 8, 8], [5, 3, 6, 10], [3, 5, 10, 6]], tired ? '#c98a66' : '#e39a6b');
+/** A rival god: a low sun with half-closed eyes, in her own colours. 16 x 16. */
+export function vellamine(g, ox, oy, tired = false, persona = null) {
+  const rays = persona ? persona.rays : PAL.lamp, face = persona && persona.id !== 'vellamine' ? persona.colour : (tired ? '#c98a66' : '#e39a6b');
+  const pts = persona && persona.id === 'hurm' ? [[7, 0], [7, 14], [0, 7], [14, 7]] : [[7, 0], [7, 14], [0, 7], [14, 7], [2, 2], [12, 2], [2, 12], [12, 12]];
+  for (const [x, y] of pts) P(g, ox + x, oy + y, 2, 2, rays);
+  blob(g, ox, oy, [[4, 4, 8, 8], [5, 3, 6, 10], [3, 5, 10, 6]], tired ? '#8a7f86' : face);
   P(g, ox + 5, oy + 7, 2, 1, PAL.ink); P(g, ox + 9, oy + 7, 2, 1, PAL.ink);
   P(g, ox + 7, oy + 10, 3, 1, PAL.ink); if (!tired) P(g, ox + 10, oy + 9, 1, 1, PAL.ink);
 }
@@ -92,7 +109,7 @@ const WORK_SPOTS = { shrine: [98, 40], bell: [62, 34], box: [86, 47], feast_hall
 
 /** The village at dusk: you, her, the houses, your Works, and your officers. 130 x 66. */
 export function village(g, s) {
-  const [me, her] = s.gods;
+  const me = s.gods[0];
   const bands = ['#3f5a8a', '#4c6594', '#5f739f', '#7a83a8', '#9a90aa', '#bf9fa3', '#dcae96', '#eec08c'];
   bands.forEach((c, i) => P(g, 0, i * 6, 130, 6, c));
   for (const [x, y] of [[8, 3], [27, 8], [49, 2], [71, 6], [93, 3], [118, 9], [60, 12]]) P(g, x, y, 1, 1, PAL.white);
@@ -104,18 +121,20 @@ export function village(g, s) {
   for (const [id, w] of Object.entries(me.works)) if (WORK_SPOTS[id]) work(g, id, WORK_SPOTS[id][0], WORK_SPOTS[id][1], w);
   blob(g, 0, 0, [[104, 58, 18, 4], [107, 57, 12, 6]], PAL.water); P(g, 110, 60, 5, 1, PAL.ink);
   cloudGod(g, 36, 6);
-  vellamine(g, 92, 18 + Math.max(0, 12 - her.souls), her.souls < 6);
+  s.gods.slice(1).forEach((r, i) => { if (!r.fallen) vellamine(g, 92 - i * 14, 14 + i * 5 + Math.max(0, 10 - Math.min(10, r.souls / 2)), r.souls < 6, personaFor(r)); });
   const officers = me.flock.filter((f) => f.office);
   const crowd = officers.length ? officers : me.flock.slice(0, 4);
   crowd.slice(0, 6).forEach((f, i) => follower(g, 6 + i * 16 + (i > 2 ? 30 : 0), 44, f, { bob: (s.season + i) % 2 }));
 }
 
-/** 36 marks: yours, hers, and the Unbothered. */
-export function split(g, s) {
-  const [me, her] = s.gods;
-  const cols = [...Array(me.souls).fill(PAL.ochre), ...Array(s.unbothered).fill(PAL.stone), ...Array(her.souls).fill(PAL.oxblood)];
+/** One region: a mark per soul, yours first, then the Unbothered, then each rival in her colour. */
+export function split(g, s, ri = 0) {
+  const r = s.regions[ri];
+  const cols = [...Array(r.held[0]).fill(PAL.ochre), ...Array(r.unbothered).fill(PAL.stone)];
+  s.gods.forEach((x, i) => { if (i > 0) cols.push(...Array(r.held[i]).fill(personaFor(x).colour)); });
   cols.forEach((c, i) => { P(g, i * 3 + 1, 1, 2, 4, PAL.ink); P(g, i * 3 + 1, 1, 2, 3, c); });
 }
+const personaFor = (g) => RIVALS.find((p) => p.id === g.persona) || RIVALS[0];
 
 /** Draw into every canvas[data-sprite] on the page. */
 export function paint(root, s) {
@@ -124,12 +143,13 @@ export function paint(root, s) {
     g.clearRect(0, 0, c.width, c.height);
     const kind = c.dataset.sprite;
     if (kind === 'village') village(g, s);
-    else if (kind === 'split') split(g, s);
+    else if (kind === 'split') split(g, s, Number(c.dataset.region || 0));
+    else if (kind === 'facepalm') facepalm(g, 0, 1);
     else if (kind === 'you') cloudGod(g, 0, 1);
     else if (kind === 'pim') pim(g, 0, 1);
-    else if (kind === 'her') vellamine(g, 0, 0, s.gods[1].souls < 6);
+    else if (kind === 'her') { const r = s.gods[Number(c.dataset.god || 1)]; if (r) vellamine(g, 0, 0, r.souls < 6 || r.fallen, personaFor(r)); }
     else if (kind === 'f') {
-      const f = [...s.gods[0].flock, ...s.gods[1].flock].find((x) => x.id === c.dataset.id);
+      const f = s.gods.flatMap((x) => x.flock).find((x) => x.id === c.dataset.id);
       if (f) follower(g, 0, 0, f);
     }
   }

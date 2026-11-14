@@ -19,7 +19,7 @@ const AT = arg('at', '6,12,18,24').split(',').map(Number);
 const POLICY = arg('policy', 'adaptive');
 
 // The end score: a win is worth most; otherwise how close it came.
-const score = (s) => (OUTCOMES[s.outcome].win ? 100 : 0) + s.gods[0].faith / 3 + 2 * s.gods[0].souls - 2 * s.gods[1].souls;
+const score = (s) => (OUTCOMES[s.outcome].win ? 100 : 0) + s.gods[0].faith / 3 + 2 * s.gods[0].souls - 2 * Math.max(0, ...s.gods.slice(1).map((g) => (g.fallen ? 0 : g.souls)));
 
 function finish(s) {
   for (let g = 0; !s.over && g < 60; g++) { const d = decide(s, POLICY); s = advance(d.state, d.input).state; }

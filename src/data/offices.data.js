@@ -61,7 +61,7 @@ export const WITNESS = {
   literalist: { faith: 1.0, mystery: -8,  legend: { faith: 0.5, mystery: 0, seasons: 3 } },
   drunk:      { faith: 0.8, mystery: -3,  legend: { faith: 0.5, mystery: 1, seasons: 4 }, swap: true },
   ambitious:  { faith: 0.6, mystery: -5,  legend: { faith: 1.0, mystery: 0, seasons: 4 }, heresy: 1, credit: true },
-  poet:       { faith: 1.0, mystery: 4,   legend: { faith: 1.0, mystery: 1.5, seasons: 8 }, entitlement: 0.5 },
+  poet:       { faith: 1.0, mystery: 4,   legend: { faith: 1.0, mystery: 1.5, seasons: 8 }, entitlement: 0.5, fresh: true },   // fresh: never stale (open item 2)
   lazy:       { faith: 0.4, mystery: 0,   legend: { faith: 0.3, mystery: 0.5, seasons: 2 } },
   zealot:     { faith: 1.0, mystery: -6,  legend: { faith: 0.5, mystery: 0, seasons: 3 }, alarm: 0.25 },
   none:       { faith: 0.5, mystery: -8,  legend: null },

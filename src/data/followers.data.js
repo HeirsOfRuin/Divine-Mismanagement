@@ -5,6 +5,12 @@ export const NAMES = [
   'Odo', 'Brenna', 'Wilf', 'Cuthwin', 'Hesper', 'Maud', 'Tibb', 'Aldous', 'Pernel',
   'Gytha', 'Osric', 'Linnet', 'Hob', 'Edda', 'Fenn', 'Marigold', 'Tostig', 'Sabin',
   'Wren', 'Godric', 'Annis', 'Bartle', 'Ysmay', 'Dunstan',
+  // Enough for six gods' flocks without a name appearing twice.
+  'Alys', 'Benedict', 'Cecily', 'Drogo', 'Elfreda', 'Fulk', 'Goda', 'Herlwin', 'Isolde', 'Jory',
+  'Kenelm', 'Leofric', 'Mabel', 'Neddy', 'Orderic', 'Petronel', 'Quenild', 'Ralf', 'Sibyl', 'Thurstan',
+  'Ulf', 'Vivian', 'Walter', 'Agnes', 'Baldwin', 'Christina', 'Denis', 'Emma', 'Firmin', 'Gunnora',
+  'Hamo', 'Ida', 'Jocelyn', 'Lettice', 'Martin', 'Nesta', 'Odile', 'Piers', 'Roesia', 'Simkin',
+  'Tibby', 'Umfrey', 'Warin', 'Ysolt', 'Absalom', 'Beatrix', 'Colin', 'Dulcie',
 ];
 
 export const TRADES = [

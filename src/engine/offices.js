@@ -12,6 +12,7 @@ import { applyTrait } from './telephone.js';
 import { render } from './render.js';
 import { gain, moveSouls } from './meters.js';
 import { hasWork } from './scripture.js';
+import { thresholds, stronghold, leaderAgainst } from './world.js';
 import { take, fill } from './content.js';
 
 export const holder = (g, office) => g.flock.find((f) => f.office === office && f.settling === 0) || null;
@@ -43,13 +44,33 @@ export function commissionIn(s, gi, workId) {
   return s;
 }
 
-/** Souls come from the Unbothered while there are any, then from the other god. */
-export function convert(s, gi, expected, rng, fromRivalOnly, reason) {
-  const o = s.gods[1 - gi];
-  if (!fromRivalOnly && s.unbothered >= 1) return moveSouls(s, 'u', gi, whole(expected, rng), reason);
-  const guard = (o.guard || 1) * (hasWork(o, 'guest_house') ? 0.5 : 1) * (o.devotion > 6 ? 0.5 : 1);
-  const n = whole(expected * (fromRivalOnly ? 1 : CONFIG.poachFactor * guard), rng);
-  return moveSouls(s, 1 - gi, gi, n, reason);
+/** How hard a god's souls are to take: their missionary, a Guest House, a
+ *  devoted flock, a small flock closing ranks, holy objects. The same for every god. */
+export function guardOf(s, gi) {
+  const o = s.gods[gi];
+  const art = Math.min(0.75, o.artifacts.reduce((a, x) => a + (x.effect.guard || 0), 0));
+  const fewer = o.souls < thresholds(s).fair * CONFIG.closeRanks;
+  return (o.guard || 1) * (hasWork(o, 'guest_house') ? 0.5 : 1) * (o.devotion > 6 ? 0.5 : 1) * (fewer ? 0.5 : 1) * (1 - art);
+}
+
+/**
+ * Souls come from the Unbothered in the god's mission field while there are
+ * any, then from whichever other god holds most there, at the poaching rate.
+ * `from` names a victim directly (a Witness frightening her people over), at
+ * the full rate, in the victim's stronghold if they have nobody in the field.
+ */
+export function convert(s, gi, expected, rng, { from = null, reason }) {
+  const g = s.gods[gi];
+  const ri = g.field;
+  const r = s.regions[ri];
+  const bonus = 1 + g.artifacts.reduce((a, x) => a + (x.effect.conv || 0), 0) + g.saints.reduce((a, x) => a + (x.virtue.conv || 0), 0);
+  if (from === null && r.unbothered >= 1) return moveSouls(s, 'u', gi, whole(expected * bonus, rng), reason, ri);
+  const victims = s.gods.map((x, i) => i).filter((i) => i !== gi && !s.gods[i].fallen && r.held[i] > 0);
+  const v = from !== null ? from : victims.sort((a, b) => r.held[b] - r.held[a] || a - b)[0];
+  if (v === undefined || v === null || s.gods[v].fallen) return 0;
+  const where = r.held[v] > 0 ? ri : stronghold(s, v);
+  const n = whole(expected * bonus * (from !== null ? 1 : CONFIG.poachFactor * guardOf(s, v)), rng);
+  return moveSouls(s, v, gi, n, reason, where);
 }
 
 // What one office will yield this season: the screen's preview and the
@@ -62,7 +83,8 @@ export function officeYield(g, office) {
 }
 
 export function workOffices(s, gi, sc, rng, out) {
-  const g = s.gods[gi], o = s.gods[1 - gi];
+  const g = s.gods[gi];
+  const o = s.gods[leaderAgainst(s, gi) ?? gi];
   out.offices = [];
   for (const f of g.flock) if (f.office && f.settling === 0) f.known = true;   // a season in office shows what they are
   const note = (office, f, extra = {}) => {
@@ -91,7 +113,7 @@ export function workOffices(s, gi, sc, rng, out) {
       const r = applyTrait(t.verse, 'drunk', rng, pr, s.spent);
       if (r.note) { s.spent = r.spent; t.verse = r.verse; t.history.push({ season: s.season, by: pr.id, note: r.note }); extra.misquoted = t.id; extra.now = render(t.verse); }
     }
-    if (e.leave && rng.chance(e.leave)) extra.left = moveSouls(s, gi, 'u', 1, 'put off by the preaching');
+    if (e.leave && rng.chance(e.leave)) extra.left = moveSouls(s, gi, 'u', 1, 'put off by the preaching', stronghold(s, gi));
     note('preacher', pr, extra);
   }
 
@@ -103,9 +125,11 @@ export function workOffices(s, gi, sc, rng, out) {
     g.charm = Math.max(-3, Math.min(5, g.charm + (e.charm || 0)));
     if (e.blunt) g.blunt = e.blunt;
     if (e.guard) g.guard = e.guard;
-    const rate = e.conv * (1 + 0.1 * g.charm) * (1 + sc.convBonus) * (o.bluntPrev || 1);
-    const extra = { won: convert(s, gi, rate, rng, false, 'mission') };
-    if (e.defect && rng.chance(e.defect)) { mi.office = null; extra.defected = true; extra.lost = moveSouls(s, gi, 1 - gi, 1, 'the missionary went over'); }
+    // Blunted by a lazy missionary of anyone else working the same field.
+    const blunt = Math.min(1, ...s.gods.filter((x, i) => i !== gi && !x.fallen && x.field === g.field).map((x) => x.bluntPrev || 1));
+    const rate = e.conv * (1 + 0.1 * g.charm) * (1 + sc.convBonus) * blunt;
+    const extra = { won: convert(s, gi, rate, rng, { reason: 'mission' }), field: g.field };
+    if (e.defect && rng.chance(e.defect) && o !== g) { mi.office = null; extra.defected = true; extra.lost = moveSouls(s, gi, s.gods.indexOf(o), 1, 'the missionary went over', stronghold(s, gi)); }
     note('missionary', mi, extra);
   } else if (mi) out.offices.push({ office: 'missionary', by: mi.id, trait: traitOf(mi), out: g.missionaryOut });
 

@@ -8,28 +8,32 @@ import { OFFICE, WITNESS } from '../data/offices.data.js';
 import { TRAITS } from '../data/traits.data.js';
 import { WANTS } from '../data/content/people.data.js';
 import { fill } from './content.js';
+import { thresholds, population } from './world.js';
 
 export const yearOf = (season) => Math.ceil(season / CONFIG.seasonsPerYear);
-export const isYearEnd = (season) => season % CONFIG.seasonsPerYear === 0 && season < CONFIG.seasons;
+export const isYearEnd = (season, seasons = CONFIG.seasons) => season % CONFIG.seasonsPerYear === 0 && season < seasons;
 
-/** The Faith the Registry expects to see at the end of the current year. */
-export function registryMinimum(season) {
-  const y = yearOf(season);
-  return CONFIG.registry[Math.min(y, CONFIG.registry.length) - 1];
+/** The Faith the Registry expects to see at the end of the current year, in this world. */
+export function registryMinimum(s) {
+  const reg = thresholds(s).registry;
+  return reg[Math.min(yearOf(s.season), reg.length) - 1];
 }
-export const nextCheck = (season) => Math.min(CONFIG.seasons, Math.ceil(season / CONFIG.seasonsPerYear) * CONFIG.seasonsPerYear);
+export const nextCheck = (s) => Math.min(s.match.seasons, Math.ceil(s.season / CONFIG.seasonsPerYear) * CONFIG.seasonsPerYear);
 
 /** Faith from worship: souls, how devoted they are, how much awe, and a Shrine. */
 export function worship(g) {
   return g.souls * CONFIG.faithPerSoul * (g.devotion / 5) * (0.5 + g.mystery / 100) * (1 + 0.25 * hasWork(g, 'shrine'));
 }
 
-/** Where the god stands against each test of the Review. */
-export function reviewStanding(g, doctrine) {
-  const r = CONFIG.review;
+/** Where a god stands against each test of the Review, in this world. */
+export function reviewStanding(s, gi = 0) {
+  const g = s.gods[gi], r = thresholds(s).review;
+  const doctrine = scriptureSum(g).doctrine;
+  const top = s.gods.reduce((m, x, i) => (i === gi || x.fallen ? m : Math.max(m, x.souls)), 0);
   return [
     { id: 'faith', label: 'Faith', need: `${r.faith} or more`, have: g.faith, ok: g.faith >= r.faith },
-    { id: 'souls', label: 'Souls', need: `${r.souls} of ${CONFIG.village}`, have: g.souls, ok: g.souls >= r.souls },
+    { id: 'souls', label: 'Souls', need: `${r.souls} of ${population(s)}`, have: g.souls, ok: g.souls >= r.souls },
+    { id: 'leads', label: 'More souls than any rival', need: `more than ${top}`, have: g.souls, ok: g.souls > top },
     { id: 'heresy', label: 'Heresy', need: `under ${r.heresy}`, have: g.heresy, ok: g.heresy < r.heresy },
     { id: 'doctrine', label: 'Tablets doing good', need: `${r.doctrine} or more`, have: doctrine, ok: doctrine >= r.doctrine },
   ];
