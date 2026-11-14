@@ -10,36 +10,41 @@
 // ---- ADAPT THESE to the game's screens (the rest is generic) ---------------
 export const START = ['[data-act="new"]', '[data-act="start"]'];           // clicks that begin a game
 export const CLOCK = '.hud .turn';                    // element whose text is the game clock
-export const TABS = ['[data-tab="village"]', '[data-tab="flock"]', '[data-tab="scripture"]', '[data-tab="heavens"]', '[data-tab="menu"]'];
+export const TABS = ['[data-tab="village"]', '[data-tab="flock"]', '[data-tab="scripture"]', '[data-tab="world"]', '[data-tab="menu"]'];
 export const TURNS = Number(process.env.TURNS || 10);
 
+const closeSheets = async (page) => {
+  for (let g = 0; g < 6; g++) {
+    const b = page.locator('.scrim [data-act="close"], .scrim [data-act="to-report"], .scrim [data-act="skip-playback"]');
+    if (!(await b.count())) return;
+    await b.first().click();
+  }
+};
+
 /** Take one season the way a player would; return true if the clock moved.
- *  Rules on any problem first; on the first two seasons posts a Prophet and
- *  sends a Revelation through the composer, otherwise takes the first act on offer. */
+ *  Rules on any problem first; on the first season posts a Prophet and a
+ *  Preacher through the office sheets; on the first two seasons sends a
+ *  Revelation through the composer and steps through the playback; after
+ *  that stays silent. */
 export async function advanceOnce(page, i = 0) {
   const before = (await page.locator(CLOCK).textContent())?.trim();
-  for (let g = 0; g < 2 && (await page.locator('[data-ruling]:not([disabled])').count()); g++) {
-    await page.locator('[data-ruling]:not([disabled])').first().click();
-    if (await page.locator('.scrim [data-act="close"]').count()) await page.locator('.scrim [data-act="close"]').first().click();
-  }
+  if (await page.locator('[data-act="note-ok"]').count()) await page.click('[data-act="note-ok"]');
+  if (await page.locator('[data-ruling]:not([disabled])').count()) { await page.locator('[data-ruling]:not([disabled])').first().click(); await closeSheets(page); }
   if (i === 0) {
     await page.click('[data-tab="flock"]');
-    await page.selectOption('select[data-post="prophet"]', { index: 1 });
-    await page.selectOption('select[data-post="preacher"]', { index: 2 });
+    for (const [office, n] of [['prophet', 0], ['preacher', 1]]) { await page.click(`[data-act="assign"][data-office="${office}"]`); await page.locator('[data-assign]').nth(n).click(); }
     await page.click('[data-tab="village"]');
   }
-  if (i <= 1 && (await page.locator('[data-act="compose-reveal"]:not([disabled])').count())) {
-    await page.click('[data-act="compose-reveal"]');
-    await page.locator('[data-chain]:not([disabled])').nth(1).click();
+  if (i <= 1 && (await page.locator('[data-act="open-reveal"]:not([disabled])').count())) {
+    await page.click('[data-act="open-reveal"]');
+    await page.locator('.face[data-chain]:not([disabled])').nth(1).click();
     await page.locator('[data-action="reveal"]').click();
+    for (let k = 0; k < 6 && (await page.locator('[data-act="next-step"]').count()); k++) await page.click('[data-act="next-step"]');
   } else {
-    const btn = page.locator('[data-action]:not([disabled])').first();
-    if (!(await btn.count())) return false;
-    await btn.click();
+    await page.click('[data-act="open-silent"]');
+    await page.click('[data-action="silent"]');
   }
-  for (let g = 0; g < 4 && (await page.locator('.scrim [data-act="close"]').count()); g++) {
-    await page.locator('.scrim [data-act="close"]').first().click();
-  }
+  await closeSheets(page);
   if (await page.locator('[data-act="new"]').count()) return true; // the game ended: also progress
   return (await page.locator(CLOCK).textContent())?.trim() !== before;
 }

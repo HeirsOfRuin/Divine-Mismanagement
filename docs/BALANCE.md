@@ -9,6 +9,50 @@ seeds, 7 at 400 and 8 at 300; a gap under it is not a result.
 Nothing here has been checked by a person playing. These are the numbers a
 careful playtest should argue with.
 
+## Round 3 (2026-11-14): after playtest 1
+
+Guided start, Registry goals, villages in regions with travel
+(`docs/FRAME-playtest-1.md`). Story Chapter 1, 400 seeds a policy (floor ~7):
+
+| Policy | Win | Promoted | Rival fell | Passed over | Absorbed | Forgotten |
+|---|---|---|---|---|---|---|
+| silent | 0% ±0.3 | 0 | 0 | 0 | 0 | 100 |
+| staff_blind / staff_aware | 0% ±0.3 | 0 | 0 | 19-22 | 2-11 | 70-76 |
+| random | 1% ±0.4 | 0 | 1 | 38 | 40 | 23 |
+| long_chain / short_chain / no_staff | 1-2% | 0 | 1-2 | 24-47 | 50-71 | 1-5 |
+| miracles | 6% ±1.2 | 0 | 6 | 38 | 6 | 50 |
+| no_scripture | 7% ±1.3 | 0 | 7 | 63 | 2 | 28 |
+| rests_third | 26% ±2.2 | 17 | 10 | 58 | 16 | 0 |
+| never_silent | 40% ±2.4 | 22 | 18 | 49 | 12 | 0 |
+| no_rare | 44% ±2.5 | 22 | 22 | 49 | 8 | 0 |
+| **adaptive** | **44% ±2.5** | 25 | 19 | 47 | 9 | 0 |
+| crusader | 45% ±2.5 | 4 | 41 | 50 | 5 | 1 |
+
+- **The guided start costs nothing measurable.** 44% against 41% before it,
+  within noise: the goals' rewards make up for acts opening later.
+- **Attacking the rival is now an equal route** (45%), won mostly by making her
+  fall (41%) rather than at the Review.
+- **Goals**: careful play meets 5.2 a game (200 games), the first by season 2.9
+  on average.
+- **Silence** is the best act in 8.2% of 159 mid-game positions, at higher
+  entitlement (1.5 against 1.1).
+
+Travel (120 games each): the missionary that moves when its village runs out
+of the unclaimed, against one that never leaves home.
+
+| Chapter | Travels | Stays home |
+|---|---|---|
+| 2: 3 villages, 2 rivals | 58% | 22% |
+| 3: 6 villages in 3 regions, 4 rivals | 66% | 1% (absorbed 97%) |
+
+So the map is a real decision. Those rates were too high, and the old
+fair-share threshold scaling barely moved them, because a travelling player
+ends with a third of a much larger world. Thresholds now scale from the share
+of the whole population (`world.js`); Chapter 1 is unchanged by construction
+(Faith 185, 23 souls). Re-measured, careful play: Chapter 2 36%, Chapter 3 46%,
+custom two rivals in two villages on lean resources 15%, five rivals rich 51%;
+random play 0-2% in every shape (120 games each).
+
 ## Round 2 (2026-11-14): rare acts, ranks, many gods and regions
 
 After `docs/FRAME-expansion.md`. Story Chapter 1, 400 seeds a policy (floor ~7):

@@ -31,7 +31,8 @@ function newGod(name, flock, start, extra = {}) {
 
 /**
  * A new game. `mode` 'story' with `chapter`, or 'custom' with `rivals`,
- * `regions`, `wealth` (your starting resources) and `seasons`.
+ * `regions`, `villages` (per region), `wealth` (your starting resources),
+ * `seasons` and `guided` (things open one at a time; on by default).
  * Story Chapter 1 is the default and the measured game.
  */
 export function newGame({ seed = 1, name = 'the God of Doors That Stick', ...opts } = {}) {
@@ -39,17 +40,17 @@ export function newGame({ seed = 1, name = 'the God of Doors That Stick', ...opt
   const match = matchFrom(opts);
   const rng = streamFor(seed, 0, 'flock');
   const names = rng.shuffle([...NAMES]);
-  const regions = layout(match);
+  const { regions, villages, homeOf } = layout(match, streamFor(seed, 0, 'map'));
   const w = CUSTOM.wealth[match.wealth];
   const mine = { ...CONFIG.start, faith: CONFIG.start.faith * w.faith, power: Math.round(CONFIG.start.power * w.power), offerings: CONFIG.start.offerings * w.offerings };
-  const gods = [newGod(name, makeFlock(rng, names.slice(0, 12), 'f'), mine, { home: 0, field: 0 })];
+  const gods = [newGod(name, makeFlock(rng, names.slice(0, 12), 'f'), mine, { home: homeOf[0], field: homeOf[0], travelling: 0 })];
   personasFor(match).forEach((p, i) => {
     const gi = i + 1;
-    gods.push(newGod(p.name, makeFlock(rng, names.slice(12 * gi, 12 * gi + 12), `r${gi}-`), CONFIG.rivalStart, { persona: p.id, home: gi % match.regions, field: gi % match.regions }));
+    gods.push(newGod(p.name, makeFlock(rng, names.slice(12 * gi, 12 * gi + 12), `r${gi}-`), CONFIG.rivalStart, { persona: p.id, home: homeOf[gi], field: homeOf[gi], travelling: 0 }));
   });
   return {
     v: SAVE_VERSION, seed, season: 1, over: false, outcome: null, nextId: 1,
-    match, regions, gods,
+    match, regions, villages, gods,
     ledger: [], spent: {}, event: null, chronicle: [], book: null,
   };
 }

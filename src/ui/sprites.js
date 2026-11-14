@@ -129,7 +129,7 @@ export function village(g, s) {
 
 /** One region: a mark per soul, yours first, then the Unbothered, then each rival in her colour. */
 export function split(g, s, ri = 0) {
-  const r = s.regions[ri];
+  const r = s.villages[ri];
   const cols = [...Array(r.held[0]).fill(PAL.ochre), ...Array(r.unbothered).fill(PAL.stone)];
   s.gods.forEach((x, i) => { if (i > 0) cols.push(...Array(r.held[i]).fill(personaFor(x).colour)); });
   cols.forEach((c, i) => { P(g, i * 3 + 1, 1, 2, 4, PAL.ink); P(g, i * 3 + 1, 1, 2, 3, c); });
@@ -145,6 +145,8 @@ export function paint(root, s) {
     if (kind === 'village') village(g, s);
     else if (kind === 'split') split(g, s, Number(c.dataset.region || 0));
     else if (kind === 'facepalm') facepalm(g, 0, 1);
+    else if (kind === 'map') map(g, s);
+    else if (kind === 'icon') icon(g, c.dataset.icon);
     else if (kind === 'you') cloudGod(g, 0, 1);
     else if (kind === 'pim') pim(g, 0, 1);
     else if (kind === 'her') { const r = s.gods[Number(c.dataset.god || 1)]; if (r) vellamine(g, 0, 0, r.souls < 6 || r.fallen, personaFor(r)); }
@@ -153,4 +155,63 @@ export function paint(root, s) {
       if (f) follower(g, 0, 0, f);
     }
   }
+}
+
+// ---- icons: 12 x 12, one per act and office --------------------------------------
+// Drawn from rectangles in the master palette, ink outline, no lettering.
+const ICONS = {
+  reveal:   (g) => { blob(g, 0, 0, [[2, 1, 8, 10]], PAL.cream); for (let y = 3; y < 10; y += 2) P(g, 4, y, 4, 1, PAL.ink); P(g, 1, 1, 10, 1, PAL.wood); P(g, 1, 10, 10, 1, PAL.wood); },
+  miracle:  (g) => { P(g, 5, 0, 2, 12, PAL.lamp); P(g, 0, 5, 12, 2, PAL.lamp); P(g, 2, 2, 2, 2, PAL.ochre); P(g, 8, 8, 2, 2, PAL.ochre); P(g, 8, 2, 2, 2, PAL.ochre); P(g, 2, 8, 2, 2, PAL.ochre); P(g, 5, 5, 2, 2, PAL.white); },
+  answer:   (g) => { blob(g, 0, 0, [[3, 2, 3, 8], [6, 2, 3, 8]], PAL.skin); P(g, 5, 2, 1, 8, PAL.ink); },
+  dream:    (g) => { blob(g, 0, 0, [[3, 1, 6, 10]], PAL.lamp); P(g, 6, 1, 4, 8, PAL.woad); P(g, 9, 2, 1, 1, PAL.white); },
+  festival: (g) => { P(g, 2, 0, 1, 12, PAL.wood); blob(g, 0, 0, [[3, 1, 7, 5]], PAL.oxblood); P(g, 4, 3, 5, 1, PAL.lamp); },
+  dispute:  (g) => { blob(g, 0, 0, [[1, 1, 6, 5]], PAL.white); blob(g, 0, 0, [[5, 5, 6, 5]], PAL.cream); P(g, 2, 3, 4, 1, PAL.ink); P(g, 6, 7, 4, 1, PAL.ink); },
+  poach:    (g) => { blob(g, 0, 0, [[2, 4, 8, 6]], PAL.skin); P(g, 2, 2, 1, 3, PAL.skin); P(g, 4, 1, 1, 4, PAL.skin); P(g, 6, 1, 1, 4, PAL.skin); P(g, 8, 2, 1, 3, PAL.skin); },
+  silent:   (g) => { P(g, 2, 2, 5, 1, PAL.woad); P(g, 5, 3, 1, 1, PAL.woad); P(g, 4, 4, 1, 1, PAL.woad); P(g, 2, 5, 5, 1, PAL.woad); P(g, 7, 7, 3, 1, PAL.plum); P(g, 8, 8, 1, 1, PAL.plum); P(g, 7, 9, 3, 1, PAL.plum); },
+  anoint:   (g) => { blob(g, 0, 0, [[1, 5, 10, 5]], PAL.ochre); P(g, 1, 2, 2, 3, PAL.ochre); P(g, 5, 1, 2, 4, PAL.ochre); P(g, 9, 2, 2, 3, PAL.ochre); P(g, 5, 7, 2, 2, PAL.oxblood); },
+  artifact: (g) => { blob(g, 0, 0, [[3, 3, 6, 8], [4, 1, 4, 2]], PAL.stone); P(g, 4, 5, 4, 1, PAL.plum); P(g, 5, 0, 2, 1, PAL.lamp); },
+  wonder:   (g) => { for (const [x, y] of [[5, 0], [5, 10], [0, 5], [10, 5], [2, 2], [8, 2], [2, 8], [8, 8]]) P(g, x, y, 2, 2, PAL.lamp); blob(g, 0, 0, [[4, 4, 4, 4]], PAL.white); },
+  canonize: (g) => { P(g, 3, 0, 6, 1, PAL.lamp); P(g, 2, 1, 1, 1, PAL.lamp); P(g, 9, 1, 1, 1, PAL.lamp); blob(g, 0, 0, [[4, 3, 4, 4], [3, 7, 6, 5]], PAL.cream); },
+  prophet:  (g) => { blob(g, 0, 0, [[2, 2, 8, 7]], PAL.white); P(g, 4, 9, 2, 2, PAL.white); P(g, 4, 5, 4, 1, PAL.ink); },
+  preacher: (g) => { blob(g, 0, 0, [[3, 4, 6, 7]], PAL.wood); blob(g, 0, 0, [[1, 2, 10, 2]], PAL.oxblood); },
+  missionary: (g) => { blob(g, 0, 0, [[1, 6, 4, 4], [7, 2, 4, 4]], PAL.wood); P(g, 1, 9, 4, 1, PAL.ink); P(g, 7, 5, 4, 1, PAL.ink); },
+  collector: (g) => { blob(g, 0, 0, [[2, 4, 8, 7], [4, 2, 4, 2]], PAL.thatch); P(g, 5, 7, 2, 2, PAL.lamp); },
+  builder:  (g) => { P(g, 5, 4, 2, 8, PAL.wood); blob(g, 0, 0, [[2, 1, 8, 3]], PAL.stone); },
+  witness:  (g) => { blob(g, 0, 0, [[1, 4, 10, 4], [3, 3, 6, 6]], PAL.white); P(g, 5, 5, 2, 2, PAL.woad); P(g, 5, 5, 1, 1, PAL.ink); },
+};
+export function icon(g, name) { g.clearRect(0, 0, 12, 12); (ICONS[name] || ICONS.reveal)(g); }
+
+// ---- the map ---------------------------------------------------------------------------
+// Regions as land, villages as houses whose roofs take the colour of whoever
+// holds most souls there (stone for the Unbothered), your mission field
+// flagged. Names are HTML laid over the canvas: no pixel lettering.
+const holderColour = (s, v) => {
+  let best = -1, bi = -1;
+  v.held.forEach((h, i) => { if (h > best) { best = h; bi = i; } });
+  if (v.unbothered > best) return PAL.stone;
+  return bi === 0 ? PAL.ochre : personaFor(s.gods[bi]).colour;
+};
+export function map(g, s) {
+  P(g, 0, 0, 130, 90, PAL.water);
+  for (let i = 0; i < 40; i++) P(g, (i * 37) % 130, (i * 23) % 90, 2, 1, '#6787a8');
+  const shades = [PAL.grass, PAL.hill, '#6b8f5e', '#5c8a74'];
+  s.regions.forEach((R, ri) => {
+    const c = shades[ri % shades.length];
+    P(g, R.x + 2, R.y, R.w - 4, R.h, PAL.ink); P(g, R.x, R.y + 2, R.w, R.h - 4, PAL.ink);
+    P(g, R.x + 3, R.y + 1, R.w - 6, R.h - 2, c); P(g, R.x + 1, R.y + 3, R.w - 2, R.h - 6, c);
+    for (let k = 0; k < 6; k++) P(g, R.x + 4 + ((k * 17 + ri * 7) % Math.max(1, R.w - 10)), R.y + 4 + ((k * 11 + ri * 5) % Math.max(1, R.h - 10)), 3, 2, PAL.hill2);
+  });
+  // Roads between neighbouring villages in a region.
+  for (let i = 0; i < s.villages.length - 1; i++) {
+    const a = s.villages[i], b = s.villages[i + 1];
+    if (a.region !== b.region) continue;
+    const steps = Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y));
+    for (let t = 0; t <= steps; t += 2) P(g, Math.round(a.x + ((b.x - a.x) * t) / steps), Math.round(a.y + ((b.y - a.y) * t) / steps), 1, 1, PAL.cream);
+  }
+  s.villages.forEach((v, vi) => {
+    const roof = holderColour(s, v);
+    blob(g, v.x - 5, v.y - 4, [[0, 3, 4, 3], [5, 2, 5, 4]], PAL.cream);
+    P(g, v.x - 5, v.y - 2, 4, 1, roof); P(g, v.x, v.y - 3, 5, 2, roof);
+    if (s.gods[0].field === vi) { P(g, v.x + 6, v.y - 8, 1, 8, PAL.ink); blob(g, v.x + 7, v.y - 8, [[0, 0, 4, 3]], PAL.ochre); }
+  });
 }

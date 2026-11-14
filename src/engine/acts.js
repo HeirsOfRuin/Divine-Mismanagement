@@ -22,6 +22,7 @@ import { hasWork, scriptureSum } from './scripture.js';
 import { holder, traitOf, convert } from './offices.js';
 import { draw, take, fill } from './content.js';
 import { leaderAgainst, stronghold } from './world.js';
+import { isOpen, opensIn } from './guide.js';
 
 const C = CONFIG.costs;
 const no = (why, cost = 0) => ({ ok: false, why, cost });
@@ -60,6 +61,9 @@ export function preview(s, gi, act) {
   const g = s.gods[gi];
   if (!act || !ACT_KINDS.includes(act.kind)) return no('Not something a god can do.');
   if (g.fallen) return no('You have fallen.');
+  // A guided match opens acts one at a time, for every god alike.
+  const key = act.kind === 'miracle' && act.miracle === 'smite' ? 'act:smite' : `act:${act.kind}`;
+  if (!GRAND[act.kind] && !isOpen(s, key)) return no(`Opens in season ${opensIn(key)}.`);
   const target = HOSTILE.includes(act.kind === 'miracle' && act.miracle === 'smite' ? 'smite' : act.kind) ? targetOf(s, gi, act) : null;
   const o = target !== null ? s.gods[target] : null;
   switch (act.kind) {
@@ -221,7 +225,7 @@ export function resolve(s, gi, act, rng, out) {
       if (how.alarm) { const v = leaderAgainst(s, gi); if (v !== null) convert(s, gi, how.alarm, rng, { from: v, reason: 'frightened over' }); }
       if (how.heresy) gain(s, gi, 'heresy', how.heresy, 'miracle');
       gain(s, gi, 'entitlement', 1 + (how.entitlement || 0), 'miracle');
-      if (wit) wit.known = true;
+      if (wit) { wit.known = true; g.n.witnessed = (g.n.witnessed || 0) + 1; }
       if (how.legend) {
         const L = { id: `l${s.nextId++}`, kind, asked: act.miracle, by: wit ? wit.id : null, trait, season: s.season,
           left: how.legend.seasons, faith: how.legend.faith * (m.faith / 4) * stale, mystery: how.legend.mystery, text: null };
@@ -276,7 +280,7 @@ export function resolve(s, gi, act, rng, out) {
       const d = p.mine - p.hers;
       g.lastDispute = s.season;
       out.act.mine = p.mine; out.act.hers = p.hers;
-      if (d > 0) out.act.won = moveSouls(s, target, gi, 1, 'disputation', stronghold(s, target));
+      if (d > 0) { out.act.won = moveSouls(s, target, gi, 1, 'disputation', stronghold(s, target)); g.n.disputeWon = (g.n.disputeWon || 0) + 1; }
       else if (d < 0) out.act.lost = moveSouls(s, gi, target, 1, 'disputation', stronghold(s, gi));
       return;
     }

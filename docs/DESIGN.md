@@ -353,6 +353,20 @@ the sum of its regions, tested every season. Acts aimed at another god take a
 `target`. Every rival runs the same policy weighted by persona, settles her own
 troubles, and can bless objects and work Wonders.
 
+### Playtest 1 (2026-11-14)
+
+See `docs/FRAME-playtest-1.md`. Villages now sit inside regions:
+`s.villages[]` (each with `region`, map `x`/`y`, `unbothered`, `held[god]`) and
+`s.regions[]` (name and map rectangle). A god's `home` and mission `field` are
+village indexes; moving the field to another region sets `travelling` and the
+missionary loses a season. `src/engine/guide.js` holds the guided start
+(`isOpen`, used by `preview()` and `postIn()` for every god) and the Registry's
+goals (`issuePetitions` at dawn, `settlePetitions` at the season's end). The
+screens: acts as tiles opening sheets, offices assigned by tapping with a
+preview per candidate, the Revelation played back one person at a time with
+changed words marked, a World/Map tab drawn by `map()` in `sprites.js` with
+HTML village pins over it, and a shorter season report.
+
 Not built yet: domains, generations, saints, schism as an ending, the Vale,
 more rivals, sound, a tutorial beyond Pim's first memo and the How it works
 sheet, an animated playback (the report shows each step as a list), a

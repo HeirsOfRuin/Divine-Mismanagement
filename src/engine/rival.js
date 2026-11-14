@@ -20,6 +20,7 @@ import { preview } from './acts.js';
 import { holder } from './offices.js';
 import { gain } from './meters.js';
 import { thresholds, unbotheredTotal } from './world.js';
+import { isOpen } from './guide.js';
 
 const HER_BELIEF = {
   preacher: ['zealot', 'ambitious', 'drunk', 'literalist', 'lazy', 'poet'],
@@ -32,20 +33,33 @@ const HER_BELIEF = {
 
 export const personaOf = (g) => RIVALS.find((p) => p.id === g.persona) || RIVALS[0];
 
-export function rivalPostings(g, season) {
-  const blind = Object.fromEntries(OFFICE_IDS.map((office, i) => [office, g.flock[i * 2].id]));
+export function rivalPostings(s, gi) {
+  const g = s.gods[gi], season = s.season;
+  const open = OFFICE_IDS.filter((o) => isOpen(s, `office:${o}`));
+  const blind = Object.fromEntries(open.map((office) => [office, g.flock[OFFICE_IDS.indexOf(office) * 2].id]));
   if (season <= 4) return blind;
   if (season % 4 !== 1) return {};
   // Once a year she reshuffles by what she has seen.
   const want = {}, taken = new Set();
   const score = (office, f) => (f.known ? HER_BELIEF[office].indexOf(f.traits[0]) : 2.5);
-  for (const office of ['preacher', 'missionary', 'collector', 'prophet', 'witness', 'builder']) {
+  for (const office of ['preacher', 'missionary', 'collector', 'prophet', 'witness', 'builder'].filter((o) => open.includes(o))) {
     const pool = g.flock.filter((f) => !taken.has(f.id));
     let best = pool[0];
     for (const f of pool) if (score(office, f) < score(office, best) - (best.office === office ? 0.9 : 0)) best = f;
     want[office] = best.id; taken.add(best.id);
   }
   return want;
+}
+
+// When her mission field has no Unbothered left, she moves her missionary to the
+// nearest village that has some, by the same travel rule as yours.
+export function rivalField(s, gi) {
+  const g = s.gods[gi], here = s.villages[g.field];
+  if (here.unbothered >= 1) return null;
+  const d = (v) => Math.hypot(v.x - here.x, v.y - here.y);
+  const options = s.villages.map((v, i) => i).filter((i) => s.villages[i].unbothered >= 2);
+  options.sort((a, b) => d(s.villages[a]) - d(s.villages[b]) || a - b);
+  return options.length ? options[0] : null;
 }
 
 export const rivalCommission = (g) => WORK_IDS.find((id) => !g.works[id]) || null;

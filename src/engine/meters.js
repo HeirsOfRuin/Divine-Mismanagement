@@ -35,7 +35,7 @@ export function gain(s, gi, meter, amount, reason) {
 // Souls move between gods and the Unbothered, always within one region; every
 // move writes the gods' ledger rows. `from`/`to` are a god's index or 'u'.
 export function moveSouls(s, from, to, n, reason, ri) {
-  const r = s.regions[ri];
+  const r = s.villages[ri];
   if (!r) throw new Error(`moveSouls: no region ${ri}`);
   const have = from === 'u' ? r.unbothered : r.held[from];
   n = Math.max(0, Math.min(Math.floor(n), have));

@@ -10,7 +10,7 @@ import { CONFIG } from '../src/data/config.data.js';
 import { decide } from '../sim/bot.js';
 
 // Story Chapter 1, and two other shapes of match, so every invariant holds for any world.
-const SHAPES = [{}, { mode: 'story', chapter: 'ch2' }, { mode: 'custom', rivals: 4, regions: 3, wealth: 'rich', seasons: 40 }];
+const SHAPES = [{}, { mode: 'story', chapter: 'ch2' }, { mode: 'custom', rivals: 4, regions: 2, villages: 2, wealth: 'rich', seasons: 40, guided: false }];
 
 function playThrough(seed, policy = 'adaptive', each = () => {}, shape = SHAPES[seed % SHAPES.length]) {
   let s = newGame({ seed, ...shape });
@@ -23,7 +23,7 @@ function playThrough(seed, policy = 'adaptive', each = () => {}, shape = SHAPES[
 }
 
 const POLICIES = ['adaptive', 'random', 'miracles', 'crusader', 'silent'];
-const shapeOf = (s) => (s.match.mode === 'story' ? { mode: 'story', chapter: s.match.chapter } : { mode: 'custom', rivals: s.match.rivals, regions: s.match.regions, wealth: s.match.wealth, seasons: s.match.seasons });
+const shapeOf = (s) => (s.match.mode === 'story' ? { mode: 'story', chapter: s.match.chapter } : { mode: 'custom', rivals: s.match.rivals, regions: s.match.regions, villages: s.match.villages, wealth: s.match.wealth, seasons: s.match.seasons, guided: s.match.guided });
 
 test('every meter of every god equals its start plus its ledger, every season', () => {
   for (let seed = 1; seed <= 25; seed++) {
@@ -42,11 +42,11 @@ test('nobody is created or lost: in every region the gods and the Unbothered mak
   for (let seed = 1; seed <= 25; seed++) {
     let sizes = null;
     playThrough(seed, POLICIES[seed % POLICIES.length], (s) => {
-      const size = s.regions.map((r) => r.unbothered + r.held.reduce((a, b) => a + b, 0));
+      const size = s.villages.map((r) => r.unbothered + r.held.reduce((a, b) => a + b, 0));
       sizes ||= size;
       assert.deepEqual(size, sizes, `seed ${seed} season ${s.season}: a region changed size`);
-      for (const r of s.regions) { assert.ok(r.unbothered >= 0 && Number.isInteger(r.unbothered)); for (const h of r.held) assert.ok(h >= 0 && Number.isInteger(h)); }
-      s.gods.forEach((g, gi) => assert.equal(g.souls, s.regions.reduce((a, r) => a + r.held[gi], 0), `seed ${seed} god ${gi}`));
+      for (const r of s.villages) { assert.ok(r.unbothered >= 0 && Number.isInteger(r.unbothered)); for (const h of r.held) assert.ok(h >= 0 && Number.isInteger(h)); }
+      s.gods.forEach((g, gi) => assert.equal(g.souls, s.villages.reduce((a, r) => a + r.held[gi], 0), `seed ${seed} god ${gi}`));
       s.gods.forEach((g) => { if (g.fallen) assert.equal(g.souls, 0); });
     });
   }

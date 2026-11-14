@@ -18,7 +18,7 @@
 
 import { CONFIG, OUTCOMES } from '../data/config.data.js';
 import { OFFICE_IDS } from '../data/offices.data.js';
-import { RANKS, SAINT_FAITH, SAINT_PILGRIMS } from '../data/match.data.js';
+import { RANKS, SAINT_FAITH, SAINT_PILGRIMS, TRAVEL_SEASONS } from '../data/match.data.js';
 import { WANTS } from '../data/content/people.data.js';
 import { EVENTS, MEMOS, RIVAL_LINES, ENDINGS } from '../data/content/world.data.js';
 import { HEADDESK, RANK_UP } from '../data/content/grand.data.js';
@@ -27,7 +27,8 @@ import { gain, moveSouls, seasonAccount, METERS } from './meters.js';
 import { scriptureSum } from './scripture.js';
 import { preview, resolve } from './acts.js';
 import { postIn, commissionIn, workOffices, convert } from './offices.js';
-import { rivalPostings, rivalCommission, rivalAct, rivalTrouble } from './rival.js';
+import { rivalPostings, rivalCommission, rivalAct, rivalTrouble, rivalField } from './rival.js';
+import { issuePetitions, settlePetitions, openedNow } from './guide.js';
 import { worship, isYearEnd, yearOf } from './derive.js';
 import { thresholds, living, leaderAgainst, stronghold, unbotheredTotal } from './world.js';
 import { bookDue, compileBook, bookEffects } from './book.js';
@@ -49,12 +50,19 @@ export function orders(prev, { postings = {}, commission: work, field } = {}) {
   const s = clone(prev);
   for (const [office, id] of Object.entries(postings)) postIn(s, 0, office, id);
   if (work !== undefined) commissionIn(s, 0, work);
-  if (field !== undefined) {
-    if (!s.regions[field]) throw new Error(`no region ${field}`);
-    s.gods[0].field = field;
-  }
+  if (field !== undefined) moveField(s, 0, field);
   return s;
 }
+/** Send a god's missionary to work a village; another region costs a season on the road. */
+export function moveField(s, gi, vi) {
+  const g = s.gods[gi];
+  if (!s.villages[vi]) throw new Error(`no village ${vi}`);
+  if (vi === g.field) return s;
+  if (s.villages[vi].region !== s.villages[g.field].region) g.travelling = TRAVEL_SEASONS;
+  g.field = vi;
+  return s;
+}
+
 export const post = (prev, office, id) => orders(prev, { postings: { [office]: id } });
 export const commission = (prev, workId) => orders(prev, { commission: workId });
 export const sendMissionary = (prev, ri) => orders(prev, { field: ri });
@@ -131,7 +139,9 @@ export function advance(prev, input = {}) {
   // 3. the rivals, in order
   for (const gi of living(s).filter((i) => i > 0)) {
     const g = s.gods[gi];
-    for (const [office, id] of Object.entries(rivalPostings(g, s.season))) postIn(s, gi, office, id);
+    for (const [office, id] of Object.entries(rivalPostings(s, gi))) postIn(s, gi, office, id);
+    const away = rivalField(s, gi);
+    if (away !== null) moveField(s, gi, away);
     if (!g.building) { const w = rivalCommission(g); if (w) commissionIn(s, gi, w); }
     const rrng = streamFor(s.seed, s.season, `rival-${gi}`);
     rivalTrouble(s, gi, rrng);
@@ -145,7 +155,7 @@ export function advance(prev, input = {}) {
   for (const gi of alive) sc[gi] = scriptureSum(s.gods[gi]);
   const orng = streamFor(s.seed, s.season, 'offices');
   for (const gi of alive) workOffices(s, gi, sc[gi], orng, gi === 0 ? rec.me : rec.rivals[gi]);
-  for (const gi of alive) s.gods[gi].bluntPrev = s.gods[gi].blunt;
+  for (const gi of alive) { s.gods[gi].bluntPrev = s.gods[gi].blunt; s.gods[gi].travelling = Math.max(0, (s.gods[gi].travelling || 0) - 1); }
 
   // 5-7. collection, drift, heresy
   const drng = streamFor(s.seed, s.season, 'drift');
@@ -184,7 +194,7 @@ export function advance(prev, input = {}) {
     gain(s, gi, 'power', c.powerBase + income * c.powerPerFaithIncome, 'Faith');
 
     if (g.devotion < c.leakBelow) moveSouls(s, gi, 'u', whole((c.leakBelow - g.devotion) * c.leakRate, drng), 'drifting off', stronghold(s, gi));
-    if (g.devotion > c.drawAbove && s.regions[g.field].unbothered >= 1 && drng.chance(c.drawRate)) moveSouls(s, 'u', gi, 1, 'drawn in', g.field);
+    if (g.devotion > c.drawAbove && s.villages[g.field].unbothered >= 1 && drng.chance(c.drawRate)) moveSouls(s, 'u', gi, 1, 'drawn in', g.field);
 
     gain(s, gi, 'heresy', -c.heresyDecay, 'forgetting');
     if (g.heresy >= c.schismAt) {
@@ -207,11 +217,12 @@ export function advance(prev, input = {}) {
     if (g.low >= CONFIG.fallSeasons || g.strikes >= CONFIG.registryStrikes) {
       // A fallen god's people go back to being Unbothered, region by region.
       g.fallen = true;
-      s.regions.forEach((r, ri) => moveSouls(s, gi, 'u', r.held[gi], 'their god fell', ri));
+      s.villages.forEach((r, ri) => moveSouls(s, gi, 'u', r.held[gi], 'their god fell', ri));
       rec.fell.push(gi);
     }
   }
   for (const gi of living(s)) s.gods[gi].rank = rankFor(s, gi);
+  rec.petitions = settlePetitions(s);
   if (me.rank > before.rank[0]) rec.rankUp = me.rank;
 
   const c = CONFIG;
@@ -252,6 +263,7 @@ export function advance(prev, input = {}) {
     s.season++;
     if (bookDue(s)) { compileBook(s, streamFor(s.seed, s.season, 'book')); rec.book = true; }
     dawn(s);
+    rec.opened = openedNow(s) ? openedNow(s).season : null;
   }
   return { state: s, record: rec };
 }
@@ -274,6 +286,7 @@ export function dawn(s) {
     const f = rng.pick(can);
     g.prayers.push({ id: `p${s.nextId++}`, by: f.id, want: gi === 0 ? f.want : null, season: s.season });
   }
+  issuePetitions(s, streamFor(s.seed, s.season, 'petitions'));
   if (rng.chance(CONFIG.eventChance)) {
     const fits = EVENTS.filter((e) => bringerFor(s, e, rng, true));
     const id = draw(s, 'event', fits.map((e) => e.id), rng);

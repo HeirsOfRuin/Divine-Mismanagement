@@ -7,17 +7,18 @@
 // so. That is the framework the author asked to begin (2026-11-14).
 
 export const STORY = [
-  { id: 'ch1', label: 'Chapter 1: Little Fretting', rivals: 1, regions: 1, wealth: 'standard', seasons: 30, measured: true,
+  { id: 'ch1', label: 'Chapter 1: Little Fretting', rivals: 1, regions: 1, villages: 1, wealth: 'standard', seasons: 30, measured: true,
     intro: 'One village, thirty-six souls, and Vellamine, who arrived the same week you did and already has a logo.' },
-  { id: 'ch2', label: 'Chapter 2: The Vale', rivals: 2, regions: 3, wealth: 'standard', seasons: 40, measured: false,
+  { id: 'ch2', label: 'Chapter 2: The Vale', rivals: 2, regions: 1, villages: 3, wealth: 'standard', seasons: 40, measured: false,
     intro: 'Three villages along one river, and two gods who got there first. Hurm has fenced his.' },
-  { id: 'ch3', label: 'Chapter 3: The Overcrowded Heavens', rivals: 4, regions: 5, wealth: 'standard', seasons: 50, measured: false,
+  { id: 'ch3', label: 'Chapter 3: The Overcrowded Heavens', rivals: 4, regions: 3, villages: 2, wealth: 'standard', seasons: 50, measured: false,
     intro: 'Five parishes, four rivals, and one seat on the High Pantheon that everyone has been measuring for curtains.' },
 ];
 
 export const CUSTOM = {
   rivals: [1, 2, 3, 4, 5],
-  regions: [1, 2, 3, 4, 5],
+  regions: [1, 2, 3, 4],
+  villages: [1, 2, 3],   // per region
   seasons: [30, 40, 50, 60],
   wealth: {
     lean:     { label: 'Lean',     faith: 0.5, power: 0.67, offerings: 0 },
@@ -37,7 +38,8 @@ export const RIVALS = [
   { id: 'grist',     name: 'Grist',     title: 'God of Small Complaints',  colour: '#5a3d28', rays: '#c98f1f', style: { miracle: 2, reveal: 1, hostile: 2, kindly: 1 } },
 ];
 
-export const REGION_NAMES = ['Little Fretting', 'Nether Dither', 'Great Muddle', 'Puddlecombe', 'Long Sulking', 'Grudgeworth', 'Ashby-under-Fence', 'Middle Wending'];
+export const REGION_NAMES = ['the Vale of Fret', 'the Dither Hundred', 'Muddlesex', 'the Sulking Wolds'];
+export const VILLAGE_NAMES = ['Little Fretting', 'Nether Dither', 'Great Muddle', 'Puddlecombe', 'Long Sulking', 'Grudgeworth', 'Ashby-under-Fence', 'Middle Wending', 'Upper Fuss', 'Sniping Parva', 'Much Wobbling', 'Dawdle St Giles'];
 
 // Your standing in the Heavens. Thresholds are in units of the world's fair
 // share (souls) and its Faith scale (src/engine/world.js), so a rank means the
@@ -85,3 +87,21 @@ export const WONDER = { faith: 15, conv: 3, mystery: 10, devotion: 0.5, entitlem
 // The Holy Book: compiled at the first dawn from this season on with at least
 // this many verses carved, or at the backstop season with any.
 export const BOOK = { from: 18, verses: 6, backstop: 24, scribes: 2, faithPerChapter: 0.5, heresy: -0.5 };
+
+// The guided start (on by default): what opens in which season. Until then an
+// act or office does not exist for anyone, rivals included (rule 7). Custom
+// matches can turn it off, and everything is open from the start.
+export const GUIDE = [
+  { season: 1, opens: ['act:reveal', 'act:silent', 'office:prophet', 'office:preacher'] },
+  { season: 2, opens: ['act:answer', 'office:missionary'] },
+  { season: 3, opens: ['office:collector', 'office:builder'] },
+  { season: 4, opens: ['act:miracle', 'office:witness'] },
+  { season: 6, opens: ['act:dream', 'act:festival'] },
+  { season: 8, opens: ['act:smite', 'act:poach', 'act:dispute'] },
+];
+
+// Moving your missionary to a village in another region takes a season on the road.
+export const TRAVEL_SEASONS = 1;
+
+// The Registry asks: at most two at a time, each once a playthrough.
+export const PETITIONS_ACTIVE = 2;

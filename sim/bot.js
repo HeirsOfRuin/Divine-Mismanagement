@@ -13,6 +13,7 @@ import { preview, orders, rulingOptions, ruleOn } from '../src/engine/turn.js';
 import { streamFor } from '../src/engine/rng.js';
 import { leaderAgainst, thresholds } from '../src/engine/world.js';
 import { registryMinimum } from '../src/engine/derive.js';
+import { isOpen } from '../src/engine/guide.js';
 
 const seen = (f) => (f.known ? f.traits[0] : null);
 
@@ -138,6 +139,7 @@ export const POLICIES = {
   short_chain:  { note: 'Blind postings; a Revelation through two people when one is missing', staff: staffBlind, act: (s) => [plainReveal(s.gods[0], 2)], build: buildNext },
   long_chain:   { note: 'Blind postings; a Revelation through all four households', staff: staffBlind, act: (s) => [plainReveal(s.gods[0], 4)], build: buildNext },
   no_staff:     { note: 'Never posts anyone; otherwise adaptive', staff: staffNone, act: (s) => adaptive(s) },
+  stay_home:    { note: 'Adaptive, but the missionary never leaves home', staff: (g) => staffAware(g), act: (s) => adaptive(s), build: buildNext, stayHome: true },
   no_rare:      { note: 'Adaptive, but never uses the rare acts', staff: (g) => staffAware(g), act: (s) => adaptive(s, { rare: false }), build: buildNext },
   no_scripture: { note: 'Adaptive, but never a Revelation', staff: (g) => staffAware(g), act: (s) => [].concat(adaptive(s)).filter((a) => a.kind !== 'reveal'), build: buildNext },
   adaptive:     { note: 'Aware postings, aimed chains, miracles when awe is high, rests when it is low', staff: (g) => staffAware(g), act: (s) => adaptive(s), build: buildNext },
@@ -162,10 +164,21 @@ export function decide(s, policyName = 'adaptive', fixed = {}) {
   if (pol.random) return decideRandom(s);
   const want = { ...(pol.staff ? pol.staff(g) : {}), ...fixed };
   if (Object.keys(fixed).length && pol.staff === undefined) Object.assign(want, fixed);
-  const postings = Object.fromEntries(OFFICE_IDS.filter((o) => o in want).map((o) => [o, want[o]]));
+  // Only offices that have opened (guided matches open them one at a time).
+  const postings = Object.fromEntries(OFFICE_IDS.filter((o) => o in want && isOpen(s, `office:${o}`)).map((o) => [o, want[o]]));
   let work;
   if (pol.build) { const w = pol.build(g); if (w && !g.works[w] && (!g.building || !g.building.paid)) work = w; }
-  s = orders(s, { postings, commission: work });
+  // When the mission field has nobody unclaimed left, go where there are some (the rival's rule).
+  let field;
+  if (!pol.stayHome && s.villages.length > 1) {
+    const here = s.villages[g.field];
+    if (here.unbothered < 1) {
+      const d = (v) => Math.hypot(v.x - here.x, v.y - here.y);
+      const options = s.villages.map((v, i) => i).filter((i) => s.villages[i].unbothered >= 2).sort((a, b) => d(s.villages[a]) - d(s.villages[b]) || a - b);
+      if (options.length) field = options[0];
+    }
+  }
+  s = orders(s, { postings, commission: work, field });
   const tries = [].concat(pol.act(s) || []).filter(Boolean);
   const act = tries.find((a) => preview(s, 0, a).ok) || { kind: 'silent' };
   return { state: s, input: { act } };
@@ -174,7 +187,7 @@ export function decide(s, policyName = 'adaptive', fixed = {}) {
 function decideRandom(s) {
   const rng = streamFor(s.seed, s.season, 'bot');
   const g = s.gods[0];
-  const postings = Object.fromEntries(OFFICE_IDS.filter(() => rng.chance(0.3)).map((o) => [o, rng.pick(g.flock).id]));
+  const postings = Object.fromEntries(OFFICE_IDS.filter((o) => isOpen(s, `office:${o}`) && rng.chance(0.3)).map((o) => [o, rng.pick(g.flock).id]));
   const free = WORK_IDS.filter((id) => !g.works[id]);
   s = orders(s, { postings, commission: free.length && !g.building ? rng.pick(free) : undefined });
   const t = rng.pick(TEMPLATES);

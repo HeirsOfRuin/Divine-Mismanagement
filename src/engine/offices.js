@@ -13,6 +13,7 @@ import { render } from './render.js';
 import { gain, moveSouls } from './meters.js';
 import { hasWork } from './scripture.js';
 import { thresholds, stronghold, leaderAgainst } from './world.js';
+import { isOpen, opensIn } from './guide.js';
 import { take, fill } from './content.js';
 
 export const holder = (g, office) => g.flock.find((f) => f.office === office && f.settling === 0) || null;
@@ -24,6 +25,7 @@ const whole = (x, rng) => (x <= 0 ? 0 : Math.floor(x) + (rng.chance(x - Math.flo
 /** Post a devotee (or nobody, id null) to an office. Returns the new state. */
 export function postIn(s, gi, office, id) {
   if (!OFFICE_IDS.includes(office)) throw new Error(`no office "${office}"`);
+  if (id != null && !isOpen(s, `office:${office}`)) throw new Error(`The ${office} opens in season ${opensIn(`office:${office}`)}.`);
   const g = s.gods[gi];
   const cur = posted(g, office);
   if ((cur ? cur.id : null) === (id ?? null)) return s;
@@ -62,7 +64,7 @@ export function guardOf(s, gi) {
 export function convert(s, gi, expected, rng, { from = null, reason }) {
   const g = s.gods[gi];
   const ri = g.field;
-  const r = s.regions[ri];
+  const r = s.villages[ri];
   const bonus = 1 + g.artifacts.reduce((a, x) => a + (x.effect.conv || 0), 0) + g.saints.reduce((a, x) => a + (x.virtue.conv || 0), 0);
   if (from === null && r.unbothered >= 1) return moveSouls(s, 'u', gi, whole(expected * bonus, rng), reason, ri);
   const victims = s.gods.map((x, i) => i).filter((i) => i !== gi && !s.gods[i].fallen && r.held[i] > 0);
@@ -119,7 +121,8 @@ export function workOffices(s, gi, sc, rng, out) {
 
   const mi = holder(g, 'missionary');
   g.guard = 1; g.blunt = 1;
-  if (mi && g.missionaryOut === 0) {
+  if (mi && g.travelling > 0) out.offices.push({ office: 'missionary', by: mi.id, trait: traitOf(mi), road: g.field });
+  else if (mi && g.missionaryOut === 0) {
     const e = OFFICE.missionary[traitOf(mi)];
     add(e, 'mission');
     g.charm = Math.max(-3, Math.min(5, g.charm + (e.charm || 0)));

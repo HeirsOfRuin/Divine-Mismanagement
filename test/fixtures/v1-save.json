@@ -10,19 +10,34 @@
   "chapter": "ch1",
   "rivals": 1,
   "regions": 1,
+  "villages": 1,
   "wealth": "standard",
   "seasons": 30,
   "measured": true,
+  "guided": true,
   "label": "Chapter 1: Little Fretting"
  },
  "regions": [
   {
-   "id": "g0",
+   "id": "r0",
+   "name": "the Vale of Fret",
+   "x": 6,
+   "y": 6,
+   "w": 118,
+   "h": 78
+  }
+ ],
+ "villages": [
+  {
+   "id": "v0",
    "name": "Little Fretting",
-   "unbothered": 6,
+   "region": 0,
+   "x": 64,
+   "y": 47,
+   "unbothered": 7,
    "held": [
     13,
-    17
+    16
    ]
   }
  ],
@@ -30,14 +45,15 @@
   {
    "name": "the God of Doors That Stick",
    "souls": 13,
-   "faith": 33.44483247246457,
-   "power": 4.068111836501226,
-   "mystery": 75.12885468159999,
+   "faith": 32.11372044463244,
+   "power": 3.659633814386444,
+   "mystery": 76.3984546816,
    "offerings": 0,
-   "devotion": 5.288442187500001,
+   "devotion": 5.103912500000002,
    "home": 0,
    "field": 0,
-   "heresy": 0,
+   "travelling": 0,
+   "heresy": 0.7000000000000002,
    "entitlement": 0,
    "charm": 0,
    "guard": 1,
@@ -59,7 +75,7 @@
       "drunk"
      ],
      "known": true,
-     "office": "collector",
+     "office": "prophet",
      "settling": 0,
      "want": "rain"
     },
@@ -95,7 +111,7 @@
       "lazy",
       "poet"
      ],
-     "known": true,
+     "known": false,
      "office": null,
      "settling": 0,
      "want": "bench"
@@ -151,7 +167,7 @@
       "poet"
      ],
      "known": true,
-     "office": "builder",
+     "office": "missionary",
      "settling": 0,
      "want": "leak"
     },
@@ -169,7 +185,7 @@
       "literalist"
      ],
      "known": true,
-     "office": "prophet",
+     "office": "builder",
      "settling": 0,
      "want": "supper"
     },
@@ -186,7 +202,7 @@
      "traits": [
       "lazy"
      ],
-     "known": true,
+     "known": false,
      "office": null,
      "settling": 0,
      "want": "wedding"
@@ -241,7 +257,7 @@
       "ambitious"
      ],
      "known": true,
-     "office": "missionary",
+     "office": "collector",
      "settling": 0,
      "want": "dog"
     },
@@ -368,19 +384,26 @@
        "lit": false
       },
       "tail": null,
-      "rider": null,
+      "rider": {
+       "by": "f11",
+       "name": "Wren",
+       "good": "an eel",
+       "trade": "eeler",
+       "kind": "oversee"
+      },
       "penalty": null,
       "gist": false,
       "bare": false
      },
-     "households": 3,
+     "households": 4,
      "title": "the Verse of the Beard",
      "after": "Beards are now held in common. There is a rota.",
      "said": "The faithful should share their bread with the hungry.",
      "chain": [
       "f01",
       "f05",
-      "f07"
+      "f07",
+      "f11"
      ],
      "steps": [
       {
@@ -406,6 +429,12 @@
        "trait": "literalist",
        "note": null,
        "text": "The faithful should share their beards."
+      },
+      {
+       "by": "f11",
+       "trait": "ambitious",
+       "note": "added a clause of their own",
+       "text": "The faithful should share their beards, under the supervision of Wren, who is to be paid."
       }
      ],
      "history": []
@@ -433,60 +462,67 @@
       "object": null,
       "tail": {
        "base": "after_harvest",
-       "cur": "lark_complaint",
+       "cur": "ripe_moon",
        "via": "poet",
-       "lit": false
+       "lit": true
       },
       "rider": {
-       "by": "f06",
-       "name": "Ysolt",
-       "good": "flour",
-       "trade": "miller",
-       "kind": "trade"
+       "by": "f11",
+       "name": "Wren",
+       "good": "an eel",
+       "trade": "eeler",
+       "kind": "fee"
       },
       "penalty": null,
       "gist": false,
       "bare": false
      },
-     "households": 3,
-     "title": "the Verse of the Lark's Complaint",
-     "after": "It is done very early, and resentfully.",
+     "households": 4,
+     "title": "the Verse of the Ripe Moon",
+     "after": "A moon-ripeness committee meets nightly. It has not yet said yes.",
      "said": "The faithful may rest after the harvest.",
      "chain": [
-      "f07",
       "f01",
-      "f06"
+      "f06",
+      "f07",
+      "f11"
      ],
      "steps": [
       {
-       "by": "f07",
+       "by": "f01",
        "trait": "literalist",
        "note": "took \"after the harvest\" at its word",
        "text": "The faithful may rest immediately after the harvest, where they stand."
       },
       {
        "by": "f01",
-       "trait": "literalist",
-       "note": "spelled out exactly how binding it is",
-       "text": "The faithful are permitted, but not obliged, to rest immediately after the harvest, where they stand."
-      },
-      {
-       "by": "f01",
        "trait": "drunk",
        "note": "heard \"nest\" for \"rest\"",
-       "text": "The faithful are permitted, but not obliged, to nest immediately after the harvest, where they stand."
+       "text": "The faithful may nest immediately after the harvest, where they stand."
       },
       {
        "by": "f06",
        "trait": "ambitious",
        "note": "added a clause of their own",
-       "text": "The faithful are permitted, but not obliged, to nest immediately after the harvest, where they stand, and Ysolt's mill is henceforth the Holy Mill."
+       "text": "The faithful may nest immediately after the harvest, where they stand, and Ysolt's mill is henceforth the Holy Mill."
       },
       {
        "by": "f06",
        "trait": "poet",
-       "note": "improved \"immediately after the harvest, where they stand\" to \"ere the lark has filed her complaint\"",
-       "text": "Let the faithful nest ere the lark has filed her complaint, and Ysolt's mill is henceforth the Holy Mill."
+       "note": "improved \"immediately after the harvest, where they stand\" to \"when the moon is ripe\"",
+       "text": "Let the faithful nest when the moon is ripe, and Ysolt's mill is henceforth the Holy Mill."
+      },
+      {
+       "by": "f07",
+       "trait": "literalist",
+       "note": "took \"when the moon is ripe\" at its word",
+       "text": "Let the faithful nest when the moon is ripe, which is to be checked nightly, and Ysolt's mill is henceforth the Holy Mill."
+      },
+      {
+       "by": "f11",
+       "trait": "ambitious",
+       "note": "struck out Ysolt's clause and added their own",
+       "text": "Let the faithful nest when the moon is ripe, which is to be checked nightly, and a small fee is owed to Wren each time."
       }
      ],
      "history": []
@@ -509,14 +545,102 @@
       },
       "verb": {
        "base": "rest",
+       "cur": "wrestle"
+      },
+      "object": null,
+      "tail": {
+       "base": "after_harvest",
+       "cur": "forgiving_river",
+       "via": "poet",
+       "lit": true
+      },
+      "rider": {
+       "by": "f11",
+       "name": "Wren",
+       "good": "an eel",
+       "trade": "eeler",
+       "kind": "thanks"
+      },
+      "penalty": null,
+      "gist": false,
+      "bare": false
+     },
+     "households": 4,
+     "title": "the Verse of the Forgiving River",
+     "after": "It is now done standing in the river. Attendance drops in winter.",
+     "said": "The faithful may rest after the harvest.",
+     "chain": [
+      "f01",
+      "f06",
+      "f07",
+      "f11"
+     ],
+     "steps": [
+      {
+       "by": "f01",
+       "trait": "literalist",
+       "note": "spelled out exactly how binding it is",
+       "text": "The faithful are permitted, but not obliged, to rest after the harvest."
+      },
+      {
+       "by": "f01",
+       "trait": "drunk",
+       "note": "heard \"wrestle\" for \"rest\"",
+       "text": "The faithful are permitted, but not obliged, to wrestle after the harvest."
+      },
+      {
+       "by": "f06",
+       "trait": "ambitious",
+       "note": "added a clause of their own",
+       "text": "The faithful are permitted, but not obliged, to wrestle after the harvest, having first bought flour from Ysolt."
+      },
+      {
+       "by": "f06",
+       "trait": "poet",
+       "note": "improved \"after the harvest\" to \"as the river forgives the stone\"",
+       "text": "Let the faithful wrestle as the river forgives the stone, having first bought flour from Ysolt."
+      },
+      {
+       "by": "f07",
+       "trait": "literalist",
+       "note": "took \"as the river forgives the stone\" at its word",
+       "text": "Let the faithful wrestle in the river, beside a stone, having first bought flour from Ysolt."
+      },
+      {
+       "by": "f11",
+       "trait": "ambitious",
+       "note": "struck out Ysolt's clause and added their own",
+       "text": "Let the faithful wrestle in the river, beside a stone, and Wren is to be thanked by name."
+      }
+     ],
+     "history": []
+    },
+    {
+     "id": "t11",
+     "season": 5,
+     "verse": {
+      "template": "rest",
+      "who": {
+       "scope": 2,
+       "zeal": false
+      },
+      "modal": {
+       "strength": 1,
+       "neg": false,
+       "let": true,
+       "lit": false,
+       "negDropped": false
+      },
+      "verb": {
+       "base": "rest",
        "cur": "rest"
       },
       "object": null,
       "tail": {
        "base": "after_harvest",
-       "cur": "ripe_moon",
+       "cur": "soft_regrets",
        "via": "poet",
-       "lit": false
+       "lit": true
       },
       "rider": {
        "by": "f11",
@@ -530,22 +654,16 @@
       "bare": false
      },
      "households": 4,
-     "title": "the Verse of the Ripe Moon",
-     "after": "Nobody knows when the moon is ripe. It is done whenever someone feels it might be.",
+     "title": "the Verse of the Hour of Regrets",
+     "after": "The Hour of Regrets is well attended. People bring a list.",
      "said": "The faithful may rest after the harvest.",
      "chain": [
-      "f07",
       "f01",
       "f06",
+      "f07",
       "f11"
      ],
      "steps": [
-      {
-       "by": "f07",
-       "trait": "literalist",
-       "note": null,
-       "text": "The faithful may rest after the harvest."
-      },
       {
        "by": "f01",
        "trait": "literalist",
@@ -562,112 +680,25 @@
        "by": "f06",
        "trait": "ambitious",
        "note": "added a clause of their own",
-       "text": "The faithful may rest after the hardest, and Ysolt is to be thanked by name."
+       "text": "The faithful may rest after the hardest, under the supervision of Ysolt, who is to be paid."
       },
       {
        "by": "f06",
        "trait": "poet",
-       "note": "improved \"after the hardest\" to \"when the moon is ripe\"",
-       "text": "Let the faithful rest when the moon is ripe, and Ysolt is to be thanked by name."
+       "note": "improved \"after the hardest\" to \"in the hour of soft regrets\"",
+       "text": "Let the faithful rest in the hour of soft regrets, under the supervision of Ysolt, who is to be paid."
       },
-      {
-       "by": "f11",
-       "trait": "ambitious",
-       "note": "struck out Ysolt's clause and added their own",
-       "text": "Let the faithful rest when the moon is ripe, and eels are to be eaten on feast days, at the usual price."
-      }
-     ],
-     "history": []
-    },
-    {
-     "id": "t11",
-     "season": 5,
-     "verse": {
-      "template": "wash",
-      "who": {
-       "scope": 2,
-       "zeal": false
-      },
-      "modal": {
-       "strength": 1,
-       "neg": false,
-       "let": true,
-       "lit": false,
-       "negDropped": false
-      },
-      "verb": {
-       "base": "wash",
-       "cur": "squash"
-      },
-      "object": {
-       "base": "hands",
-       "cur": "hands",
-       "via": null,
-       "lit": true
-      },
-      "tail": {
-       "base": "before_meals",
-       "cur": "forgiving_river",
-       "via": "poet",
-       "lit": false
-      },
-      "rider": {
-       "by": "f11",
-       "name": "Wren",
-       "good": "an eel",
-       "trade": "eeler",
-       "kind": "thanks"
-      },
-      "penalty": null,
-      "gist": false,
-      "bare": false
-     },
-     "households": 4,
-     "title": "the Verse of the Forgiving River",
-     "after": "It is now done slowly, and with a faraway look.",
-     "said": "The faithful should wash their hands before meals.",
-     "chain": [
-      "f07",
-      "f01",
-      "f06",
-      "f11"
-     ],
-     "steps": [
       {
        "by": "f07",
        "trait": "literalist",
-       "note": "took \"before meals\" at its word",
-       "text": "The faithful should wash their hands immediately before every meal, including snacks."
-      },
-      {
-       "by": "f01",
-       "trait": "literalist",
-       "note": "took \"their hands\" at its word",
-       "text": "The faithful should wash each hand separately immediately before every meal, including snacks."
-      },
-      {
-       "by": "f01",
-       "trait": "drunk",
-       "note": "heard \"squash\" for \"wash\"",
-       "text": "The faithful should squash each hand separately immediately before every meal, including snacks."
-      },
-      {
-       "by": "f06",
-       "trait": "ambitious",
-       "note": "added a clause of their own",
-       "text": "The faithful should squash each hand separately immediately before every meal, including snacks, having first bought flour from Ysolt."
-      },
-      {
-       "by": "f06",
-       "trait": "poet",
-       "note": "improved \"immediately before every meal, including snacks\" to \"as the river forgives the stone\"",
-       "text": "Let the faithful squash each hand separately as the river forgives the stone, having first bought flour from Ysolt."
+       "note": "took \"in the hour of soft regrets\" at its word",
+       "text": "Let the faithful rest during the Hour of Regrets, to be held daily, under the supervision of Ysolt, who is to be paid."
       },
       {
        "by": "f11",
        "trait": "ambitious",
        "note": "struck out Ysolt's clause and added their own",
-       "text": "Let the faithful squash each hand separately as the river forgives the stone, and Wren is to be thanked by name."
+       "text": "Let the faithful rest during the Hour of Regrets, to be held daily, and eels are to be eaten on feast days, at the usual price."
       }
      ],
      "history": []
@@ -703,7 +734,7 @@
    "artifacts": [],
    "saints": [],
    "cooldowns": {},
-   "exasperation": 23,
+   "exasperation": 26,
    "fallen": false,
    "n": {
     "reveal": 5
@@ -711,15 +742,16 @@
   },
   {
    "name": "Vellamine",
-   "souls": 17,
-   "faith": 42.30108105842078,
-   "power": 7.759721437844858,
+   "souls": 16,
+   "faith": 41.54618143409441,
+   "power": 7.51608569575247,
    "mystery": 64.8409854464,
    "offerings": 0,
-   "devotion": 4.3412567369140636,
+   "devotion": 4.393457361914064,
    "persona": "vellamine",
    "home": 0,
    "field": 0,
+   "travelling": 0,
    "heresy": 0,
    "entitlement": 0.7,
    "charm": -3,
@@ -760,7 +792,7 @@
       "zealot"
      ],
      "known": false,
-     "office": "witness",
+     "office": "prophet",
      "settling": 0,
      "want": null
     },
@@ -779,7 +811,7 @@
       "lazy"
      ],
      "known": true,
-     "office": "prophet",
+     "office": "collector",
      "settling": 0,
      "want": null
     },
@@ -835,7 +867,7 @@
       "literalist"
      ],
      "known": false,
-     "office": "builder",
+     "office": "witness",
      "settling": 0,
      "want": null
     },
@@ -871,7 +903,7 @@
       "poet"
      ],
      "known": false,
-     "office": null,
+     "office": "builder",
      "settling": 0,
      "want": null
     },
@@ -924,8 +956,8 @@
      "traits": [
       "ambitious"
      ],
-     "known": true,
-     "office": "collector",
+     "known": false,
+     "office": null,
      "settling": 0,
      "want": null
     },
@@ -1222,13 +1254,13 @@
       {
        "by": "r1-04",
        "trait": "poet",
-       "note": "improved \"after the farthest\" to \"in the hour of soft regrets\"",
-       "text": "Let ALL rest in the hour of soft regrets, or carry the big stone up the hill and back."
+       "note": "improved \"after the farthest\" to \"ere the lark has filed her complaint\"",
+       "text": "Let ALL rest ere the lark has filed her complaint, or carry the big stone up the hill and back."
       },
       {
        "by": "r1-07",
        "trait": "lazy",
-       "note": "left out \"in the hour of soft regrets\"",
+       "note": "left out \"ere the lark has filed her complaint\"",
        "text": "Let ALL rest, or carry the big stone up the hill and back."
       }
      ],
@@ -1250,7 +1282,7 @@
    "seen": {
     "sign": 1
    },
-   "rank": 1,
+   "rank": 0,
    "artifacts": [],
    "saints": [],
    "cooldowns": {},
@@ -1411,10 +1443,17 @@
    "Faith"
   ],
   [
+   1,
+   0,
+   "power",
+   2,
+   "the Registry"
+  ],
+  [
    2,
    0,
    "power",
-   -2,
+   -3,
    "reveal"
   ],
   [
@@ -1447,13 +1486,6 @@
   ],
   [
    2,
-   0,
-   "offerings",
-   1,
-   "collection"
-  ],
-  [
-   2,
    1,
    "faith",
    2,
@@ -1468,27 +1500,6 @@
   ],
   [
    2,
-   1,
-   "devotion",
-   -0.09999999999999964,
-   "mission"
-  ],
-  [
-   2,
-   1,
-   "souls",
-   1,
-   "mission"
-  ],
-  [
-   2,
-   1,
-   "offerings",
-   1,
-   "collection"
-  ],
-  [
-   2,
    0,
    "faith",
    2,
@@ -1498,7 +1509,7 @@
    2,
    0,
    "offerings",
-   0.28125,
+   -0.125,
    "Scripture"
   ],
   [
@@ -1507,6 +1518,13 @@
    "offerings",
    -1,
    "upkeep of Oddities"
+  ],
+  [
+   2,
+   0,
+   "heresy",
+   0.35,
+   "Scripture"
   ],
   [
    2,
@@ -1542,6 +1560,13 @@
    "power",
    2.4203688000000003,
    "Faith"
+  ],
+  [
+   2,
+   0,
+   "heresy",
+   -0.35,
+   "forgetting"
   ],
   [
    2,
@@ -1582,7 +1607,7 @@
    2,
    1,
    "devotion",
-   0.03968906249999993,
+   0.024689062500000247,
    "habit"
   ],
   [
@@ -1596,21 +1621,21 @@
    2,
    1,
    "faith",
-   3.8732891481472507,
+   3.6389874226589995,
    "worship"
   ],
   [
    2,
    1,
    "faith",
-   -2.1076060405947246,
+   -2.0841758680459,
    "forgetting"
   ],
   [
    2,
    1,
    "power",
-   2.9683222870368136,
+   2.9097468556647508,
    "Faith"
   ],
   [
@@ -1624,7 +1649,7 @@
    3,
    0,
    "power",
-   -2,
+   -3,
    "reveal"
   ],
   [
@@ -1699,13 +1724,6 @@
   ],
   [
    3,
-   1,
-   "offerings",
-   1,
-   "collection"
-  ],
-  [
-   3,
    0,
    "faith",
    2,
@@ -1714,22 +1732,29 @@
   [
    3,
    0,
-   "offerings",
-   -0.21875,
+   "devotion",
+   -0.04999999999999982,
    "Scripture"
   ],
   [
    3,
    0,
    "offerings",
-   -2,
+   -0.625,
+   "Scripture"
+  ],
+  [
+   3,
+   0,
+   "offerings",
+   -0.75,
    "upkeep of Oddities"
   ],
   [
    3,
    0,
    "heresy",
-   0.35,
+   0.7,
    "Scripture"
   ],
   [
@@ -1743,7 +1768,7 @@
    3,
    0,
    "devotion",
-   -0.022499999999999964,
+   -0.01499999999999968,
    "habit"
   ],
   [
@@ -1757,28 +1782,28 @@
    3,
    0,
    "faith",
-   3.972455952192,
+   3.939529696127998,
    "worship"
   ],
   [
    3,
    0,
    "faith",
-   -2.4735197232192014,
+   -2.470227097612799,
    "forgetting"
   ],
   [
    3,
    0,
    "power",
-   2.743113988048,
+   2.7348824240319995,
    "Faith"
   ],
   [
    3,
    0,
    "heresy",
-   -0.35,
+   -0.7,
    "forgetting"
   ],
   [
@@ -1799,14 +1824,14 @@
    3,
    1,
    "offerings",
-   0.08437500000000009,
+   0.08437499999999998,
    "Scripture"
   ],
   [
    3,
    1,
    "offerings",
-   -2,
+   -0.584375,
    "upkeep of Oddities"
   ],
   [
@@ -1827,7 +1852,7 @@
    3,
    1,
    "devotion",
-   0.04039195312499988,
+   0.027641953124999397,
    "habit"
   ],
   [
@@ -1841,21 +1866,21 @@
    3,
    1,
    "faith",
-   4.339309231103513,
+   4.090376032783777,
    "worship"
   ],
   [
    3,
    1,
    "faith",
-   -2.830776359645604,
+   -2.7847958845196885,
    "forgetting"
   ],
   [
    3,
    1,
    "power",
-   3.3348273077758783,
+   3.272594008195944,
    "Faith"
   ],
   [
@@ -1910,15 +1935,15 @@
   [
    4,
    0,
-   "souls",
-   1,
-   "mission"
+   "heresy",
+   0.3,
+   "collection"
   ],
   [
    4,
    0,
    "offerings",
-   2,
+   4,
    "collection"
   ],
   [
@@ -1960,84 +1985,84 @@
    4,
    0,
    "faith",
-   3.0749999999999993,
+   2,
    "Scripture"
   ],
   [
    4,
    0,
    "devotion",
-   0.001875000000000071,
+   -0.09999999999999964,
    "Scripture"
   ],
   [
    4,
    0,
    "offerings",
-   -0.71875,
+   -1.125,
    "Scripture"
   ],
   [
    4,
    0,
    "offerings",
-   -1.84375,
+   -2.875,
    "upkeep of Oddities"
   ],
   [
    4,
    0,
    "heresy",
-   0.7,
+   1.0499999999999998,
    "Scripture"
   ],
   [
    4,
    0,
    "mystery",
-   10.5,
+   12,
    "Oddities"
   ],
   [
    4,
    0,
    "devotion",
-   -0.041906250000000256,
+   -0.02024999999999988,
    "habit"
   ],
   [
    4,
    0,
    "mystery",
-   -1.288171520000006,
+   -1.4081715199999962,
    "habit"
   ],
   [
    4,
    0,
    "faith",
-   4.690409824833409,
+   4.278982469342978,
    "worship"
   ],
   [
    4,
    0,
    "faith",
-   -3.10270873338062,
+   -2.951102634785819,
    "forgetting"
   ],
   [
    4,
    0,
    "power",
-   3.191352456208352,
+   2.8197456173357445,
    "Faith"
   ],
   [
    4,
    0,
    "heresy",
-   -0.7,
+   -1.3499999999999999,
    "forgetting"
   ],
   [
@@ -2065,7 +2090,7 @@
    4,
    1,
    "offerings",
-   -1.6687500000000002,
+   -1.084375,
    "upkeep of Oddities"
   ],
   [
@@ -2086,7 +2111,7 @@
    4,
    1,
    "devotion",
-   0.08139566015624933,
+   0.07055816015625016,
    "habit"
   ],
   [
@@ -2100,21 +2125,21 @@
    4,
    1,
    "faith",
-   4.6212886723497135,
+   4.371563345161157,
    "worship"
   ],
   [
    4,
    1,
    "faith",
-   -3.632327590916013,
+   -3.565972630583836,
    "forgetting"
   ],
   [
    4,
    1,
    "power",
-   3.7115721680874287,
+   3.6491408362902895,
    "Faith"
   ],
   [
@@ -2218,8 +2243,29 @@
   [
    5,
    0,
+   "heresy",
+   0.5,
+   "mission"
+  ],
+  [
+   5,
+   0,
+   "souls",
+   1,
+   "mission"
+  ],
+  [
+   5,
+   0,
+   "heresy",
+   0.30000000000000004,
+   "collection"
+  ],
+  [
+   5,
+   0,
    "offerings",
-   2,
+   4,
    "collection"
   ],
   [
@@ -2240,35 +2286,35 @@
    5,
    0,
    "faith",
-   3.0749999999999993,
+   3.09,
    "Scripture"
   ],
   [
    5,
    0,
    "devotion",
-   -0.04812499999999975,
+   -0.14250000000000007,
    "Scripture"
   ],
   [
    5,
    0,
    "offerings",
-   -1.21875,
+   -1.625,
    "Scripture"
   ],
   [
    5,
    0,
    "offerings",
-   -0.78125,
+   -2.375,
    "upkeep of Oddities"
   ],
   [
    5,
    0,
    "heresy",
-   1.0499999999999998,
+   1.4000000000000001,
    "Scripture"
   ],
   [
@@ -2282,42 +2328,42 @@
    5,
    0,
    "devotion",
-   -0.0509015625,
+   -0.01833750000000034,
    "habit"
   ],
   [
    5,
    0,
    "mystery",
-   -2.1851177984000003,
+   -2.295517798399999,
    "habit"
   ],
   [
    5,
    0,
    "faith",
-   5.161546368979494,
+   5.031987892074799,
    "worship"
   ],
   [
    5,
    0,
    "faith",
-   -3.7160924969405116,
+   -3.568191160514715,
    "forgetting"
   ],
   [
    5,
    0,
    "power",
-   3.309136592244873,
+   3.2804969730186997,
    "Faith"
   ],
   [
    5,
    0,
    "heresy",
-   -1.0499999999999998,
+   -1.5,
    "forgetting"
   ],
   [
@@ -2373,7 +2419,7 @@
    5,
    1,
    "devotion",
-   0.11624881113281216,
+   0.10703693613281207,
    "habit"
   ],
   [
@@ -2387,21 +2433,21 @@
    5,
    1,
    "faith",
-   5.085252857778947,
+   4.843670140405941,
    "worship"
   ],
   [
    5,
    1,
    "faith",
-   -4.70012011760231,
+   -4.616242381566046,
    "forgetting"
   ],
   [
    5,
    1,
    "power",
-   4.577563214444737,
+   4.5171675351014855,
    "Faith"
   ],
   [
@@ -2427,6 +2473,12 @@
    "dog",
    "letter"
   ],
+  "petition": [
+   "convert_three",
+   "tablet_good",
+   "two_offices",
+   "lead_rival"
+  ],
   "event": [
    "where_you_live",
    "gift_goat"
@@ -2443,43 +2495,44 @@
    "beards",
    "with_blindness",
    "loaf",
-   "lark_complaint",
+   "ripe_moon",
    "beds",
    "patient_elm",
-   "after_hardest",
-   "ripe_moon",
+   "forgiving_river",
    "after_farthest",
-   "soft_regrets",
-   "forgiving_river"
+   "lark_complaint",
+   "after_hardest",
+   "soft_regrets"
   ],
   "literal": [
    "believing_dew",
    "with_hungry",
    "after_harvest",
-   "before_meals",
-   "hands"
+   "ripe_moon",
+   "forgiving_river",
+   "soft_regrets"
   ],
   "title": [
    "the Verse of the Manger",
    "the Verse of the Eel",
    "the Verse of the Beard",
    "the Verse of the Loaf",
-   "the Verse of the Lark's Complaint",
-   "the Verse of the Bed",
    "the Verse of the Ripe Moon",
+   "the Verse of the Bed",
+   "the Verse of the Forgiving River",
    "the Verse of the Big Stone",
-   "the Verse of the Forgiving River"
+   "the Verse of the Hour of Regrets"
   ],
   "after": [
    "mangers",
    "before_eels",
    "beards",
    "loaf",
-   "lark_complaint",
+   "ripe_moon:lit",
    "beds",
-   "ripe_moon",
+   "forgiving_river:lit",
    "threat",
-   "forgiving_river"
+   "soft_regrets:lit"
   ],
   "threat": [
    "stern",
@@ -2507,26 +2560,27 @@
    "reveal:1",
    "miracle:2"
   ],
-  "incident": [
-   "missionary:lazy",
-   "collector:lazy",
-   "builder:ambitious",
-   "witness:lazy",
-   "preacher:lazy",
-   "prophet:literalist",
-   "collector:literalist",
-   "witness:poet"
+  "rider": [
+   "oversee:f11",
+   "trade:miller",
+   "fee:f11",
+   "buy:f06",
+   "thanks:f11",
+   "oversee:f06",
+   "trade:eeler"
   ],
   "verb": [
    "nest",
-   "squash"
+   "wrestle"
   ],
-  "rider": [
-   "trade:miller",
-   "thanks:f06",
-   "trade:eeler",
-   "buy:f06",
-   "thanks:f11"
+  "incident": [
+   "preacher:lazy",
+   "missionary:lazy",
+   "collector:ambitious",
+   "builder:literalist",
+   "prophet:literalist",
+   "missionary:ambitious",
+   "witness:poet"
   ]
  },
  "event": {
@@ -2573,6 +2627,19 @@
     "after": "The child has asked which one."
    },
    "fell": [],
+   "petitions": [
+    {
+     "id": "tablet_good",
+     "reward": {
+      "power": 2
+     },
+     "season": 1,
+     "base": {
+      "works": 0
+     },
+     "text": "Carve a Tablet that does some good."
+    }
+   ],
    "souls": {
     "me": 0,
     "rivals": {
@@ -2582,6 +2649,7 @@
    "faith": 3.0549040000000005,
    "account": {
     "power": {
+     "the Registry": 2,
      "Faith": 2.40414,
      "reveal": -3
     },
@@ -2606,7 +2674,8 @@
    "line": {
     "by": 1,
     "text": "Vellamine has carved a new verse. Her people got it wrong too. It is some comfort."
-   }
+   },
+   "opened": 2
   },
   {
    "season": 2,
@@ -2615,39 +2684,10 @@
      "kind": "reveal",
      "target": null,
      "tablet": "t3",
-     "changed": 3,
+     "changed": 4,
      "ruined": false
     },
-    "offices": [
-     {
-      "office": "missionary",
-      "by": "f02",
-      "trait": "lazy",
-      "won": 0,
-      "field": 0,
-      "text": "Roesia does not go out much, but is on good terms with everyone, including Vellamine's missionary, who now also does not go out much."
-     },
-     {
-      "office": "collector",
-      "by": "f03",
-      "trait": "lazy",
-      "text": "Umfrey collected from the two nearest houses and called it a round."
-     },
-     {
-      "office": "builder",
-      "by": "f06",
-      "trait": "ambitious",
-      "work": "shrine",
-      "waiting": 9,
-      "text": "Ysolt's work comes in larger and dearer than asked, with Ysolt's name over the door in larger letters than yours."
-     },
-     {
-      "office": "witness",
-      "by": "f05",
-      "trait": "lazy",
-      "text": "Hesper is your Witness, and will mention it to anyone who asks."
-     }
-    ]
+    "offices": []
    },
    "rivals": {
     "1": {
@@ -2665,50 +2705,31 @@
        "trait": "literalist"
       },
       {
-       "office": "missionary",
-       "by": "r1-05",
-       "trait": "zealot",
-       "won": 1,
-       "field": 0
-      },
-      {
-       "office": "collector",
-       "by": "r1-07",
-       "trait": "lazy"
-      },
-      {
-       "office": "builder",
-       "by": "r1-09",
-       "trait": "drunk",
-       "work": "shrine",
-       "waiting": 6
-      },
-      {
        "office": "prophet",
        "by": "r1-01",
        "trait": "zealot"
-      },
-      {
-       "office": "witness",
-       "by": "r1-11",
-       "trait": "ambitious"
       }
      ]
     }
    },
    "notes": [],
    "fell": [],
+   "petitions": [],
    "souls": {
     "me": 0,
     "rivals": {
-     "1": 1
+     "1": 0
     }
    },
    "faith": 3.7078372799999997,
    "account": {
+    "heresy": {
+     "forgetting": -0.35,
+     "Scripture": 0.35
+    },
     "power": {
      "Faith": 2.4203688000000003,
-     "reveal": -2
+     "reveal": -3
     },
     "faith": {
      "forgetting": -1.9736379200000016,
@@ -2722,8 +2743,7 @@
     },
     "offerings": {
      "upkeep of Oddities": -1,
-     "Scripture": 0.28125,
-     "collection": 1
+     "Scripture": -0.125
     }
    },
    "headdesk": "You make a sound that, at your level, registers as weather.",
@@ -2732,7 +2752,8 @@
    "line": {
     "by": 1,
     "text": "Vellamine has read your Scripture and called it brave."
-   }
+   },
+   "opened": 3
   },
   {
    "season": 3,
@@ -2741,7 +2762,7 @@
      "kind": "reveal",
      "target": null,
      "tablet": "t6",
-     "changed": 5,
+     "changed": 6,
      "ruined": true
     },
     "offices": [
@@ -2752,17 +2773,12 @@
       "text": "Elfreda preached for four minutes and let everyone go early. It is the most popular thing the temple has ever done."
      },
      {
-      "office": "builder",
-      "by": "f06",
-      "trait": "ambitious",
-      "work": "shrine",
-      "waiting": 9
-     },
-     {
-      "office": "prophet",
-      "by": "f07",
-      "trait": "literalist",
-      "text": "Mabel is your Prophet. They will hear exactly what you say and repeat it as if it were a contract."
+      "office": "missionary",
+      "by": "f02",
+      "trait": "lazy",
+      "won": 0,
+      "field": 0,
+      "text": "Roesia does not go out much, but is on good terms with everyone, including Vellamine's missionary, who now also does not go out much."
      }
     ]
    },
@@ -2789,51 +2805,35 @@
        "field": 0
       },
       {
-       "office": "collector",
-       "by": "r1-07",
-       "trait": "lazy"
-      },
-      {
-       "office": "builder",
-       "by": "r1-09",
-       "trait": "drunk",
-       "work": "shrine",
-       "waiting": 6
-      },
-      {
        "office": "prophet",
        "by": "r1-01",
        "trait": "zealot"
-      },
-      {
-       "office": "witness",
-       "by": "r1-11",
-       "trait": "ambitious"
       }
      ]
     }
    },
    "notes": [],
    "fell": [],
+   "petitions": [],
    "souls": {
     "me": 0,
     "rivals": {
      "1": 1
     }
    },
-   "faith": 4.4989362289727985,
+   "faith": 4.469302598515199,
    "account": {
     "heresy": {
-     "forgetting": -0.35,
-     "Scripture": 0.35
+     "forgetting": -0.7,
+     "Scripture": 0.7
     },
     "power": {
-     "Faith": 2.743113988048,
-     "reveal": -2
+     "Faith": 2.7348824240319995,
+     "reveal": -3
     },
     "faith": {
-     "forgetting": -2.4735197232192014,
-     "worship": 3.972455952192,
+     "forgetting": -2.470227097612799,
+     "worship": 3.939529696127998,
      "Scripture": 2,
      "preaching": 1
     },
@@ -2843,12 +2843,13 @@
      "being seen to act": -2
     },
     "devotion": {
-     "habit": -0.022499999999999964,
+     "habit": -0.01499999999999968,
+     "Scripture": -0.04999999999999982,
      "preaching": 0.15000000000000036
     },
     "offerings": {
-     "upkeep of Oddities": -2,
-     "Scripture": -0.21875
+     "upkeep of Oddities": -0.75,
+     "Scripture": -0.625
     }
    },
    "headdesk": "You rest your forehead on the edge of a cloud for a while.",
@@ -2857,7 +2858,8 @@
    "line": {
     "by": 1,
     "text": "Vellamine's newest Tablet says something about lamps. Nobody can agree what."
-   }
+   },
+   "opened": 4
   },
   {
    "season": 4,
@@ -2866,8 +2868,8 @@
      "kind": "reveal",
      "target": null,
      "tablet": "t8",
-     "changed": 4,
-     "ruined": false
+     "changed": 6,
+     "ruined": true
     },
     "offices": [
      {
@@ -2876,35 +2878,24 @@
       "trait": "lazy"
      },
      {
-      "office": "missionary",
-      "by": "f08",
-      "trait": "lazy",
-      "won": 1,
-      "field": 0
-     },
-     {
       "office": "collector",
-      "by": "f01",
-      "trait": "literalist",
-      "text": "Tibby collected exactly what was owed and gave receipts. People thanked them, which has never happened to a collector before."
+      "by": "f11",
+      "trait": "ambitious",
+      "text": "Wren collects more than anyone ever has. Wren also has a new hat."
      },
      {
       "office": "builder",
-      "by": "f06",
-      "trait": "ambitious",
+      "by": "f07",
+      "trait": "literalist",
       "work": "shrine",
-      "waiting": 9
+      "waiting": 6,
+      "text": "Mabel builds exactly what was drawn, to the inch, including the mistake in the drawing."
      },
      {
       "office": "prophet",
-      "by": "f07",
-      "trait": "literalist"
-     },
-     {
-      "office": "witness",
-      "by": "f04",
-      "trait": "poet",
-      "text": "Martin is your Witness. Whatever you do will be told better than it happened."
+      "by": "f01",
+      "trait": "literalist",
+      "text": "Tibby is your Prophet. They will hear exactly what you say and repeat it as if it were a contract."
      }
     ]
    },
@@ -2946,11 +2937,6 @@
        "office": "prophet",
        "by": "r1-01",
        "trait": "zealot"
-      },
-      {
-       "office": "witness",
-       "by": "r1-11",
-       "trait": "ambitious"
       }
      ]
     }
@@ -2959,55 +2945,55 @@
    "registry": {
     "year": 1,
     "min": 8,
-    "faith": 27.924378600425587,
+    "faith": 26.559923713072358,
     "strikes": 0
    },
    "fell": [],
+   "petitions": [],
    "souls": {
-    "me": 1,
+    "me": 0,
     "rivals": {
      "1": 1
     }
    },
-   "faith": 5.662701091452789,
+   "faith": 4.327879834557159,
    "account": {
     "heresy": {
-     "forgetting": -0.7,
-     "Scripture": 0.7
+     "forgetting": -1.3499999999999999,
+     "Scripture": 1.0499999999999998,
+     "collection": 0.3
     },
     "power": {
-     "Faith": 3.191352456208352,
+     "Faith": 2.8197456173357445,
      "reveal": -3
     },
     "faith": {
-     "forgetting": -3.10270873338062,
-     "worship": 4.690409824833409,
-     "Scripture": 3.0749999999999993,
+     "forgetting": -2.951102634785819,
+     "worship": 4.278982469342978,
+     "Scripture": 2,
      "preaching": 1
     },
     "mystery": {
-     "habit": -1.288171520000006,
-     "Oddities": 10.5,
+     "habit": -1.4081715199999962,
+     "Oddities": 12,
      "being seen to act": -2
     },
     "devotion": {
-     "habit": -0.041906250000000256,
-     "Scripture": 0.001875000000000071,
+     "habit": -0.02024999999999988,
+     "Scripture": -0.09999999999999964,
      "preaching": 0.15000000000000036
     },
     "offerings": {
-     "upkeep of Oddities": -1.84375,
-     "Scripture": -0.71875,
-     "collection": 2
-    },
-    "souls": {
-     "mission": 1
+     "upkeep of Oddities": -2.875,
+     "Scripture": -1.125,
+     "collection": 4
     }
    },
    "headdesk": "You ask Pim whether all gods have this problem. Pim says yes, and that the large ones have it louder.",
    "facepalm": true,
    "memo": "Year end. The Registry has noted your continued existence and has no further comment at this time.",
-   "line": null
+   "line": null,
+   "opened": null
   },
   {
    "season": 5,
@@ -3016,8 +3002,8 @@
      "kind": "reveal",
      "target": null,
      "tablet": "t11",
-     "changed": 6,
-     "ruined": true
+     "changed": 5,
+     "ruined": false
     },
     "offices": [
      {
@@ -3026,26 +3012,35 @@
       "trait": "lazy"
      },
      {
+      "office": "missionary",
+      "by": "f06",
+      "trait": "ambitious",
+      "won": 1,
+      "field": 0,
+      "text": "Ysolt brings people in. Afterwards they tend to describe themselves as followers of Ysolt."
+     },
+     {
       "office": "collector",
-      "by": "f01",
-      "trait": "literalist"
+      "by": "f11",
+      "trait": "ambitious"
      },
      {
       "office": "builder",
-      "by": "f06",
-      "trait": "ambitious",
+      "by": "f07",
+      "trait": "literalist",
       "work": "shrine",
-      "waiting": 9
+      "waiting": 6
      },
      {
       "office": "prophet",
-      "by": "f07",
+      "by": "f01",
       "trait": "literalist"
      },
      {
       "office": "witness",
       "by": "f04",
-      "trait": "poet"
+      "trait": "poet",
+      "text": "Martin is your Witness. Whatever you do will be told better than it happened."
      }
     ]
    },
@@ -3071,42 +3066,48 @@
    },
    "notes": [],
    "fell": [],
+   "petitions": [],
    "souls": {
-    "me": 0,
+    "me": 1,
     "rivals": {
      "1": 2
     }
    },
-   "faith": 5.520453872038981,
+   "faith": 5.553796731560084,
    "account": {
     "heresy": {
-     "forgetting": -1.0499999999999998,
-     "Scripture": 1.0499999999999998
+     "forgetting": -1.5,
+     "Scripture": 1.4000000000000001,
+     "collection": 0.30000000000000004,
+     "mission": 0.5
     },
     "power": {
-     "Faith": 3.309136592244873,
+     "Faith": 3.2804969730186997,
      "reveal": -3
     },
     "faith": {
-     "forgetting": -3.7160924969405116,
-     "worship": 5.161546368979494,
-     "Scripture": 3.0749999999999993,
+     "forgetting": -3.568191160514715,
+     "worship": 5.031987892074799,
+     "Scripture": 3.09,
      "preaching": 1
     },
     "mystery": {
-     "habit": -2.1851177984000003,
+     "habit": -2.295517798399999,
      "Oddities": 14.5,
      "being seen to act": -2
     },
     "devotion": {
-     "habit": -0.0509015625,
-     "Scripture": -0.04812499999999975,
+     "habit": -0.01833750000000034,
+     "Scripture": -0.14250000000000007,
      "preaching": 0.15000000000000036
     },
     "offerings": {
-     "upkeep of Oddities": -0.78125,
-     "Scripture": -1.21875,
-     "collection": 2
+     "upkeep of Oddities": -2.375,
+     "Scripture": -1.625,
+     "collection": 4
+    },
+    "souls": {
+     "mission": 1
     }
    },
    "headdesk": "You draft a clarification. Then you remember how clarifications travel.",
@@ -3115,8 +3116,34 @@
    "line": {
     "by": 1,
     "text": "Vellamine's miracle was mostly lighting. It worked."
-   }
+   },
+   "opened": 6
   }
  ],
- "book": null
+ "book": null,
+ "petitions": [
+  {
+   "id": "convert_three",
+   "reward": {
+    "faith": 6
+   },
+   "season": 1,
+   "base": {
+    "works": 0
+   },
+   "text": "Win three souls in one season."
+  },
+  {
+   "id": "lead_rival",
+   "reward": {
+    "power": 3
+   },
+   "season": 2,
+   "base": {
+    "reveal": 1,
+    "works": 0
+   },
+   "text": "Have more souls than Vellamine."
+  }
+ ]
 }
