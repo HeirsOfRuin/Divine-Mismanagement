@@ -9,6 +9,24 @@ seeds, 7 at 400 and 8 at 300; a gap under it is not a result.
 Nothing here has been checked by a person playing. These are the numbers a
 careful playtest should argue with.
 
+## Round 4 (2026-11-15): the story calibration
+
+Registry goals removed; story scenes with small effects; the Committee's
+standing effect. Chapter 1, careful play: 36% ±2.4 before softening the
+Committee, 41% ±2.5 after (400 seeds); never silent 29%, crusader 38%, random
+0% (400 seeds, before softening). Without the goals, careful play fell from 44%
+to 36%: their rewards had been carrying it.
+
+Story paths, careful play, 200 games each (floor ~10):
+
+| Path | Win |
+|---|---|
+| Committee under Aldous, then dissolved (3 souls, Heresy +2) | 36% |
+| ... dissolved, softened to 2 souls, Heresy +1 | 40% |
+| Committee under Aldous, report endorsed | 49% |
+| Committee under Odo | 50% |
+| No committee | 47% |
+
 ## Round 3 (2026-11-14): after playtest 1
 
 Guided start, Registry goals, villages in regions with travel

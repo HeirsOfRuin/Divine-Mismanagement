@@ -4,7 +4,10 @@ You are a minor god with twelve worshippers, and every one of them is an idiot.
 
 **Playtest build:** https://claude.ai/artifact/8jDtk9gwMTvE1joPgCJ3jA (private to the author until shared).
 
-Status (2026-11-14, after playtest 1): **easier to read, introduced gradually,
+Status (2026-11-15, after playtest 3): **story calibration in Chapter 1**: a
+backstory, a cast, scenes whose choices come back, the Book as the village's
+account, an ending. Awaiting the author's verdict (`docs/FRAME-story.md`).
+Earlier status, status (2026-11-14, after playtest 1): **easier to read, introduced gradually,
 with goals and a map.** See `docs/FRAME-playtest-1.md`. Before that: Story (three chapters) or
 Custom (1-5 rivals, 1-5 regions, starting resources, 30-60 seasons). Rank, the
 rare acts (High Prophet, holy objects, Wonders, Saints) and the Holy Book are in

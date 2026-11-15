@@ -12,6 +12,7 @@ import { CUSTOM } from '../data/match.data.js';
 import { streamFor } from './rng.js';
 import { makeFlock } from './followers.js';
 import { matchFrom, layout, personasFor } from './world.js';
+import { castFlock } from './story.js';
 
 export const SAVE_KEY = 'divine-mismanagement.save.v1'; // never rename
 export const SAVE_VERSION = 1;
@@ -48,11 +49,12 @@ export function newGame({ seed = 1, name = 'the God of Doors That Stick', ...opt
     const gi = i + 1;
     gods.push(newGod(p.name, makeFlock(rng, names.slice(12 * gi, 12 * gi + 12), `r${gi}-`), CONFIG.rivalStart, { persona: p.id, home: homeOf[gi], field: homeOf[gi], travelling: 0 }));
   });
-  return {
+  return castFlock({
     v: SAVE_VERSION, seed, season: 1, over: false, outcome: null, nextId: 1,
     match, regions, villages, gods,
     ledger: [], spent: {}, event: null, chronicle: [], book: null,
-  };
+    flags: {}, scenes: [], seenScenes: [],
+  });
 }
 
 /** MIGRATIONS[v](save) returns the save at version v + 1. Add one per version bump. */

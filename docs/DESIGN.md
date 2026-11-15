@@ -367,6 +367,19 @@ preview per candidate, the Revelation played back one person at a time with
 changed words marked, a World/Map tab drawn by `map()` in `sprites.js` with
 HTML village pins over it, and a shorter season report.
 
+### The story calibration (2026-11-15)
+
+See `docs/FRAME-story.md`. `src/engine/story.js` puts the cast into a Story
+game's flock (`castFlock`), queues scenes at dawn (`queueScenes`), and holds
+them until answered with `chooseScene()` (like a ruling, before the act).
+Choices set `s.flags`; later scenes `require` flags; the ending reads them
+(`epilogue`, `finalChoice`, `chooseEnding`). Text lives in
+`src/data/content/story.data.js`. `book.js` now builds sections from what
+happened (opening by the season-1 choice, the words, wonders, saints, the
+rival, the Committee), each bent by the second scribe's trait. The Registry's
+goals (`issuePetitions`) are no longer called; the step-by-step playback and
+its word diff are gone.
+
 Not built yet: domains, generations, saints, schism as an ending, the Vale,
 more rivals, sound, a tutorial beyond Pim's first memo and the How it works
 sheet, an animated playback (the report shows each step as a list), a

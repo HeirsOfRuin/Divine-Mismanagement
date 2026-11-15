@@ -10,7 +10,7 @@
 // Patterns kept from before: empty and locked states say why (rule 6); saves
 // autosave; a throw never leaves a dead button (busy released in finally).
 
-import { newGame, advance, preview, post, commission, sendMissionary, ruleOn, rulingOptions } from '../engine/turn.js';
+import { newGame, advance, preview, post, commission, sendMissionary, ruleOn, rulingOptions, chooseScene, chooseEnding } from '../engine/turn.js';
 import { SAVE_KEY, serialize, deserialize, toCode, fromCode } from '../engine/state.js';
 import { render as renderVerse } from '../engine/render.js';
 import { makeRevelation } from '../engine/telephone.js';
@@ -18,7 +18,8 @@ import { holder, posted } from '../engine/offices.js';
 import { scriptureSum } from '../engine/scripture.js';
 import { grandOpen } from '../engine/acts.js';
 import { bookEffects } from '../engine/book.js';
-import { isOpen, opensIn, noteFor, rewardText } from '../engine/guide.js';
+import { isOpen, opensIn, noteFor } from '../engine/guide.js';
+import { currentScene, epilogue, finalChoice, finalText, isStory } from '../engine/story.js';
 import { seasonName, registryMinimum, nextCheck, reviewStanding, effectsText, tabletCounts, officeText, worstVerse, wantText } from '../engine/derive.js';
 import { thresholds, living } from '../engine/world.js';
 import { CONFIG, OUTCOMES } from '../data/config.data.js';
@@ -163,9 +164,9 @@ function villageTab() {
     ${showNote ? `<section class="note"><div class="head"><canvas data-sprite="pim" width="16" height="15" style="width:24px;height:22px"></canvas><b>${esc(note.title)}</b></div><p>${esc(note.text)}</p><button class="small-btn" data-act="note-ok">Understood</button></section>` : ''}
     ${state.event ? `<section class="problem">${rulingHtml()}</section>` : ''}
     <section class="card goals">
-      <div class="caps">The Registry asks</div>
-      ${(state.petitions || []).map((p) => `<div class="goal"><span class="box"></span><span>${esc(p.text)}</span><small>${rewardText(p.reward)}</small></div>`).join('') || '<p class="hint">Nothing more, for now.</p>'}
+      <div class="caps">${isStory(state) ? 'Your appeal' : 'The Registry'}</div>
       <div class="goal"><span class="box ${g.faith >= line ? 'ok' : ''}"></span><span>Faith ${line} by season ${at}</span><small>you have ${whole(g.faith)}${g.strikes ? ' · <b class="down">one more miss and you are archived</b>' : ''}</small></div>
+      <p class="hint">${isStory(state) ? `The Registry hears your appeal after season ${state.match.seasons}. What it will ask is on the World page.` : `The Review is after season ${state.match.seasons}.`}</p>
     </section>
     <h2>This season, one act</h2>
     <div class="tiles">${actTiles()}</div>
@@ -281,17 +282,17 @@ function scriptureTab() {
 function bookHtml() {
   const b = state.book;
   const roman = (n) => ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'][n] || String(n);
+  const words = () => b.chapters.map((c, i) => {
+    const was = c.formerly && c.formerly.replace(/^the /, 'The ') !== c.title ? ` <small class="formerly">formerly ${esc(c.formerly)}</small>` : '';
+    return `<section class="chapter"><div class="caps">${roman(i + 1)}. ${esc(c.title)}${was}</div>
+      <p class="serif verse-text">${esc(renderVerse(c.verse))}</p>
+      <details class="footnote"><summary>What you actually said</summary><p>${esc(c.said)}</p>${c.notes.length ? `<p>${c.notes.map((n) => `${esc(who(n.by).name)} (${TRAITS[n.trait].label}) ${esc(n.note)} while copying it out`).join('; ')}.</p>` : ''}</details></section>`;
+  }).join('');
   return `<div class="book">
     <h2 class="book-title">${esc(b.title)}</h2>
     <p class="serif center">${esc(b.preface)}</p>
     <p class="hint center">${esc(b.compiled)}</p>
-    ${b.chapters.map((c, i) => {
-      const now = renderVerse(c.verse), carved = renderVerse(c.carved);
-      const was = c.formerly && c.formerly.replace(/^the /, 'The ') !== c.title.replace(/^the /, 'The ') ? `<small class="formerly">formerly ${esc(c.formerly.replace(/^the /, 'the '))}</small>` : '';
-      return `<section class="chapter"><div class="caps">${roman(i + 1)}. ${esc(c.title.replace(/^the /, 'The '))} ${was}</div>
-        <p class="serif verse-text"><span class="vnum">1</span> ${diffHtml(carved, now)}</p>
-        <p class="footnote">You said: ${esc(c.said)}${carved !== c.said ? `<br>It was carved: ${esc(carved)}` : ''}${c.notes.length ? `<br>${c.notes.map((n) => `${esc(who(n.by).name)} (${TRAITS[n.trait].label}) ${esc(n.note)}`).join('; ')}.` : '<br>The scribes copied this one faithfully.'}</p></section>`;
-    }).join('')}
+    ${(b.sections || [{ heading: 'The words', passages: [], chapters: true }]).map((sec, k) => `<h3 class="book-head">${roman(k + 1)}. ${esc(sec.heading)}</h3>${sec.passages.map((p) => `<p class="serif verse-text">${esc(p)}</p>`).join('')}${sec.chapters ? words() : ''}`).join('')}
     <button class="primary" data-act="close">Close the Book</button></div>`;
 }
 
@@ -351,8 +352,10 @@ const HOW = `<h2>How it works</h2>
 // ---- sheets ------------------------------------------------------------------------
 
 function sheetHtml() {
+  // A waiting scene comes before everything else, and cannot be dismissed.
+  if (!sheet && state && !state.over && state.scenes && state.scenes.length) return `<div class="scrim"><div class="sheet">${sceneHtml()}</div></div>`;
   if (!sheet) return '';
-  const kinds = { reveal: revealHtml, miracle: miracleHtml, answer: answerHtml, dream: dreamHtml, simple: simpleHtml, target: targetHtml, pick: pickHtml, assign: assignHtml, book: bookHtml, villageSheet: villageSheetHtml, playback: playbackHtml, report: () => reportHtml(sheet.record), text: () => sheet.html };
+  const kinds = { reveal: revealHtml, miracle: miracleHtml, answer: answerHtml, dream: dreamHtml, simple: simpleHtml, target: targetHtml, pick: pickHtml, assign: assignHtml, book: bookHtml, villageSheet: villageSheetHtml, report: () => reportHtml(sheet.record), text: () => sheet.html };
   return `<div class="scrim"><div class="sheet">${kinds[sheet.kind]()}</div></div>`;
 }
 const footer = (go) => `<div class="row"><button data-act="close">Not now</button>${go}</div>`;
@@ -486,47 +489,37 @@ function dreamHtml() {
     <div class="stack">${g.flock.filter((f) => !f.known).map((f) => `<button class="choice" data-action="dream" data-id="${f.id}">${sprite(f, 26)}<span><b>${esc(f.name)}</b> ${esc(f.trade.label)}${f.office ? `<small>${OFFICES[f.office].label}</small>` : ''}</span></button>`).join('')}</div>${footer('')}`;
 }
 
-// ---- the telephone, played back ------------------------------------------------------
+// ---- scenes -----------------------------------------------------------------------
 
-// Word-level difference between two sentences, for showing what each person changed.
-function diffHtml(before, after) {
-  const a = before.split(' '), b = after.split(' ');
-  const L = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
-  for (let i = a.length - 1; i >= 0; i--) for (let j = b.length - 1; j >= 0; j--) L[i][j] = a[i] === b[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
-  // Runs of changed words are marked once, not word by word.
-  const out = [];
-  const push = (kind, w) => { const last = out[out.length - 1]; if (last && last.kind === kind) last.words.push(w); else out.push({ kind, words: [w] }); };
-  let i = 0, j = 0;
-  while (i < a.length || j < b.length) {
-    if (i < a.length && j < b.length && a[i] === b[j]) { push('same', b[j]); i++; j++; }
-    else if (j < b.length && (i >= a.length || L[i][j + 1] >= L[i + 1][j])) { push('ins', b[j]); j++; }
-    else { push('del', a[i]); i++; }
-  }
-  return out.map((r) => { const t = esc(r.words.join(' ')); return r.kind === 'same' ? t : `<${r.kind}>${t}</${r.kind}>`; }).join(' ');
-}
-
-function playbackHtml() {
-  const g = me();
-  const t = [...g.tablets, ...g.apocrypha].find((x) => x.id === sheet.tablet);
-  const shown = Math.min(sheet.step, t.steps.length);
-  const done = sheet.step > t.steps.length;
-  let prev = t.said;
-  const rows = t.steps.slice(0, shown).map((st) => {
-    const f = who(st.by);
-    const html = st.note ? diffHtml(prev, st.text) : esc(st.text);
-    prev = st.text;
-    return `<div class="step fresh">${sprite(f, 28)}<div><div class="who">${esc(f.name)} · ${TRAITS[st.trait].label} · ${esc(st.note || 'passed it on unchanged')}</div><div class="said serif">${html}</div></div></div>`;
-  }).join('');
-  const next = t.steps[shown];
-  return `<div class="sheet-head">${ico('reveal', 28)}<b>The Revelation, as it travelled</b></div>
-    <div class="chain"><div class="step"><canvas data-sprite="you" width="16" height="15" style="width:28px;height:26px"></canvas><div><div class="who">You said</div><div class="said serif">${esc(t.said)}</div></div></div>${rows}</div>
-    ${done ? `<article class="tablet carved"><div class="caps">Carved: ${esc(t.title)}</div><div class="verse">${esc(renderVerse(t.verse))}</div>${t.after ? `<div class="by">${esc(t.after)}</div>` : ''}<div class="counts">${esc(tabletCounts(g, t).text)}</div></article>
-      ${sheet.record.facepalm ? `<p class="facepalm"><canvas data-sprite="facepalm" width="16" height="15" style="width:40px;height:37px"></canvas> ${esc(sheet.record.headdesk || 'You put your head in your hands again.')}</p>` : ''}
-      <div class="row"><button class="primary" data-act="to-report">The rest of the season</button></div>`
-    : `<div class="row"><button data-act="skip-playback">Skip</button><button class="primary" data-act="next-step">${next ? `${esc(who(next.by).name)} passes it on` : 'Carve it'}</button></div>`}`;
+const portrait = (who_) => {
+  if (who_ === 'you') return '<canvas data-sprite="you" width="16" height="15" style="width:44px;height:41px"></canvas>';
+  if (who_ === 'pim') return '<canvas data-sprite="pim" width="16" height="15" style="width:44px;height:41px"></canvas>';
+  if (who_ === 'vellamine') return sun(1, 44);
+  const f = me().flock.find((x) => x.cast === who_);
+  return f ? sprite(f, 40) : '';
+};
+function sceneHtml() {
+  const sc = currentScene(state);
+  return `<div class="scene"><div class="portraits">${sc.who.map(portrait).join('')}</div>
+    <h2 class="scene-title">${esc(sc.title)}</h2>
+    ${sc.pages.map((p) => `<p class="serif">${esc(p)}</p>`).join('')}
+    <div class="stack">${sc.choices.map((c) => `<button class="choice" data-scene="${c.id}"><span><b>${esc(c.label)}</b>${c.note ? `<small>${esc(c.note)}</small>` : ''}</span></button>`).join('')}</div></div>`;
 }
 
 // ---- the season's report ------------------------------------------------------------
+
+// A Revelation's result in three lines: what you said, what was carved, what
+// came of it. How it got that way is one tap away, in plain sentences.
+function revealBlock(r) {
+  const g = me();
+  const t = [...g.tablets, ...g.apocrypha].find((x) => x.id === r.me.act.tablet);
+  const changed = t.steps.filter((st) => st.note);
+  return `<div class="reveal">
+    <p class="said-line"><span class="caps">You said</span> <span class="serif">${esc(t.said)}</span></p>
+    <article class="tablet carved"><div class="caps">Carved: ${esc(t.title)}</div><div class="verse">${esc(renderVerse(t.verse))}</div>${t.after ? `<div class="by">${esc(t.after)}</div>` : ''}<div class="counts">${esc(tabletCounts(g, t).text)}</div></article>
+    ${r.facepalm ? `<p class="facepalm"><canvas data-sprite="facepalm" width="16" height="15" style="width:40px;height:37px"></canvas> ${esc(r.headdesk || 'You put your head in your hands again.')}</p>` : ''}
+    <details><summary>How it got that way</summary>${changed.length ? changed.map((st) => `<p class="by">${esc(who(st.by).name)} (${TRAITS[st.trait].label}) ${esc(st.note)}.</p>`).join('') : '<p class="by">Nobody changed a word, which worries Pim.</p>'}</details></div>`;
+}
 
 function reportHtml(r) {
   const g = me();
@@ -555,13 +548,13 @@ function reportHtml(r) {
   }
   if (r.me.schism) news.push(`<b class="down">A schism: ${r.me.schism} left over a point of doctrine.</b>`);
   for (const i of r.fell || []) news.push(`<b>${esc(state.gods[i].name)} has fallen.</b> Her people are Unbothered again.`);
-  for (const p of r.petitions || []) news.push(`<b>The Registry is satisfied:</b> ${esc(p.text)} ${rewardText(p.reward)}.`);
   if (r.registry) news.push(`<span class="${r.registry.strikes ? 'down' : ''}">Year ${r.registry.year} end: the Registry wanted ${r.registry.min} Faith and found ${whole(r.registry.faith)}.${r.registry.strikes ? ' A notice of concern.' : ''}</span>`);
-  if (r.rankUp) news.push(`<b>You are now a ${esc(RANKS[r.rankUp].title)}.</b> ${esc(r.rankText || '')}${RANKS[r.rankUp].unlocks ? ` Opens: ${RANKS[r.rankUp].unlocks.map((k) => GRAND[k].label).join(', ')}.` : ''}`);
+  if (r.rankUp) news.push(`<b>You are now a ${esc(RANKS[r.rankUp].title)}.</b> ${RANKS[r.rankUp].unlocks ? ` Opens: ${RANKS[r.rankUp].unlocks.map((k) => GRAND[k].label).join(', ')}.` : ''}`);
   if (r.book) news.push(`<b>${esc(state.book.title)}</b> has been compiled. ${esc(state.book.compiled)} <button class="small-btn" data-act="read-book">Read it</button>`);
   const d = (m) => Object.values(r.account[m] || {}).reduce((x, y) => x + y, 0);
   const fig = (label, v, int) => `<span class="${v > 0.05 ? 'up' : v < -0.05 ? 'down' : ''}">${label} ${int ? `${v >= 0 ? '+' : '−'}${Math.abs(v)}` : signed(v) || '±0'}</span>`;
   return `<div class="caps">${esc(seasonName(r.season))}</div>
+    ${a.kind === 'reveal' ? revealBlock(r) : ''}
     <div class="figures">${fig('Souls', r.souls.me, true)}${fig('Faith', r.faith)}${fig('Power', d('power'))}${fig('Mystery', d('mystery'))}</div>
     <ul class="news">${news.map((n) => `<li>${n}</li>`).join('')}</ul>
     ${r.memo ? memoCard(r.memo, r) : ''}
@@ -573,22 +566,27 @@ function endingHtml() {
   const g = me();
   const o = OUTCOMES[state.outcome];
   const last = state.chronicle[state.chronicle.length - 1];
-  const worst = worstVerse(g);
-  const all = [...g.apocrypha, ...g.tablets];
   const label = state.outcome === 'rival_fell' && state.gods.length > 2 ? 'Every rival fell' : o.label;
+  const fc = finalChoice(state);
+  const ft = finalText(state);
+  const worst = worstVerse(g);
   return `<div class="ending">
     <div class="caps">${esc(seasonName(last.season))} · ${o.win ? 'a win' : 'a loss'} · ${esc(RANKS[g.rank].title)}</div>
     <h2>${esc(label)}</h2>
-    <p class="serif">${esc(last.ending || '')}</p>
-    ${worst ? `<p>The verse that did the most harm was ${esc(worst.tablet.title)}: “${esc(renderVerse(worst.tablet.verse))}”${worst.by ? ` Mostly the doing of ${esc(worst.by.name)} ${esc(worst.by.trade.label)}.` : ''}</p>` : ''}
-    <p>You put your head in your hands ${g.exasperation} time${g.exasperation === 1 ? '' : 's'}.</p>
-    ${state.book ? `<button class="book-cover" data-act="read-book"><span class="caps">${esc(state.book.title)}</span><small>Read the Book your people made of you.</small></button>` : `<h3 class="caps">Your Scripture, as it stood</h3>${all.length ? all.map((t) => `<p class="serif">${esc(t.title)}: ${esc(renderVerse(t.verse))}</p>`).join('') : '<p class="empty">You carved nothing.</p>'}`}
+    ${epilogue(state).map((p, i) => `<p class="${i ? '' : 'serif lead'}">${esc(p)}</p>`).join('')}
+    ${fc ? `<div class="card"><p class="serif">${esc(fc.prompt)}</p><div class="stack">${fc.options.map((x) => `<button class="choice" data-ending="${x.id}"><b>${esc(x.label)}</b></button>`).join('')}</div></div>` : ''}
+    ${ft ? `<p class="serif lead">${esc(ft)}</p>` : ''}
+    ${worst ? `<p class="hint">The verse that did the most harm: ${esc(worst.tablet.title)}${worst.by ? `, mostly the doing of ${esc(worst.by.name)}` : ''}. You put your head in your hands ${g.exasperation} time${g.exasperation === 1 ? '' : 's'}.</p>` : ''}
+    ${state.book ? `<button class="book-cover" data-act="read-book"><span class="caps">${esc(state.book.title)}</span><small>What they believe happened.</small></button>` : ''}
     <div class="stack"><button data-act="copy-scripture">Copy your Scripture as text</button><button class="primary" data-act="new">Play again</button></div></div>`;
 }
 
 function scriptureText() {
   const g = me();
-  if (state.book) return [state.book.title, '', state.book.preface, '', ...state.book.chapters.map((c, i) => `${i + 1}. ${c.title.replace(/^the/, 'The')}\n${renderVerse(c.verse)}\n(You said: ${c.said})\n`)].join('\n');
+  if (state.book) {
+    const b = state.book;
+    return [b.title, '', b.preface, '', ...(b.sections || []).flatMap((sec, k) => [`${k + 1}. ${sec.heading}`, '', ...sec.passages, '', ...(sec.chapters ? b.chapters.map((c) => `${c.title}\n${renderVerse(c.verse)}\n(You said: ${c.said})\n`) : [])])].join('\n');
+  }
   return [`The Scripture of ${g.name}`, '', ...[...g.apocrypha, ...g.tablets].map((t) => `${t.title.replace(/^the/, 'The')}\n${renderVerse(t.verse)}\n`)].join('\n');
 }
 
@@ -604,16 +602,18 @@ function startDraft() {
 function act(input) {
   const { state: next, record } = advance(state, { act: input });
   state = next; draft = null; save();
-  sheet = input.kind === 'reveal' ? { kind: 'playback', tablet: record.me.act.tablet, step: 1, record } : { kind: 'report', record };
+  sheet = { kind: 'report', record };
 }
 
 function onClick(e) {
-  const t = e.target.closest('[data-act],[data-tab],[data-action],[data-ruling],[data-template],[data-chain],[data-setmode],[data-chapter],[data-field],[data-assign],[data-draft]');
+  const t = e.target.closest('[data-act],[data-tab],[data-action],[data-ruling],[data-template],[data-chain],[data-setmode],[data-chapter],[data-field],[data-assign],[data-draft],[data-scene],[data-ending]');
   if (!t || busy || t.disabled) return;
   busy = true;
   try {
     const d = t.dataset;
-    if (d.tab) { tab = d.tab; sheet = null; }
+    if (d.scene) { state = chooseScene(state, d.scene); save(); sheet = state.sceneAfter ? { kind: 'text', html: `<p class="serif">${esc(state.sceneAfter)}</p><button class="primary" data-act="close">Continue</button>` } : null; }
+    else if (d.ending) { state = chooseEnding(state, d.ending); save(); }
+    else if (d.tab) { tab = d.tab; sheet = null; }
     else if (d.setmode) { setup.name = document.getElementById('godname')?.value || setup.name; setup.mode = d.setmode; }
     else if (d.chapter) { setup.name = document.getElementById('godname')?.value || setup.name; setup.chapter = d.chapter; }
     else if (d.field !== undefined) { state = sendMissionary(state, Number(d.field)); save(); sheet = null; }
@@ -664,9 +664,6 @@ function onClick(e) {
       else if (a.startsWith('open-')) { sheet = { kind: 'simple', id: a.slice(5) }; }
       else if (a === 'assign') { sheet = { kind: 'assign', office: d.office }; }
       else if (a === 'target-smite') { sheet = { kind: 'target' }; }
-      else if (a === 'next-step') { sheet.step++; }
-      else if (a === 'skip-playback') { sheet.step = 99; }
-      else if (a === 'to-report') { sheet = { kind: 'report', record: sheet.record }; }
       else if (a === 'export') { showCode(); }
       else if (a === 'copy-scripture') { sheet = { kind: 'text', html: `<h2>Your Scripture</h2><textarea readonly rows="12">${esc(scriptureText())}</textarea><button class="primary" data-act="close">Done</button>` }; }
       // An in-page box, not prompt(): some hosts (the artifact viewer, some app

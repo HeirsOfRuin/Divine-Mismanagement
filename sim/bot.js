@@ -9,7 +9,8 @@
 import { TEMPLATES } from '../src/data/lexicon.data.js';
 import { OFFICE_IDS, WORK_IDS } from '../src/data/offices.data.js';
 import { CONFIG } from '../src/data/config.data.js';
-import { preview, orders, rulingOptions, ruleOn } from '../src/engine/turn.js';
+import { preview, orders, rulingOptions, ruleOn, chooseScene } from '../src/engine/turn.js';
+import { currentScene } from '../src/engine/story.js';
 import { streamFor } from '../src/engine/rng.js';
 import { leaderAgainst, thresholds } from '../src/engine/world.js';
 import { registryMinimum } from '../src/engine/derive.js';
@@ -156,14 +157,22 @@ const value = (e) => (e.faith || 0) + 3 * (e.souls || 0) + 5 * (e.devotion || 0)
 export function decide(s, policyName = 'adaptive', fixed = {}) {
   const pol = POLICIES[policyName];
   if (!pol) throw new Error(`no policy ${policyName}`);
-  const g = s.gods[0];
+  // Scenes first, by the same valuation as rulings (ties: the first choice);
+  // the random player picks at random. `opts.scene` can force a choice by scene id.
+  for (let guard = 0; s.scenes && s.scenes.length && guard < 10; guard++) {
+    const sc = currentScene(s);
+    const forced = fixed && fixed.__scenes && fixed.__scenes[sc.id];
+    const pick = forced || (pol.random ? streamFor(s.seed, s.season, `bot-scene-${guard}`).pick(sc.choices).id : [...sc.choices].sort((a, b) => value(b.effects) - value(a.effects))[0].id);
+    s = chooseScene(s, pick);
+  }
   if (s.event) {
     const opts = rulingOptions(s).filter((o) => o.ok);
     s = ruleOn(s, pol.random ? streamFor(s.seed, s.season, 'bot-ruling').pick(opts).i : opts.sort((a, b) => value(b.effects) - value(a.effects) || a.i - b.i)[0].i);
   }
   if (pol.random) return decideRandom(s);
-  const want = { ...(pol.staff ? pol.staff(g) : {}), ...fixed };
-  if (Object.keys(fixed).length && pol.staff === undefined) Object.assign(want, fixed);
+  const g = s.gods[0];
+  const posts = Object.fromEntries(Object.entries(fixed).filter(([k]) => k !== '__scenes'));
+  const want = { ...(pol.staff ? pol.staff(s.gods[0]) : {}), ...posts };
   // Only offices that have opened (guided matches open them one at a time).
   const postings = Object.fromEntries(OFFICE_IDS.filter((o) => o in want && isOpen(s, `office:${o}`)).map((o) => [o, want[o]]));
   let work;

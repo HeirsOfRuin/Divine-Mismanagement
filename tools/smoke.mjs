@@ -15,7 +15,7 @@ export const TURNS = Number(process.env.TURNS || 10);
 
 const closeSheets = async (page) => {
   for (let g = 0; g < 6; g++) {
-    const b = page.locator('.scrim [data-act="close"], .scrim [data-act="to-report"], .scrim [data-act="skip-playback"]');
+    const b = page.locator('.scrim [data-act="close"]');
     if (!(await b.count())) return;
     await b.first().click();
   }
@@ -28,6 +28,8 @@ const closeSheets = async (page) => {
  *  that stays silent. */
 export async function advanceOnce(page, i = 0) {
   const before = (await page.locator(CLOCK).textContent())?.trim();
+  // Story scenes come first: take the first choice, read what follows.
+  for (let k = 0; k < 6 && (await page.locator('[data-scene]').count()); k++) { await page.locator('[data-scene]').first().click(); await closeSheets(page); }
   if (await page.locator('[data-act="note-ok"]').count()) await page.click('[data-act="note-ok"]');
   if (await page.locator('[data-ruling]:not([disabled])').count()) { await page.locator('[data-ruling]:not([disabled])').first().click(); await closeSheets(page); }
   if (i === 0) {
@@ -39,7 +41,6 @@ export async function advanceOnce(page, i = 0) {
     await page.click('[data-act="open-reveal"]');
     await page.locator('.face[data-chain]:not([disabled])').nth(1).click();
     await page.locator('[data-action="reveal"]').click();
-    for (let k = 0; k < 6 && (await page.locator('[data-act="next-step"]').count()); k++) await page.click('[data-act="next-step"]');
   } else {
     await page.click('[data-act="open-silent"]');
     await page.click('[data-action="silent"]');

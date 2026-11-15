@@ -34,9 +34,9 @@
    "region": 0,
    "x": 64,
    "y": 47,
-   "unbothered": 7,
+   "unbothered": 4,
    "held": [
-    13,
+    16,
     16
    ]
   }
@@ -44,16 +44,16 @@
  "gods": [
   {
    "name": "the God of Doors That Stick",
-   "souls": 13,
-   "faith": 32.11372044463244,
-   "power": 3.659633814386444,
-   "mystery": 76.3984546816,
+   "souls": 16,
+   "faith": 42.4439118276112,
+   "power": 6.105646832262184,
+   "mystery": 69.2721411584,
    "offerings": 0,
-   "devotion": 5.103912500000002,
+   "devotion": 5.393988679687501,
    "home": 0,
    "field": 0,
    "travelling": 0,
-   "heresy": 0.7000000000000002,
+   "heresy": 0.09999999999999987,
    "entitlement": 0,
    "charm": 0,
    "guard": 1,
@@ -62,22 +62,22 @@
    "flock": [
     {
      "id": "f01",
-     "name": "Tibby",
+     "name": "Odo",
      "trade": {
-      "id": "beekeeper",
-      "label": "the Beekeeper",
-      "good": "honey",
-      "rider": ", and {name}'s honey is declared medicinal"
+      "id": "miller",
+      "label": "the Miller",
+      "good": "flour",
+      "rider": ", and {name}'s mill is henceforth the Holy Mill"
      },
      "household": 0,
      "traits": [
-      "literalist",
-      "drunk"
+      "literalist"
      ],
      "known": true,
      "office": "prophet",
      "settling": 0,
-     "want": "rain"
+     "want": "rain",
+     "cast": "odo"
     },
     {
      "id": "f02",
@@ -93,7 +93,7 @@
       "lazy"
      ],
      "known": true,
-     "office": null,
+     "office": "preacher",
      "settling": 0,
      "want": "goat"
     },
@@ -111,32 +111,33 @@
       "lazy",
       "poet"
      ],
-     "known": false,
+     "known": true,
      "office": null,
      "settling": 0,
      "want": "bench"
     },
     {
      "id": "f04",
-     "name": "Martin",
+     "name": "Brenna",
      "trade": {
-      "id": "miller",
-      "label": "the Miller",
-      "good": "flour",
-      "rider": ", and {name}'s mill is henceforth the Holy Mill"
+      "id": "alewife",
+      "label": "the Brewer",
+      "good": "ale",
+      "rider": ", and any thirst arising is to be settled at {name}'s"
      },
      "household": 1,
      "traits": [
-      "poet"
+      "drunk"
      ],
      "known": true,
-     "office": "witness",
+     "office": "missionary",
      "settling": 0,
-     "want": "hedge"
+     "want": "hedge",
+     "cast": "brenna"
     },
     {
      "id": "f05",
-     "name": "Hesper",
+     "name": "Maud",
      "trade": {
       "id": "clerk",
       "label": "the Clerk",
@@ -167,27 +168,28 @@
       "poet"
      ],
      "known": true,
-     "office": "missionary",
+     "office": "builder",
      "settling": 0,
      "want": "leak"
     },
     {
      "id": "f07",
-     "name": "Mabel",
+     "name": "Aldous",
      "trade": {
-      "id": "eeler",
-      "label": "the Eel-Catcher",
-      "good": "an eel",
-      "rider": ", and eels are to be eaten on feast days, at the usual price"
+      "id": "clerk",
+      "label": "the Clerk",
+      "good": "a permit",
+      "rider": ", by permit, obtainable from {name} for two eggs"
      },
      "household": 2,
      "traits": [
-      "literalist"
+      "ambitious"
      ],
      "known": true,
-     "office": "builder",
+     "office": "collector",
      "settling": 0,
-     "want": "supper"
+     "want": "supper",
+     "cast": "aldous"
     },
     {
      "id": "f08",
@@ -209,7 +211,7 @@
     },
     {
      "id": "f09",
-     "name": "Brenna",
+     "name": "Cuthwin",
      "trade": {
       "id": "carpenter",
       "label": "the Carpenter",
@@ -227,21 +229,22 @@
     },
     {
      "id": "f10",
-     "name": "Elfreda",
+     "name": "Hesper",
      "trade": {
-      "id": "shepherd",
-      "label": "the Shepherd",
-      "good": "wool",
-      "rider": ", and {name}'s sheep go first"
+      "id": "beekeeper",
+      "label": "the Beekeeper",
+      "good": "honey",
+      "rider": ", and {name}'s honey is declared medicinal"
      },
      "household": 3,
      "traits": [
-      "lazy"
+      "poet"
      ],
      "known": true,
-     "office": "preacher",
+     "office": "witness",
      "settling": 0,
-     "want": "back"
+     "want": "back",
+     "cast": "hesper"
     },
     {
      "id": "f11",
@@ -257,7 +260,7 @@
       "ambitious"
      ],
      "known": true,
-     "office": "collector",
+     "office": null,
      "settling": 0,
      "want": "dog"
     },
@@ -291,10 +294,10 @@
        "zeal": false
       },
       "modal": {
-       "strength": 1,
+       "strength": 2,
        "neg": false,
-       "let": true,
-       "lit": false,
+       "let": false,
+       "lit": true,
        "negDropped": false
       },
       "verb": {
@@ -307,21 +310,31 @@
        "via": "drunk",
        "lit": false
       },
-      "tail": null,
-      "rider": null,
+      "tail": {
+       "base": "with_kindness",
+       "cur": "with_kindness",
+       "via": null,
+       "lit": false
+      },
+      "rider": {
+       "by": "f07",
+       "name": "Aldous",
+       "good": "a permit",
+       "trade": "clerk",
+       "kind": "buy"
+      },
       "penalty": null,
       "gist": false,
       "bare": false
      },
-     "households": 4,
+     "households": 3,
      "title": "the Verse of the Manger",
      "after": "Every feeding trough in the parish has been attended to personally.",
      "said": "The faithful should welcome strangers with kindness.",
      "chain": [
       "f01",
       "f04",
-      "f07",
-      "f10"
+      "f07"
      ],
      "steps": [
       {
@@ -331,28 +344,16 @@
        "text": "The faithful are advised, though not ordered, to welcome strangers with kindness."
       },
       {
-       "by": "f01",
+       "by": "f04",
        "trait": "drunk",
        "note": "heard \"mangers\" for \"strangers\"",
        "text": "The faithful are advised, though not ordered, to welcome mangers with kindness."
       },
       {
-       "by": "f04",
-       "trait": "poet",
-       "note": "improved \"with kindness\" to \"while the dew still believes\"",
-       "text": "Let the faithful welcome mangers while the dew still believes."
-      },
-      {
        "by": "f07",
-       "trait": "literalist",
-       "note": "took \"while the dew still believes\" at its word",
-       "text": "Let the faithful welcome mangers while the dew is still devout."
-      },
-      {
-       "by": "f10",
-       "trait": "lazy",
-       "note": "left out \"while the dew is still devout\"",
-       "text": "Let the faithful welcome mangers."
+       "trait": "ambitious",
+       "note": "added a clause of their own",
+       "text": "The faithful are advised, though not ordered, to welcome mangers with kindness, having first bought a permit from Aldous."
       }
      ],
      "history": []
@@ -367,9 +368,9 @@
        "zeal": false
       },
       "modal": {
-       "strength": 2,
+       "strength": 1,
        "neg": false,
-       "let": false,
+       "let": true,
        "lit": false,
        "negDropped": false
       },
@@ -379,16 +380,16 @@
       },
       "object": {
        "base": "bread",
-       "cur": "beards",
-       "via": "drunk",
+       "cur": "oven_gold",
+       "via": "poet",
        "lit": false
       },
       "tail": null,
       "rider": {
-       "by": "f11",
-       "name": "Wren",
-       "good": "an eel",
-       "trade": "eeler",
+       "by": "f07",
+       "name": "Aldous",
+       "good": "a permit",
+       "trade": "clerk",
        "kind": "oversee"
       },
       "penalty": null,
@@ -396,14 +397,14 @@
       "bare": false
      },
      "households": 4,
-     "title": "the Verse of the Beard",
-     "after": "Beards are now held in common. There is a rota.",
+     "title": "the Verse of the Oven Gold",
+     "after": "Everyone agrees it is a lovely phrase. Nobody has handed over any bread.",
      "said": "The faithful should share their bread with the hungry.",
      "chain": [
       "f01",
       "f05",
       "f07",
-      "f11"
+      "f10"
      ],
      "steps": [
       {
@@ -413,28 +414,22 @@
        "text": "The faithful should share their bread with whoever is hungriest at the time, to be settled by a show of ribs."
       },
       {
-       "by": "f01",
-       "trait": "drunk",
-       "note": "heard \"their beards\" for \"their bread\"",
-       "text": "The faithful should share their beards with whoever is hungriest at the time, to be settled by a show of ribs."
-      },
-      {
        "by": "f05",
        "trait": "lazy",
        "note": "left out \"with whoever is hungriest at the time, to be settled by a show of ribs\"",
-       "text": "The faithful should share their beards."
+       "text": "The faithful should share their bread."
       },
       {
        "by": "f07",
-       "trait": "literalist",
-       "note": null,
-       "text": "The faithful should share their beards."
-      },
-      {
-       "by": "f11",
        "trait": "ambitious",
        "note": "added a clause of their own",
-       "text": "The faithful should share their beards, under the supervision of Wren, who is to be paid."
+       "text": "The faithful should share their bread, under the supervision of Aldous, who is to be paid."
+      },
+      {
+       "by": "f10",
+       "trait": "poet",
+       "note": "improved \"their bread\" to \"the gold of the oven\"",
+       "text": "Let the faithful share the gold of the oven, under the supervision of Aldous, who is to be paid."
       }
      ],
      "history": []
@@ -457,13 +452,187 @@
       },
       "verb": {
        "base": "rest",
-       "cur": "nest"
+       "cur": "rest"
       },
       "object": null,
       "tail": {
-       "base": "after_harvest",
-       "cur": "ripe_moon",
+       "base": null,
+       "cur": "patient_elm",
        "via": "poet",
+       "lit": false
+      },
+      "rider": {
+       "by": "f07",
+       "name": "Aldous",
+       "good": "a permit",
+       "trade": "clerk",
+       "kind": "trade"
+      },
+      "penalty": null,
+      "gist": false,
+      "bare": false
+     },
+     "households": 3,
+     "title": "the Verse of the Patient Elm",
+     "after": "The elm has become popular.",
+     "said": "The faithful may rest after the harvest.",
+     "chain": [
+      "f03",
+      "f06",
+      "f07"
+     ],
+     "steps": [
+      {
+       "by": "f03",
+       "trait": "lazy",
+       "note": "left out \"after the harvest\"",
+       "text": "The faithful may rest."
+      },
+      {
+       "by": "f03",
+       "trait": "poet",
+       "note": "added \"beneath the patient elm\"",
+       "text": "Let the faithful rest beneath the patient elm."
+      },
+      {
+       "by": "f06",
+       "trait": "ambitious",
+       "note": "added a clause of their own",
+       "text": "Let the faithful rest beneath the patient elm, and Ysolt's mill is henceforth the Holy Mill."
+      },
+      {
+       "by": "f06",
+       "trait": "poet",
+       "note": null,
+       "text": "Let the faithful rest beneath the patient elm, and Ysolt's mill is henceforth the Holy Mill."
+      },
+      {
+       "by": "f07",
+       "trait": "ambitious",
+       "note": "struck out Ysolt's clause and added their own",
+       "text": "Let the faithful rest beneath the patient elm, by permit, obtainable from Aldous for two eggs."
+      }
+     ],
+     "history": []
+    },
+    {
+     "id": "t8",
+     "season": 4,
+     "verse": {
+      "template": "wash",
+      "who": {
+       "scope": 2,
+       "zeal": false
+      },
+      "modal": {
+       "strength": 1,
+       "neg": false,
+       "let": true,
+       "lit": false,
+       "negDropped": false
+      },
+      "verb": {
+       "base": "wash",
+       "cur": "wash"
+      },
+      "object": null,
+      "tail": {
+       "base": "before_meals",
+       "cur": "forgiving_river",
+       "via": "poet",
+       "lit": false
+      },
+      "rider": {
+       "by": "f11",
+       "name": "Wren",
+       "good": "an eel",
+       "trade": "eeler",
+       "kind": "trade"
+      },
+      "penalty": null,
+      "gist": false,
+      "bare": false
+     },
+     "households": 4,
+     "title": "the Verse of the Forgiving River",
+     "after": "It is now done slowly, and with a faraway look.",
+     "said": "The faithful should wash their hands before meals.",
+     "chain": [
+      "f03",
+      "f06",
+      "f07",
+      "f11"
+     ],
+     "steps": [
+      {
+       "by": "f03",
+       "trait": "lazy",
+       "note": "left out \"their hands\"",
+       "text": "The faithful should wash before meals."
+      },
+      {
+       "by": "f03",
+       "trait": "poet",
+       "note": "improved \"before meals\" to \"as the river forgives the stone\"",
+       "text": "Let the faithful wash as the river forgives the stone."
+      },
+      {
+       "by": "f06",
+       "trait": "ambitious",
+       "note": "added a clause of their own",
+       "text": "Let the faithful wash as the river forgives the stone, having first bought flour from Ysolt."
+      },
+      {
+       "by": "f06",
+       "trait": "poet",
+       "note": null,
+       "text": "Let the faithful wash as the river forgives the stone, having first bought flour from Ysolt."
+      },
+      {
+       "by": "f07",
+       "trait": "ambitious",
+       "note": "struck out Ysolt's clause and added their own",
+       "text": "Let the faithful wash as the river forgives the stone, and Aldous is excused on account of important work."
+      },
+      {
+       "by": "f11",
+       "trait": "ambitious",
+       "note": "struck out Aldous's clause and added their own",
+       "text": "Let the faithful wash as the river forgives the stone, and eels are to be eaten on feast days, at the usual price."
+      }
+     ],
+     "history": []
+    },
+    {
+     "id": "t11",
+     "season": 5,
+     "verse": {
+      "template": "borrow",
+      "who": {
+       "scope": 2,
+       "zeal": false
+      },
+      "modal": {
+       "strength": 1,
+       "neg": true,
+       "let": true,
+       "lit": false,
+       "negDropped": false
+      },
+      "verb": {
+       "base": "borrow",
+       "cur": "borrow"
+      },
+      "object": {
+       "base": "tools",
+       "cur": "iron_children",
+       "via": "poet",
+       "lit": false
+      },
+      "tail": {
+       "base": "without_asking",
+       "cur": "without_asking",
+       "via": null,
        "lit": true
       },
       "rider": {
@@ -478,9 +647,9 @@
       "bare": false
      },
      "households": 4,
-     "title": "the Verse of the Ripe Moon",
-     "after": "A moon-ripeness committee meets nightly. It has not yet said yes.",
-     "said": "The faithful may rest after the harvest.",
+     "title": "the Verse of the Iron Children",
+     "after": "The smith believes it is about him and has become unbearable.",
+     "said": "The faithful should not borrow tools without asking.",
      "chain": [
       "f01",
       "f06",
@@ -491,214 +660,32 @@
       {
        "by": "f01",
        "trait": "literalist",
-       "note": "took \"after the harvest\" at its word",
-       "text": "The faithful may rest immediately after the harvest, where they stand."
-      },
-      {
-       "by": "f01",
-       "trait": "drunk",
-       "note": "heard \"nest\" for \"rest\"",
-       "text": "The faithful may nest immediately after the harvest, where they stand."
+       "note": "took \"without asking\" at its word",
+       "text": "The faithful should not borrow tools without asking in writing."
       },
       {
        "by": "f06",
        "trait": "ambitious",
        "note": "added a clause of their own",
-       "text": "The faithful may nest immediately after the harvest, where they stand, and Ysolt's mill is henceforth the Holy Mill."
+       "text": "The faithful should not borrow tools without asking in writing, and a small fee is owed to Ysolt each time."
       },
       {
        "by": "f06",
        "trait": "poet",
-       "note": "improved \"immediately after the harvest, where they stand\" to \"when the moon is ripe\"",
-       "text": "Let the faithful nest when the moon is ripe, and Ysolt's mill is henceforth the Holy Mill."
+       "note": "improved \"tools\" to \"the iron children of toil\"",
+       "text": "Let the faithful not borrow the iron children of toil without asking in writing, and a small fee is owed to Ysolt each time."
       },
       {
        "by": "f07",
-       "trait": "literalist",
-       "note": "took \"when the moon is ripe\" at its word",
-       "text": "Let the faithful nest when the moon is ripe, which is to be checked nightly, and Ysolt's mill is henceforth the Holy Mill."
-      },
-      {
-       "by": "f11",
        "trait": "ambitious",
        "note": "struck out Ysolt's clause and added their own",
-       "text": "Let the faithful nest when the moon is ripe, which is to be checked nightly, and a small fee is owed to Wren each time."
-      }
-     ],
-     "history": []
-    },
-    {
-     "id": "t8",
-     "season": 4,
-     "verse": {
-      "template": "rest",
-      "who": {
-       "scope": 2,
-       "zeal": false
-      },
-      "modal": {
-       "strength": 1,
-       "neg": false,
-       "let": true,
-       "lit": false,
-       "negDropped": false
-      },
-      "verb": {
-       "base": "rest",
-       "cur": "wrestle"
-      },
-      "object": null,
-      "tail": {
-       "base": "after_harvest",
-       "cur": "forgiving_river",
-       "via": "poet",
-       "lit": true
-      },
-      "rider": {
-       "by": "f11",
-       "name": "Wren",
-       "good": "an eel",
-       "trade": "eeler",
-       "kind": "thanks"
-      },
-      "penalty": null,
-      "gist": false,
-      "bare": false
-     },
-     "households": 4,
-     "title": "the Verse of the Forgiving River",
-     "after": "It is now done standing in the river. Attendance drops in winter.",
-     "said": "The faithful may rest after the harvest.",
-     "chain": [
-      "f01",
-      "f06",
-      "f07",
-      "f11"
-     ],
-     "steps": [
-      {
-       "by": "f01",
-       "trait": "literalist",
-       "note": "spelled out exactly how binding it is",
-       "text": "The faithful are permitted, but not obliged, to rest after the harvest."
-      },
-      {
-       "by": "f01",
-       "trait": "drunk",
-       "note": "heard \"wrestle\" for \"rest\"",
-       "text": "The faithful are permitted, but not obliged, to wrestle after the harvest."
-      },
-      {
-       "by": "f06",
-       "trait": "ambitious",
-       "note": "added a clause of their own",
-       "text": "The faithful are permitted, but not obliged, to wrestle after the harvest, having first bought flour from Ysolt."
-      },
-      {
-       "by": "f06",
-       "trait": "poet",
-       "note": "improved \"after the harvest\" to \"as the river forgives the stone\"",
-       "text": "Let the faithful wrestle as the river forgives the stone, having first bought flour from Ysolt."
-      },
-      {
-       "by": "f07",
-       "trait": "literalist",
-       "note": "took \"as the river forgives the stone\" at its word",
-       "text": "Let the faithful wrestle in the river, beside a stone, having first bought flour from Ysolt."
+       "text": "Let the faithful not borrow the iron children of toil without asking in writing, and a small fee is owed to Aldous each time."
       },
       {
        "by": "f11",
        "trait": "ambitious",
-       "note": "struck out Ysolt's clause and added their own",
-       "text": "Let the faithful wrestle in the river, beside a stone, and Wren is to be thanked by name."
-      }
-     ],
-     "history": []
-    },
-    {
-     "id": "t11",
-     "season": 5,
-     "verse": {
-      "template": "rest",
-      "who": {
-       "scope": 2,
-       "zeal": false
-      },
-      "modal": {
-       "strength": 1,
-       "neg": false,
-       "let": true,
-       "lit": false,
-       "negDropped": false
-      },
-      "verb": {
-       "base": "rest",
-       "cur": "rest"
-      },
-      "object": null,
-      "tail": {
-       "base": "after_harvest",
-       "cur": "soft_regrets",
-       "via": "poet",
-       "lit": true
-      },
-      "rider": {
-       "by": "f11",
-       "name": "Wren",
-       "good": "an eel",
-       "trade": "eeler",
-       "kind": "trade"
-      },
-      "penalty": null,
-      "gist": false,
-      "bare": false
-     },
-     "households": 4,
-     "title": "the Verse of the Hour of Regrets",
-     "after": "The Hour of Regrets is well attended. People bring a list.",
-     "said": "The faithful may rest after the harvest.",
-     "chain": [
-      "f01",
-      "f06",
-      "f07",
-      "f11"
-     ],
-     "steps": [
-      {
-       "by": "f01",
-       "trait": "literalist",
-       "note": null,
-       "text": "The faithful may rest after the harvest."
-      },
-      {
-       "by": "f01",
-       "trait": "drunk",
-       "note": "heard \"after the hardest\" for \"after the harvest\"",
-       "text": "The faithful may rest after the hardest."
-      },
-      {
-       "by": "f06",
-       "trait": "ambitious",
-       "note": "added a clause of their own",
-       "text": "The faithful may rest after the hardest, under the supervision of Ysolt, who is to be paid."
-      },
-      {
-       "by": "f06",
-       "trait": "poet",
-       "note": "improved \"after the hardest\" to \"in the hour of soft regrets\"",
-       "text": "Let the faithful rest in the hour of soft regrets, under the supervision of Ysolt, who is to be paid."
-      },
-      {
-       "by": "f07",
-       "trait": "literalist",
-       "note": "took \"in the hour of soft regrets\" at its word",
-       "text": "Let the faithful rest during the Hour of Regrets, to be held daily, under the supervision of Ysolt, who is to be paid."
-      },
-      {
-       "by": "f11",
-       "trait": "ambitious",
-       "note": "struck out Ysolt's clause and added their own",
-       "text": "Let the faithful rest during the Hour of Regrets, to be held daily, and eels are to be eaten on feast days, at the usual price."
+       "note": "struck out Aldous's clause and added their own",
+       "text": "Let the faithful not borrow the iron children of toil without asking in writing, and a small fee is owed to Wren each time."
       }
      ],
      "history": []
@@ -734,7 +721,7 @@
    "artifacts": [],
    "saints": [],
    "cooldowns": {},
-   "exasperation": 26,
+   "exasperation": 21,
    "fallen": false,
    "n": {
     "reveal": 5
@@ -761,7 +748,7 @@
    "flock": [
     {
      "id": "r1-01",
-     "name": "Christina",
+     "name": "Gisla",
      "trade": {
       "id": "alewife",
       "label": "the Brewer",
@@ -775,7 +762,8 @@
      "known": true,
      "office": "preacher",
      "settling": 0,
-     "want": null
+     "want": null,
+     "cast": "gisla"
     },
     {
      "id": "r1-02",
@@ -1187,13 +1175,13 @@
       {
        "by": "r1-04",
        "trait": "poet",
-       "note": "improved \"with the hungry\" to \"beneath the patient elm\"",
-       "text": "Let ALL share their beds beneath the patient elm, or have their name said in a disappointed voice."
+       "note": "improved \"with the hungry\" to \"in the hour of soft regrets\"",
+       "text": "Let ALL share their beds in the hour of soft regrets, or have their name said in a disappointed voice."
       },
       {
        "by": "r1-07",
        "trait": "lazy",
-       "note": "left out \"beneath the patient elm\"",
+       "note": "left out \"in the hour of soft regrets\"",
        "text": "Let ALL share their beds, or have their name said in a disappointed voice."
       }
      ],
@@ -1298,6 +1286,27 @@
   [
    1,
    0,
+   "power",
+   -1,
+   "Is anyone there?"
+  ],
+  [
+   1,
+   0,
+   "faith",
+   3,
+   "Is anyone there?"
+  ],
+  [
+   1,
+   0,
+   "devotion",
+   0.20000000000000018,
+   "Is anyone there?"
+  ],
+  [
+   1,
+   0,
    "faith",
    1,
    "a ruling"
@@ -1306,7 +1315,7 @@
    1,
    0,
    "power",
-   -3,
+   -2,
    "reveal"
   ],
   [
@@ -1342,42 +1351,70 @@
    0,
    "offerings",
    -0.5,
+   "Scripture"
+  ],
+  [
+   1,
+   0,
+   "offerings",
+   -0.5,
    "upkeep of Oddities"
   ],
   [
    1,
    0,
-   "mystery",
-   2.5,
-   "Oddities"
+   "heresy",
+   0.35,
+   "Scripture"
   ],
   [
    1,
    0,
    "mystery",
-   -0.03999999999999915,
+   1.5,
+   "Oddities"
+  ],
+  [
+   1,
+   0,
+   "devotion",
+   -0.03000000000000025,
+   "habit"
+  ],
+  [
+   1,
+   0,
+   "mystery",
+   0.03999999999999915,
    "habit"
   ],
   [
    1,
    0,
    "faith",
-   3.6165599999999998,
+   3.705276959999999,
    "worship"
   ],
   [
    1,
    0,
    "faith",
-   -1.5616559999999993,
+   -1.870527696,
    "forgetting"
   ],
   [
    1,
    0,
    "power",
-   2.40414,
+   3.1763192399999998,
    "Faith"
+  ],
+  [
+   1,
+   0,
+   "heresy",
+   -0.35,
+   "forgetting"
   ],
   [
    1,
@@ -1443,13 +1480,6 @@
    "Faith"
   ],
   [
-   1,
-   0,
-   "power",
-   2,
-   "the Registry"
-  ],
-  [
    2,
    0,
    "power",
@@ -1486,6 +1516,20 @@
   ],
   [
    2,
+   0,
+   "faith",
+   1,
+   "preaching"
+  ],
+  [
+   2,
+   0,
+   "devotion",
+   0.15000000000000036,
+   "preaching"
+  ],
+  [
+   2,
    1,
    "faith",
    2,
@@ -1509,7 +1553,7 @@
    2,
    0,
    "offerings",
-   -0.125,
+   -0.90625,
    "Scripture"
   ],
   [
@@ -1523,7 +1567,7 @@
    2,
    0,
    "heresy",
-   0.35,
+   0.7,
    "Scripture"
   ],
   [
@@ -1536,36 +1580,43 @@
   [
    2,
    0,
+   "devotion",
+   -0.04800000000000004,
+   "habit"
+  ],
+  [
+   2,
+   0,
    "mystery",
-   -0.1968000000000032,
+   -0.12319999999999709,
    "habit"
   ],
   [
    2,
    0,
    "faith",
-   3.6814752000000013,
+   3.8496194611199996,
    "worship"
   ],
   [
    2,
    0,
    "faith",
-   -1.9736379200000016,
+   -2.3684368725119995,
    "forgetting"
   ],
   [
    2,
    0,
    "power",
-   2.4203688000000003,
+   2.71240486528,
    "Faith"
   ],
   [
    2,
    0,
    "heresy",
-   -0.35,
+   -0.7,
    "forgetting"
   ],
   [
@@ -1648,8 +1699,15 @@
   [
    3,
    0,
+   "faith",
+   2,
+   "The corridor"
+  ],
+  [
+   3,
+   0,
    "power",
-   -3,
+   -2,
    "reveal"
   ],
   [
@@ -1726,84 +1784,77 @@
    3,
    0,
    "faith",
-   2,
+   3.1875,
    "Scripture"
   ],
   [
    3,
    0,
    "devotion",
-   -0.04999999999999982,
+   0.004687500000000178,
    "Scripture"
   ],
   [
    3,
    0,
    "offerings",
-   -0.625,
+   -0.09375,
    "Scripture"
-  ],
-  [
-   3,
-   0,
-   "offerings",
-   -0.75,
-   "upkeep of Oddities"
   ],
   [
    3,
    0,
    "heresy",
-   0.7,
+   1.0499999999999998,
    "Scripture"
   ],
   [
    3,
    0,
    "mystery",
-   8,
+   6.5,
    "Oddities"
   ],
   [
    3,
    0,
    "devotion",
-   -0.01499999999999968,
+   -0.06400312500000016,
    "habit"
   ],
   [
    3,
    0,
    "mystery",
-   -0.6610560000000021,
+   -0.4733439999999973,
    "habit"
   ],
   [
    3,
    0,
    "faith",
-   3.939529696127998,
+   4.07131181234784,
    "worship"
   ],
   [
    3,
    0,
    "faith",
-   -2.470227097612799,
+   -3.1574743664955847,
    "forgetting"
   ],
   [
    3,
    0,
    "power",
-   2.7348824240319995,
+   3.56470295308696,
    "Faith"
   ],
   [
    3,
    0,
    "heresy",
-   -0.7,
+   -1.0499999999999998,
    "forgetting"
   ],
   [
@@ -1935,16 +1986,16 @@
   [
    4,
    0,
-   "heresy",
-   0.3,
-   "collection"
+   "devotion",
+   -0.04999999999999982,
+   "mission"
   ],
   [
    4,
    0,
-   "offerings",
-   4,
-   "collection"
+   "souls",
+   2,
+   "mission"
   ],
   [
    4,
@@ -1985,84 +2036,70 @@
    4,
    0,
    "faith",
-   2,
+   4.1875,
    "Scripture"
   ],
   [
    4,
    0,
    "devotion",
-   -0.09999999999999964,
+   0.010937499999999822,
    "Scripture"
-  ],
-  [
-   4,
-   0,
-   "offerings",
-   -1.125,
-   "Scripture"
-  ],
-  [
-   4,
-   0,
-   "offerings",
-   -2.875,
-   "upkeep of Oddities"
   ],
   [
    4,
    0,
    "heresy",
-   1.0499999999999998,
+   1.4,
    "Scripture"
   ],
   [
    4,
    0,
    "mystery",
-   12,
+   9,
    "Oddities"
   ],
   [
    4,
    0,
    "devotion",
-   -0.02024999999999988,
+   -0.07104328125000059,
    "habit"
   ],
   [
    4,
    0,
    "mystery",
-   -1.4081715199999962,
+   -0.9954764800000007,
    "habit"
   ],
   [
    4,
    0,
    "faith",
-   4.278982469342978,
+   5.0576943351601,
    "worship"
   ],
   [
    4,
    0,
    "faith",
-   -2.951102634785819,
+   -3.8662463633620376,
    "forgetting"
   ],
   [
    4,
    0,
    "power",
-   2.8197456173357445,
+   3.561298583790025,
    "Faith"
   ],
   [
    4,
    0,
    "heresy",
-   -1.3499999999999999,
+   -1.4,
    "forgetting"
   ],
   [
@@ -2243,22 +2280,22 @@
   [
    5,
    0,
-   "heresy",
-   0.5,
+   "devotion",
+   -0.04999999999999982,
    "mission"
   ],
   [
    5,
    0,
    "souls",
-   1,
+   2,
    "mission"
   ],
   [
    5,
    0,
    "heresy",
-   0.30000000000000004,
+   0.3,
    "collection"
   ],
   [
@@ -2285,78 +2322,92 @@
   [
    5,
    0,
+   "heresy",
+   -0.3,
+   "the Committee"
+  ],
+  [
+   5,
+   0,
+   "offerings",
+   -0.2999999999999998,
+   "the Committee"
+  ],
+  [
+   5,
+   0,
    "faith",
-   3.09,
+   5.1875,
    "Scripture"
   ],
   [
    5,
    0,
    "devotion",
-   -0.14250000000000007,
+   -0.0390625,
    "Scripture"
   ],
   [
    5,
    0,
    "offerings",
-   -1.625,
+   -2.40625,
    "Scripture"
   ],
   [
    5,
    0,
    "offerings",
-   -2.375,
+   -1.2937500000000002,
    "upkeep of Oddities"
   ],
   [
    5,
    0,
    "heresy",
-   1.4000000000000001,
+   1.5999999999999999,
    "Scripture"
   ],
   [
    5,
    0,
    "mystery",
-   14.5,
+   11.5,
    "Oddities"
   ],
   [
    5,
    0,
    "devotion",
-   -0.01833750000000034,
+   -0.06952741406249974,
    "habit"
   ],
   [
    5,
    0,
    "mystery",
-   -2.295517798399999,
+   -1.6758383616000003,
    "habit"
   ],
   [
    5,
    0,
    "faith",
-   5.031987892074799,
+   6.176184760420796,
    "worship"
   ],
   [
    5,
    0,
    "faith",
-   -3.568191160514715,
+   -4.715990203067911,
    "forgetting"
   ],
   [
    5,
    0,
    "power",
-   3.2804969730186997,
+   4.090921190105199,
    "Faith"
   ],
   [
@@ -2473,66 +2524,61 @@
    "dog",
    "letter"
   ],
-  "petition": [
-   "convert_three",
-   "tablet_good",
-   "two_offices",
-   "lead_rival"
-  ],
   "event": [
    "where_you_live",
    "gift_goat"
   ],
   "modal": [
-   "2p",
-   "1p"
+   "2p"
   ],
   "phrase": [
    "mangers",
-   "believing_dew",
    "before_eels",
    "labourers",
-   "beards",
+   "oven_gold",
    "with_blindness",
    "loaf",
-   "ripe_moon",
-   "beds",
    "patient_elm",
+   "beds",
+   "soft_regrets",
    "forgiving_river",
    "after_farthest",
    "lark_complaint",
-   "after_hardest",
-   "soft_regrets"
+   "iron_children"
   ],
-  "literal": [
-   "believing_dew",
-   "with_hungry",
-   "after_harvest",
-   "ripe_moon",
-   "forgiving_river",
-   "soft_regrets"
+  "rider": [
+   "buy:f07",
+   "oversee:f07",
+   "trade:miller",
+   "trade:clerk",
+   "buy:f06",
+   "excused:f07",
+   "trade:eeler",
+   "fee:f06",
+   "fee:f07",
+   "fee:f11"
   ],
   "title": [
    "the Verse of the Manger",
    "the Verse of the Eel",
-   "the Verse of the Beard",
+   "the Verse of the Oven Gold",
    "the Verse of the Loaf",
-   "the Verse of the Ripe Moon",
+   "the Verse of the Patient Elm",
    "the Verse of the Bed",
    "the Verse of the Forgiving River",
    "the Verse of the Big Stone",
-   "the Verse of the Hour of Regrets"
+   "the Verse of the Iron Children"
   ],
   "after": [
    "mangers",
    "before_eels",
-   "beards",
+   "oven_gold",
    "loaf",
-   "ripe_moon:lit",
+   "patient_elm",
    "beds",
-   "forgiving_river:lit",
+   "forgiving_river",
    "threat",
-   "soft_regrets:lit"
+   "iron_children"
   ],
   "threat": [
    "stern",
@@ -2560,26 +2606,16 @@
    "reveal:1",
    "miracle:2"
   ],
-  "rider": [
-   "oversee:f11",
-   "trade:miller",
-   "fee:f11",
-   "buy:f06",
-   "thanks:f11",
-   "oversee:f06",
-   "trade:eeler"
-  ],
-  "verb": [
-   "nest",
-   "wrestle"
+  "literal": [
+   "with_hungry",
+   "without_asking"
   ],
   "incident": [
    "preacher:lazy",
-   "missionary:lazy",
+   "prophet:lazy",
+   "missionary:drunk",
+   "builder:ambitious",
    "collector:ambitious",
-   "builder:literalist",
-   "prophet:literalist",
-   "missionary:ambitious",
    "witness:poet"
   ]
  },
@@ -2602,7 +2638,7 @@
      "kind": "reveal",
      "target": null,
      "tablet": "t1",
-     "changed": 5,
+     "changed": 3,
      "ruined": false
     },
     "offices": []
@@ -2622,50 +2658,47 @@
    "notes": [],
    "ruling": {
     "id": "where_you_live",
-    "text": "A child has asked Tibby where you live, and Tibby does not know.",
+    "text": "A child has asked Odo where you live, and Odo does not know.",
     "chose": "In the clouds",
     "after": "The child has asked which one."
    },
    "fell": [],
-   "petitions": [
-    {
-     "id": "tablet_good",
-     "reward": {
-      "power": 2
-     },
-     "season": 1,
-     "base": {
-      "works": 0
-     },
-     "text": "Carve a Tablet that does some good."
-    }
-   ],
    "souls": {
     "me": 0,
     "rivals": {
      "1": 0
     }
    },
-   "faith": 3.0549040000000005,
+   "faith": 2.834749263999999,
    "account": {
+    "heresy": {
+     "forgetting": -0.35,
+     "Scripture": 0.35
+    },
     "power": {
-     "the Registry": 2,
-     "Faith": 2.40414,
-     "reveal": -3
+     "Faith": 3.1763192399999998,
+     "reveal": -2,
+     "Is anyone there?": -1
     },
     "faith": {
-     "forgetting": -1.5616559999999993,
-     "worship": 3.6165599999999998,
+     "forgetting": -1.870527696,
+     "worship": 3.705276959999999,
      "Scripture": 1,
-     "a ruling": 1
+     "a ruling": 1,
+     "Is anyone there?": 3
     },
     "mystery": {
-     "habit": -0.03999999999999915,
-     "Oddities": 2.5,
+     "habit": 0.03999999999999915,
+     "Oddities": 1.5,
      "being seen to act": -2
     },
+    "devotion": {
+     "habit": -0.03000000000000025,
+     "Is anyone there?": 0.20000000000000018
+    },
     "offerings": {
-     "upkeep of Oddities": -0.5
+     "upkeep of Oddities": -0.5,
+     "Scripture": -0.5
     }
    },
    "headdesk": "Somewhere above the parish, a small cloud sighs.",
@@ -2687,7 +2720,14 @@
      "changed": 4,
      "ruined": false
     },
-    "offices": []
+    "offices": [
+     {
+      "office": "preacher",
+      "by": "f02",
+      "trait": "lazy",
+      "text": "Roesia preached for four minutes and let everyone go early. It is the most popular thing the temple has ever done."
+     }
+    ]
    },
    "rivals": {
     "1": {
@@ -2714,36 +2754,40 @@
    },
    "notes": [],
    "fell": [],
-   "petitions": [],
    "souls": {
     "me": 0,
     "rivals": {
      "1": 0
     }
    },
-   "faith": 3.7078372799999997,
+   "faith": 4.481182588608,
    "account": {
     "heresy": {
-     "forgetting": -0.35,
-     "Scripture": 0.35
+     "forgetting": -0.7,
+     "Scripture": 0.7
     },
     "power": {
-     "Faith": 2.4203688000000003,
+     "Faith": 2.71240486528,
      "reveal": -3
     },
     "faith": {
-     "forgetting": -1.9736379200000016,
-     "worship": 3.6814752000000013,
-     "Scripture": 2
+     "forgetting": -2.3684368725119995,
+     "worship": 3.8496194611199996,
+     "Scripture": 2,
+     "preaching": 1
     },
     "mystery": {
-     "habit": -0.1968000000000032,
+     "habit": -0.12319999999999709,
      "Oddities": 4,
      "being seen to act": -2
     },
+    "devotion": {
+     "habit": -0.04800000000000004,
+     "preaching": 0.15000000000000036
+    },
     "offerings": {
      "upkeep of Oddities": -1,
-     "Scripture": -0.125
+     "Scripture": -0.90625
     }
    },
    "headdesk": "You make a sound that, at your level, registers as weather.",
@@ -2762,23 +2806,20 @@
      "kind": "reveal",
      "target": null,
      "tablet": "t6",
-     "changed": 6,
-     "ruined": true
+     "changed": 4,
+     "ruined": false
     },
     "offices": [
      {
       "office": "preacher",
-      "by": "f10",
-      "trait": "lazy",
-      "text": "Elfreda preached for four minutes and let everyone go early. It is the most popular thing the temple has ever done."
+      "by": "f02",
+      "trait": "lazy"
      },
      {
-      "office": "missionary",
-      "by": "f02",
+      "office": "prophet",
+      "by": "f03",
       "trait": "lazy",
-      "won": 0,
-      "field": 0,
-      "text": "Roesia does not go out much, but is on good terms with everyone, including Vellamine's missionary, who now also does not go out much."
+      "text": "Umfrey is your Prophet. They will pass on the important parts, as they see them."
      }
     ]
    },
@@ -2814,42 +2855,41 @@
    },
    "notes": [],
    "fell": [],
-   "petitions": [],
    "souls": {
     "me": 0,
     "rivals": {
      "1": 1
     }
    },
-   "faith": 4.469302598515199,
+   "faith": 5.101337445852256,
    "account": {
     "heresy": {
-     "forgetting": -0.7,
-     "Scripture": 0.7
+     "forgetting": -1.0499999999999998,
+     "Scripture": 1.0499999999999998
     },
     "power": {
-     "Faith": 2.7348824240319995,
-     "reveal": -3
+     "Faith": 3.56470295308696,
+     "reveal": -2
     },
     "faith": {
-     "forgetting": -2.470227097612799,
-     "worship": 3.939529696127998,
-     "Scripture": 2,
-     "preaching": 1
+     "forgetting": -3.1574743664955847,
+     "worship": 4.07131181234784,
+     "Scripture": 3.1875,
+     "preaching": 1,
+     "The corridor": 2
     },
     "mystery": {
-     "habit": -0.6610560000000021,
-     "Oddities": 8,
+     "habit": -0.4733439999999973,
+     "Oddities": 6.5,
      "being seen to act": -2
     },
     "devotion": {
-     "habit": -0.01499999999999968,
-     "Scripture": -0.04999999999999982,
+     "habit": -0.06400312500000016,
+     "Scripture": 0.004687500000000178,
      "preaching": 0.15000000000000036
     },
     "offerings": {
-     "upkeep of Oddities": -0.75,
-     "Scripture": -0.625
+     "Scripture": -0.09375
     }
    },
    "headdesk": "You rest your forehead on the edge of a cloud for a while.",
@@ -2868,34 +2908,35 @@
      "kind": "reveal",
      "target": null,
      "tablet": "t8",
-     "changed": 6,
-     "ruined": true
+     "changed": 5,
+     "ruined": false
     },
     "offices": [
      {
       "office": "preacher",
-      "by": "f10",
+      "by": "f02",
       "trait": "lazy"
      },
      {
-      "office": "collector",
-      "by": "f11",
-      "trait": "ambitious",
-      "text": "Wren collects more than anyone ever has. Wren also has a new hat."
+      "office": "missionary",
+      "by": "f04",
+      "trait": "drunk",
+      "won": 2,
+      "field": 0,
+      "text": "Brenna did the rounds of the alehouse and came home with new believers, none of whom remember agreeing."
      },
      {
       "office": "builder",
-      "by": "f07",
-      "trait": "literalist",
+      "by": "f06",
+      "trait": "ambitious",
       "work": "shrine",
-      "waiting": 6,
-      "text": "Mabel builds exactly what was drawn, to the inch, including the mistake in the drawing."
+      "waiting": 9,
+      "text": "Ysolt's work comes in larger and dearer than asked, with Ysolt's name over the door in larger letters than yours."
      },
      {
       "office": "prophet",
-      "by": "f01",
-      "trait": "literalist",
-      "text": "Tibby is your Prophet. They will hear exactly what you say and repeat it as if it were a contract."
+      "by": "f03",
+      "trait": "lazy"
      }
     ]
    },
@@ -2945,48 +2986,45 @@
    "registry": {
     "year": 1,
     "min": 8,
-    "faith": 26.559923713072358,
+    "faith": 34.79621727025832,
     "strikes": 0
    },
    "fell": [],
-   "petitions": [],
    "souls": {
-    "me": 0,
+    "me": 2,
     "rivals": {
      "1": 1
     }
    },
-   "faith": 4.327879834557159,
+   "faith": 6.378947971798063,
    "account": {
     "heresy": {
-     "forgetting": -1.3499999999999999,
-     "Scripture": 1.0499999999999998,
-     "collection": 0.3
+     "forgetting": -1.4,
+     "Scripture": 1.4
     },
     "power": {
-     "Faith": 2.8197456173357445,
+     "Faith": 3.561298583790025,
      "reveal": -3
     },
     "faith": {
-     "forgetting": -2.951102634785819,
-     "worship": 4.278982469342978,
-     "Scripture": 2,
+     "forgetting": -3.8662463633620376,
+     "worship": 5.0576943351601,
+     "Scripture": 4.1875,
      "preaching": 1
     },
     "mystery": {
-     "habit": -1.4081715199999962,
-     "Oddities": 12,
+     "habit": -0.9954764800000007,
+     "Oddities": 9,
      "being seen to act": -2
     },
     "devotion": {
-     "habit": -0.02024999999999988,
-     "Scripture": -0.09999999999999964,
+     "habit": -0.07104328125000059,
+     "Scripture": 0.010937499999999822,
+     "mission": -0.04999999999999982,
      "preaching": 0.15000000000000036
     },
-    "offerings": {
-     "upkeep of Oddities": -2.875,
-     "Scripture": -1.125,
-     "collection": 4
+    "souls": {
+     "mission": 2
     }
    },
    "headdesk": "You ask Pim whether all gods have this problem. Pim says yes, and that the large ones have it louder.",
@@ -3008,39 +3046,34 @@
     "offices": [
      {
       "office": "preacher",
-      "by": "f10",
+      "by": "f02",
       "trait": "lazy"
      },
      {
       "office": "missionary",
-      "by": "f06",
-      "trait": "ambitious",
-      "won": 1,
-      "field": 0,
-      "text": "Ysolt brings people in. Afterwards they tend to describe themselves as followers of Ysolt."
+      "by": "f04",
+      "trait": "drunk",
+      "won": 2,
+      "field": 0
      },
      {
       "office": "collector",
-      "by": "f11",
-      "trait": "ambitious"
+      "by": "f07",
+      "trait": "ambitious",
+      "text": "Aldous collects more than anyone ever has. Aldous also has a new hat."
      },
      {
       "office": "builder",
-      "by": "f07",
-      "trait": "literalist",
+      "by": "f06",
+      "trait": "ambitious",
       "work": "shrine",
-      "waiting": 6
-     },
-     {
-      "office": "prophet",
-      "by": "f01",
-      "trait": "literalist"
+      "waiting": 9
      },
      {
       "office": "witness",
-      "by": "f04",
+      "by": "f10",
       "trait": "poet",
-      "text": "Martin is your Witness. Whatever you do will be told better than it happened."
+      "text": "Hesper is your Witness. Whatever you do will be told better than it happened."
      }
     ]
    },
@@ -3066,48 +3099,49 @@
    },
    "notes": [],
    "fell": [],
-   "petitions": [],
    "souls": {
-    "me": 1,
+    "me": 2,
     "rivals": {
      "1": 2
     }
    },
-   "faith": 5.553796731560084,
+   "faith": 7.647694557352885,
    "account": {
     "heresy": {
      "forgetting": -1.5,
-     "Scripture": 1.4000000000000001,
-     "collection": 0.30000000000000004,
-     "mission": 0.5
+     "Scripture": 1.5999999999999999,
+     "the Committee": -0.3,
+     "collection": 0.3
     },
     "power": {
-     "Faith": 3.2804969730186997,
+     "Faith": 4.090921190105199,
      "reveal": -3
     },
     "faith": {
-     "forgetting": -3.568191160514715,
-     "worship": 5.031987892074799,
-     "Scripture": 3.09,
+     "forgetting": -4.715990203067911,
+     "worship": 6.176184760420796,
+     "Scripture": 5.1875,
      "preaching": 1
     },
     "mystery": {
-     "habit": -2.295517798399999,
-     "Oddities": 14.5,
+     "habit": -1.6758383616000003,
+     "Oddities": 11.5,
      "being seen to act": -2
     },
     "devotion": {
-     "habit": -0.01833750000000034,
-     "Scripture": -0.14250000000000007,
+     "habit": -0.06952741406249974,
+     "Scripture": -0.0390625,
+     "mission": -0.04999999999999982,
      "preaching": 0.15000000000000036
     },
     "offerings": {
-     "upkeep of Oddities": -2.375,
-     "Scripture": -1.625,
+     "upkeep of Oddities": -1.2937500000000002,
+     "Scripture": -2.40625,
+     "the Committee": -0.2999999999999998,
      "collection": 4
     },
     "souls": {
-     "mission": 1
+     "mission": 2
     }
    },
    "headdesk": "You draft a clarification. Then you remember how clarifications travel.",
@@ -3121,29 +3155,17 @@
   }
  ],
  "book": null,
- "petitions": [
-  {
-   "id": "convert_three",
-   "reward": {
-    "faith": 6
-   },
-   "season": 1,
-   "base": {
-    "works": 0
-   },
-   "text": "Win three souls in one season."
-  },
-  {
-   "id": "lead_rival",
-   "reward": {
-    "power": 3
-   },
-   "season": 2,
-   "base": {
-    "reveal": 1,
-    "works": 0
-   },
-   "text": "Have more souls than Vellamine."
-  }
- ]
+ "flags": {
+  "stone": "unstick",
+  "corridor": "ask",
+  "committee": "aldous"
+ },
+ "scenes": [],
+ "seenScenes": [
+  "prologue",
+  "stone",
+  "corridor",
+  "committee"
+ ],
+ "sceneAfter": "Aldous chairs the first meeting that evening. It runs until midnight. Heresy is down. So, slightly, is everyone."
 }

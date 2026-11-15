@@ -21,14 +21,15 @@ import { OFFICE_IDS } from '../data/offices.data.js';
 import { RANKS, SAINT_FAITH, SAINT_PILGRIMS, TRAVEL_SEASONS } from '../data/match.data.js';
 import { WANTS } from '../data/content/people.data.js';
 import { EVENTS, MEMOS, RIVAL_LINES, ENDINGS } from '../data/content/world.data.js';
-import { HEADDESK, RANK_UP } from '../data/content/grand.data.js';
+import { HEADDESK } from '../data/content/grand.data.js';
 import { streamFor } from './rng.js';
 import { gain, moveSouls, seasonAccount, METERS } from './meters.js';
 import { scriptureSum } from './scripture.js';
 import { preview, resolve } from './acts.js';
 import { postIn, commissionIn, workOffices, convert } from './offices.js';
 import { rivalPostings, rivalCommission, rivalAct, rivalTrouble, rivalField } from './rival.js';
-import { issuePetitions, settlePetitions, openedNow } from './guide.js';
+import { openedNow } from './guide.js';
+import { queueScenes, resolveScene, committeeEffects, finalChoice } from './story.js';
 import { worship, isYearEnd, yearOf } from './derive.js';
 import { thresholds, living, leaderAgainst, stronghold, unbotheredTotal } from './world.js';
 import { bookDue, compileBook, bookEffects } from './book.js';
@@ -42,7 +43,24 @@ const clone = (s) => JSON.parse(JSON.stringify(s));
 const whole = (x, rng) => (x <= 0 ? 0 : Math.floor(x) + (rng.chance(x - Math.floor(x)) ? 1 : 0));
 
 /** A new game, at the dawn of the first season. See state.js for the options. */
-export const newGame = (opts) => dawn(blankGame(opts));
+export const newGame = (opts) => queueScenes(dawn(blankGame(opts)));
+
+/** Answer the scene now waiting (Story mode, and rank scenes). Costs no act. */
+export function chooseScene(prev, choiceId) {
+  if (!prev.scenes || !prev.scenes.length) throw new Error('no scene is waiting');
+  const s = clone(prev);
+  s.sceneAfter = resolveScene(s, choiceId);
+  return s;
+}
+
+/** After a won game: the last choice of the story. */
+export function chooseEnding(prev, id) {
+  const c = finalChoice(prev);
+  if (!c || !c.options.some((o) => o.id === id)) throw new Error('nothing to choose');
+  const s = clone(prev);
+  s.flags.final = id;
+  return s;
+}
 
 /** Several standing orders at once: { postings: { office: id }, commission: workId, field: regionIndex }. */
 export function orders(prev, { postings = {}, commission: work, field } = {}) {
@@ -124,6 +142,7 @@ export function advance(prev, input = {}) {
   const p = preview(prev, 0, act);
   if (!p.ok) throw new Error(`not allowed: ${p.why}`);
   if (prev.event) throw new Error(`${prev.event.text} This needs a ruling first.`);
+  if (prev.scenes && prev.scenes.length) throw new Error('A scene is waiting for you first.');
   const s = clone(prev);
   const me = s.gods[0];
   const T = thresholds(s);
@@ -174,6 +193,7 @@ export function advance(prev, input = {}) {
     }
     for (const a of g.artifacts) for (const m of ['faith', 'heresy', 'devotion', 'offerings', 'mystery', 'entitlement']) if (a.effect[m]) gain(s, gi, m, a.effect[m], 'holy objects');
     if (gi === 0) { const b = bookEffects(s); if (b) { if (b.faith) gain(s, 0, 'faith', b.faith, 'the Book'); gain(s, 0, 'heresy', b.heresy, 'the Book'); } }
+    if (gi === 0) { const ce = committeeEffects(s); if (ce) for (const [m, v] of Object.entries(ce)) gain(s, 0, m, v, 'the Committee'); }
     if (x.faith) gain(s, gi, 'faith', x.faith, 'Scripture');
     if (x.dev) gain(s, gi, 'devotion', x.dev, 'Scripture');
     if (x.off) gain(s, gi, 'offerings', x.off, 'Scripture');
@@ -222,7 +242,6 @@ export function advance(prev, input = {}) {
     }
   }
   for (const gi of living(s)) s.gods[gi].rank = rankFor(s, gi);
-  rec.petitions = settlePetitions(s);
   if (me.rank > before.rank[0]) rec.rankUp = me.rank;
 
   const c = CONFIG;
@@ -243,7 +262,6 @@ export function advance(prev, input = {}) {
   rec.faith = me.faith - before.faith;
   rec.account = seasonAccount(s, 0);
   const crng = streamFor(s.seed, s.season, 'content');
-  if (rec.rankUp && RANK_UP[rec.rankUp] && take(s, 'rank', String(rec.rankUp))) rec.rankText = RANK_UP[rec.rankUp];
   if (rec.me.act.ruined || rec.me.act.changed >= 3 || rec.me.act.wrong) {
     const k = draw(s, 'headdesk', HEADDESK.map((_, i) => String(i)), crng);
     rec.headdesk = k !== null ? HEADDESK[Number(k)] : null;
@@ -263,6 +281,7 @@ export function advance(prev, input = {}) {
     s.season++;
     if (bookDue(s)) { compileBook(s, streamFor(s.seed, s.season, 'book')); rec.book = true; }
     dawn(s);
+    queueScenes(s, rec.rankUp || 0);
     rec.opened = openedNow(s) ? openedNow(s).season : null;
   }
   return { state: s, record: rec };
@@ -286,7 +305,6 @@ export function dawn(s) {
     const f = rng.pick(can);
     g.prayers.push({ id: `p${s.nextId++}`, by: f.id, want: gi === 0 ? f.want : null, season: s.season });
   }
-  issuePetitions(s, streamFor(s.seed, s.season, 'petitions'));
   if (rng.chance(CONFIG.eventChance)) {
     const fits = EVENTS.filter((e) => bringerFor(s, e, rng, true));
     const id = draw(s, 'event', fits.map((e) => e.id), rng);

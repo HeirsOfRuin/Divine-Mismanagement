@@ -136,3 +136,28 @@ test('no authored line is shown twice in a playthrough (100 games, every kind of
     }
   }
 });
+
+// The story (docs/FRAME-story.md): every scene once, in order, and every
+// choice's consequence reached where the story says it comes back.
+test('Story Chapter 1: each path through the scenes reaches its callback, once, in order', async () => {
+  const { play } = await import('../sim/adapter.js');
+  const { epilogue } = await import('../src/engine/story.js');
+  const paths = [
+    { stone: 'unstick', corridor: 'ask', committee: 'aldous', report_aldous: 'dissolve', expect: 'report_aldous' },
+    { stone: 'silent', corridor: 'blank', committee: 'aldous', report_aldous: 'endorse', expect: 'report_aldous' },
+    { stone: 'door', corridor: 'congratulate', committee: 'odo', expect: 'report_odo' },
+    { stone: 'unstick', corridor: 'ask', committee: 'refuse', report_none: 'ignore', expect: 'report_none' },
+  ];
+  for (const [n, path] of paths.entries()) {
+    const s = play(40 + n, { policy: 'adaptive', fixed: () => ({ __scenes: path }) });
+    const seen = s.seenScenes.filter((x) => !x.startsWith('rank:'));
+    assert.equal(new Set(s.seenScenes).size, s.seenScenes.length, 'a scene shown twice');
+    assert.deepEqual(seen.slice(0, 4), ['prologue', 'stone', 'corridor', 'committee']);
+    if (s.chronicle.length >= 16) assert.ok(seen.includes(path.expect), `path ${n}: ${seen.join(',')}`);
+    assert.equal(s.flags.stone, path.stone === 'door' ? 'door' : path.stone);
+    if (path.report_aldous === 'endorse' && s.book) assert.equal(s.gods[0].flock.find((f) => f.id === s.book.scribes[1]).cast, 'aldous', 'the endorsed Committee helps write the Book');
+    const ep = epilogue(s).join(' ');
+    assert.doesNotMatch(ep, /undefined|\{\w+\}/);
+    assert.match(ep, /Odo the Miller/);
+  }
+});

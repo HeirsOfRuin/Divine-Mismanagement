@@ -266,3 +266,13 @@ details.rival summary small { display: block; color: var(--ink-dim); font-size: 
 @media (prefers-reduced-motion: reduce) { .step.fresh, .tablet.carved, .facepalm canvas { animation: none; } }
 
 .formerly { font-variant: normal; letter-spacing: 0; font-style: italic; color: var(--ink-dim); font-size: 12px; }
+
+/* the story: scenes, the reveal, the Book's sections, the ending */
+.scene .portraits { display: flex; gap: 10px; align-items: flex-end; margin-bottom: .5rem; }
+.scene-title { font: 700 22px var(--serif); font-variant: normal; letter-spacing: 0; color: var(--ink); border: 0; margin: .2rem 0 .6rem; }
+.scene p.serif { font-size: 16px; line-height: 1.5; }
+.said-line { font-size: 15px; }
+.said-line .caps { font-size: 11px; color: var(--ink-dim); margin-right: 6px; }
+.book-head { font: 400 15px var(--serif); font-variant: small-caps; letter-spacing: .08em; border-bottom: 1px solid var(--rule); padding-bottom: 3px; margin-top: 1.2rem; }
+.footnote summary { font-size: 12px; min-height: 28px; }
+.ending .lead { font-size: 17px; }
