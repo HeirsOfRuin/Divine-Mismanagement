@@ -384,3 +384,23 @@ Not built yet: domains, generations, saints, schism as an ending, the Vale,
 more rivals, sound, a tutorial beyond Pim's first memo and the How it works
 sheet, an animated playback (the report shows each step as a list), a
 chapter jump for playtesting late seasons.
+
+### Chapters 2 and 3: framework (2026-11-17)
+
+See `docs/STORY-chapters-2-3.md`. `story.js` now keys everything by chapter:
+Chapter 1 from `story.data.js`, Chapters 2 and 3 from
+`src/data/content/chapters.data.js` (cast, scenes, ending lines, last choice,
+the Review's name). A finished Story chapter gives `legacyOf(s)`: chapter,
+outcome, last choice, flags, name, rank, the Book's title, Saints. `newGame`
+takes it as `legacy` and keeps it as `s.legacy`; a legacy from any chapter but
+the one before is ignored and the canonical one (`CANON_LEGACY`: won, stayed)
+stands in. A scene page may be `{ legacy: { key: text } }`, keyed by
+`legacyKey` (the last choice's id if won; else `rival_fell`, `passed_over`,
+`lapsed`). The screen stores the legacy under
+`divine-mismanagement.legacy.v1` once the last choice is made, offers "Begin
+Chapter N" on the ending, and starts a chapter from the menu with the stored
+legacy if it fits. Written so far: each chapter's prologue (five variants of
+its first page), first scene, ending lines and last choice. Not built: the
+rest of each chapter's scenes, fates, generations, the Harmonised Text, the
+lawsuit, the Church as an actor, the selection, schism, and the Book's opening
+for Chapters 2 and 3 (still the generic one).

@@ -34,9 +34,10 @@ function newGod(name, flock, start, extra = {}) {
  * A new game. `mode` 'story' with `chapter`, or 'custom' with `rivals`,
  * `regions`, `villages` (per region), `wealth` (your starting resources),
  * `seasons` and `guided` (things open one at a time; on by default).
- * Story Chapter 1 is the default and the measured game.
+ * Story Chapter 1 is the default and the measured game. `legacy` is how the
+ * chapter before ended (story.js legacyOf); Chapters 2 and 3 open from it.
  */
-export function newGame({ seed = 1, name = 'the God of Doors That Stick', ...opts } = {}) {
+export function newGame({ seed = 1, name = 'the God of Doors That Stick', legacy = null, ...opts } = {}) {
   seed = seed >>> 0;
   const match = matchFrom(opts);
   const rng = streamFor(seed, 0, 'flock');
@@ -54,7 +55,7 @@ export function newGame({ seed = 1, name = 'the God of Doors That Stick', ...opt
     match, regions, villages, gods,
     ledger: [], spent: {}, event: null, chronicle: [], book: null,
     flags: {}, scenes: [], seenScenes: [],
-  });
+  }, legacy);
 }
 
 /** MIGRATIONS[v](save) returns the save at version v + 1. Add one per version bump. */

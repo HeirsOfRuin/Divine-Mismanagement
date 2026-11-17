@@ -161,3 +161,36 @@ test('Story Chapter 1: each path through the scenes reaches its callback, once, 
     assert.match(ep, /Odo the Miller/);
   }
 });
+
+// Chapters 2 and 3 (docs/STORY-chapters-2-3.md): each opens from how the
+// chapter before ended, and a finished chapter hands that on.
+test('Story Chapters 2 and 3: the legacy picks the prologue, and a finished chapter hands its own on', async () => {
+  const { play } = await import('../sim/adapter.js');
+  const { newGame, chooseScene } = await import('../src/engine/turn.js');
+  const { currentScene, legacyOf } = await import('../src/engine/story.js');
+  const opening = (chapter, legacy) => currentScene(newGame({ seed: 9, mode: 'story', chapter, legacy })).pages[0];
+  assert.match(opening('ch2', null), /at your own request/, 'no legacy: the canonical one (won, stayed)');
+  assert.match(opening('ch2', { chapter: 'ch1', outcome: 'ascended', final: 'thresholds' }), /God of Thresholds again/);
+  assert.match(opening('ch2', { chapter: 'ch1', outcome: 'passed_over' }), /adjourned/);
+  assert.match(opening('ch2', { chapter: 'ch1', outcome: 'absorbed' }), /Archive/);
+  assert.match(opening('ch2', { chapter: 'ch2', outcome: 'passed_over' }), /at your own request/, 'a legacy from the wrong chapter is ignored');
+  assert.match(opening('ch3', { chapter: 'ch2', outcome: 'ascended', final: 'move' }), /callus/);
+  const ch1 = play(41, { policy: 'adaptive' });
+  const L = legacyOf(ch1);
+  assert.equal(L.chapter, 'ch1');
+  assert.equal(L.outcome, ch1.outcome);
+  assert.deepEqual(L.flags, Object.fromEntries(Object.entries(ch1.flags).filter(([k]) => k !== 'final')));
+  for (const chapter of ['ch2', 'ch3']) {
+    let s = newGame({ seed: 4, mode: 'story', chapter, legacy: L });
+    const names = s.gods.flatMap((g) => g.flock.map((f) => f.name));
+    assert.equal(new Set(names).size, names.length, 'a cast name shared');
+    while (s.scenes.length) {
+      const sc = currentScene(s);
+      for (const p of sc.pages) assert.doesNotMatch(p, /undefined|\{\w+\}/);
+      s = chooseScene(s, sc.choices[0].id);
+    }
+    const end = play(6, { policy: 'adaptive', match: { mode: 'story', chapter } });
+    assert.equal(end.seenScenes[0], `${chapter}_prologue`);
+    assert.equal(legacyOf(end).chapter, chapter);
+  }
+});

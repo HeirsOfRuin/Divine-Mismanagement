@@ -9,10 +9,10 @@
 export const STORY = [
   { id: 'ch1', label: 'Chapter 1: Little Fretting', rivals: 1, regions: 1, villages: 1, wealth: 'standard', seasons: 30, measured: true,
     intro: 'You used to be the God of Thresholds. Then the Registry re-filed you. One village, twelve believers, an appeal in seven years, and Vellamine at your old desk.' },
-  { id: 'ch2', label: 'Chapter 2: The Vale', rivals: 2, regions: 1, villages: 3, wealth: 'standard', seasons: 40, measured: false,
+  { id: 'ch2', label: 'Chapter 2: The Vale', rivals: 2, regions: 1, villages: 3, wealth: 'standard', seasons: 40, measured: false, written: false,
     intro: 'Three villages along one river, and two gods who got there first. Hurm has fenced his.' },
-  { id: 'ch3', label: 'Chapter 3: The Overcrowded Heavens', rivals: 4, regions: 3, villages: 2, wealth: 'standard', seasons: 50, measured: false,
-    intro: 'Five parishes, four rivals, and one seat on the High Pantheon that everyone has been measuring for curtains.' },
+  { id: 'ch3', label: 'Chapter 3: The Overcrowded Heavens', rivals: 4, regions: 3, villages: 2, wealth: 'standard', seasons: 50, measured: false, written: false,
+    intro: 'Six villages in three regions, four rivals, and one seat on the High Pantheon that everyone has been measuring for curtains.' },
 ];
 
 export const CUSTOM = {

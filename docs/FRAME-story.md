@@ -3,7 +3,8 @@
 2026-11-15. **Status: calibration.** The backstory, the cast, five story scenes
 with choices that come back later, rank scenes, the new Book and the ending are
 built into Story Chapter 1 for the author's verdict. The rest of the spine is
-written down here and not built.
+written down here and not built. Chapters 2 and 3 continue it in
+`docs/STORY-chapters-2-3.md`.
 
 ## The author's words
 

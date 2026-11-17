@@ -19,7 +19,7 @@ import { scriptureSum } from '../engine/scripture.js';
 import { grandOpen } from '../engine/acts.js';
 import { bookEffects } from '../engine/book.js';
 import { isOpen, opensIn, noteFor } from '../engine/guide.js';
-import { currentScene, epilogue, finalChoice, finalText, isStory } from '../engine/story.js';
+import { currentScene, epilogue, finalChoice, finalText, isStory, reviewLabel, legacyOf, legacyKey, nextChapter } from '../engine/story.js';
 import { seasonName, registryMinimum, nextCheck, reviewStanding, effectsText, tabletCounts, officeText, worstVerse, wantText } from '../engine/derive.js';
 import { thresholds, living } from '../engine/world.js';
 import { CONFIG, OUTCOMES } from '../data/config.data.js';
@@ -59,7 +59,23 @@ const fullName = (f) => `${f.saint ? 'Saint ' : ''}${f.name}`;
 const village = (vi) => state.villages[vi];
 const multi = () => state.villages.length > 1;
 
-function save() { if (state) lsSet(SAVE_KEY, serialize(state)); }
+function save() {
+  if (!state) return;
+  lsSet(SAVE_KEY, serialize(state));
+  // A finished Story chapter (its last choice made) is what the next one opens from.
+  const L = legacyOf(state);
+  if (L && !finalChoice(state)) lsSet(LEGACY_KEY, JSON.stringify(L));
+}
+const LEGACY_KEY = 'divine-mismanagement.legacy.v1';
+function storedLegacy() { try { return JSON.parse(lsGet(LEGACY_KEY) || 'null'); } catch { return null; } }
+const OUTCOME_WORDS = { thresholds: 'won, and went back to Thresholds', move: 'won, and moved the stone', stay: 'won, and stayed', rival_fell: 'every rival fell', passed_over: 'passed over', lapsed: 'lost' };
+function legacyLine(chapter) {
+  const i = STORY.findIndex((c) => c.id === chapter);
+  if (i < 1) return '';
+  const prev = STORY[i - 1], L = storedLegacy();
+  if (L && L.chapter === prev.id) return `Carries on from your ${prev.label.split(':')[0]}: ${OUTCOME_WORDS[legacyKey(L)] || L.outcome}.`;
+  return `Opens as if you won ${prev.label.split(':')[0]} and stayed. Finish it to carry your own ending in.`;
+}
 function load() {
   const raw = lsGet(SAVE_KEY);
   if (!raw) return null;
@@ -102,8 +118,9 @@ function setupScreen() {
         <button class="${s.mode === 'custom' ? 'on' : ''}" data-setmode="custom">Custom match</button>
       </div>
       ${s.mode === 'story' ? `
-        <div class="stack">${STORY.map((c) => `<button class="choice ${c.id === s.chapter ? 'on' : ''}" data-chapter="${c.id}"><span><b>${esc(c.label)}</b><small>${c.rivals} rival${c.rivals > 1 ? 's' : ''} · ${villages(c)} village${villages(c) > 1 ? 's' : ''}${c.regions > 1 ? ` in ${c.regions} regions` : ''} · ${c.seasons} seasons${c.measured ? '' : ' · lightly measured'}</small></span></button>`).join('')}</div>
-        <p class="serif intro">${esc(ch.intro)}</p>` : `
+        <div class="stack">${STORY.map((c) => `<button class="choice ${c.id === s.chapter ? 'on' : ''}" data-chapter="${c.id}"><span><b>${esc(c.label)}</b><small>${c.rivals} rival${c.rivals > 1 ? 's' : ''} · ${villages(c)} village${villages(c) > 1 ? 's' : ''}${c.regions > 1 ? ` in ${c.regions} regions` : ''} · ${c.seasons} seasons${c.measured ? '' : ' · lightly measured'}${c.written === false ? ' · story: opening only' : ''}</small></span></button>`).join('')}</div>
+        <p class="serif intro">${esc(ch.intro)}</p>
+        ${legacyLine(ch.id) ? `<p class="hint">${esc(legacyLine(ch.id))}</p>` : ''}` : `
         <div class="grid2">
           ${opt('rivals', CUSTOM.rivals, 'Rival gods')}
           ${opt('regions', CUSTOM.regions, 'Regions')}
@@ -164,9 +181,9 @@ function villageTab() {
     ${showNote ? `<section class="note"><div class="head"><canvas data-sprite="pim" width="16" height="15" style="width:24px;height:22px"></canvas><b>${esc(note.title)}</b></div><p>${esc(note.text)}</p><button class="small-btn" data-act="note-ok">Understood</button></section>` : ''}
     ${state.event ? `<section class="problem">${rulingHtml()}</section>` : ''}
     <section class="card goals">
-      <div class="caps">${isStory(state) ? 'Your appeal' : 'The Registry'}</div>
+      <div class="caps">${isStory(state) ? reviewLabel(state).caps : 'The Registry'}</div>
       <div class="goal"><span class="box ${g.faith >= line ? 'ok' : ''}"></span><span>Faith ${line} by season ${at}</span><small>you have ${whole(g.faith)}${g.strikes ? ' · <b class="down">one more miss and you are archived</b>' : ''}</small></div>
-      <p class="hint">${isStory(state) ? `The Registry hears your appeal after season ${state.match.seasons}. What it will ask is on the World page.` : `The Review is after season ${state.match.seasons}.`}</p>
+      <p class="hint">${isStory(state) ? reviewLabel(state).hint : `The Review is after season ${state.match.seasons}.`}</p>
     </section>
     <h2>This season, one act</h2>
     <div class="tiles">${actTiles()}</div>
@@ -570,6 +587,7 @@ function endingHtml() {
   const fc = finalChoice(state);
   const ft = finalText(state);
   const worst = worstVerse(g);
+  const nx = nextChapter(state);
   return `<div class="ending">
     <div class="caps">${esc(seasonName(last.season))} · ${o.win ? 'a win' : 'a loss'} · ${esc(RANKS[g.rank].title)}</div>
     <h2>${esc(label)}</h2>
@@ -578,7 +596,7 @@ function endingHtml() {
     ${ft ? `<p class="serif lead">${esc(ft)}</p>` : ''}
     ${worst ? `<p class="hint">The verse that did the most harm: ${esc(worst.tablet.title)}${worst.by ? `, mostly the doing of ${esc(worst.by.name)}` : ''}. You put your head in your hands ${g.exasperation} time${g.exasperation === 1 ? '' : 's'}.</p>` : ''}
     ${state.book ? `<button class="book-cover" data-act="read-book"><span class="caps">${esc(state.book.title)}</span><small>What they believe happened.</small></button>` : ''}
-    <div class="stack"><button data-act="copy-scripture">Copy your Scripture as text</button><button class="primary" data-act="new">Play again</button></div></div>`;
+    <div class="stack"><button data-act="copy-scripture">Copy your Scripture as text</button>${nx && !fc ? `<button class="primary" data-act="next-chapter">Begin ${esc(nx.label)}</button><button data-act="new">Play again</button>` : '<button class="primary" data-act="new">Play again</button>'}</div></div>`;
 }
 
 function scriptureText() {
@@ -641,9 +659,14 @@ function onClick(e) {
       const a = d.act;
       if (a === 'new') { setup = { name: state ? me().name : 'the God of Doors That Stick', mode: 'story', chapter: 'ch1', rivals: 2, regions: 2, villages: 2, seasons: 40, wealth: 'standard', guided: true }; state = null; sheet = null; }
       else if (a === 'back') { setup = null; }
+      else if (a === 'next-chapter') {
+        const L = legacyOf(state), nx = nextChapter(state);
+        state = newGame({ seed: (Math.random() * 2 ** 31) >>> 0, name: L.god, mode: 'story', chapter: nx.id, guided: true, legacy: L });
+        tab = 'village'; sheet = null; banner = null; seenNote = 0; save();
+      }
       else if (a === 'start') {
         const name = (document.getElementById('godname')?.value || '').trim() || 'the God of Doors That Stick';
-        state = newGame({ seed: (Math.random() * 2 ** 31) >>> 0, name, ...setup, guided: setup.mode === 'story' ? true : setup.guided });
+        state = newGame({ seed: (Math.random() * 2 ** 31) >>> 0, name, ...setup, guided: setup.mode === 'story' ? true : setup.guided, legacy: setup.mode === 'story' ? storedLegacy() : null });
         setup = null; tab = 'village'; sheet = null; banner = null; seenNote = 0; save();
       }
       else if (a === 'continue') { state = load(); tab = 'village'; }
