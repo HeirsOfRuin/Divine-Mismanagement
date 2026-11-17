@@ -29,6 +29,12 @@ always right (6.5 points between them, under the floor). Round 5's fault is
 closed without tuning: Chapter 2 is now below Chapter 1 (44.8%), where a later
 chapter belongs. `hard` stays 1.
 
+Where the 21 points went (56.0% with only the opening, 35.0% now): Hurm's
+priest made a Literalist (Master Pale) is about 5 of them (40.0% ±3.5
+without him, under the floor); no other single cause found, so the rest is
+the new scenes' small costs together. Chapter 1 re-run after the `hard` knob:
+44.8% ±2.5 (400 seeds), the same games seed for seed.
+
 ## Round 5 (2026-11-17): Chapters 2 and 3 open with a cast
 
 Chapters 2 and 3 now have a fixed cast and an opening scene
