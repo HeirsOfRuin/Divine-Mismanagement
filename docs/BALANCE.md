@@ -9,6 +9,31 @@ seeds, 7 at 400 and 8 at 300; a gap under it is not a result.
 Nothing here has been checked by a person playing. These are the numbers a
 careful playtest should argue with.
 
+## Round 5 (2026-11-17): Chapters 2 and 3 open with a cast
+
+Chapters 2 and 3 now have a fixed cast and an opening scene
+(`docs/STORY-chapters-2-3.md`). Chapter 1 is unchanged: 44.8% ±2.5 (400
+seeds), the same games seed for seed. The later chapters got easier, by more
+than the noise (careful play, 200 seeds each, floor ~10):
+
+| | Before | After |
+|---|---|---|
+| Chapter 2 | 35.5% ±3.4 | 56.0% ±3.5 |
+| Chapter 3 | 44.0% ±3.5 | 57.5% ±3.5 |
+
+Chapter 2 taken apart (200 seeds each): scenes without the cast 43.0% ±3.5;
+cast and scenes with the scenes' meter effects removed 59.5% ±3.5. The cast is
+most of it: five fixed people (two Literalists in Chapter 2) replace five
+random ones, and the random flock was the harder one. Chapter 1's 41-45% was
+measured with its cast in place, so Chapter 1 never showed this.
+
+**Open, not tuned.** A later chapter should not be easier than the first. Not
+tuned now because the rest of each chapter (generations, the lawsuit, the
+Synod, the Church as an actor) is designed and not built, and will move these
+numbers more than the opening does. Re-measure when Chapter 2's spine to the
+Synod is built, and tune the chapter's thresholds then, aiming at or below
+Chapter 1.
+
 ## Round 4 (2026-11-15): the story calibration
 
 Registry goals removed; story scenes with small effects; the Committee's
