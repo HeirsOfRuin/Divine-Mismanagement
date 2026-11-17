@@ -194,3 +194,32 @@ test('Story Chapters 2 and 3: the legacy picks the prologue, and a finished chap
     assert.equal(legacyOf(end).chapter, chapter);
   }
 });
+
+// Chapter 2 to the Synod: every scene once, in order; Odo dies at the turn
+// of the generation and an heir takes his place; the Synod rewrites each
+// faith's best Tablets. Different paths through the choices.
+test('Story Chapter 2: the spine to the Synod, the generation and the Harmonised Text', async () => {
+  const { play } = await import('../sim/adapter.js');
+  const paths = [
+    { fence: 'gate', margins: 'ask', keeper: 'wenna', lawsuit: 'wenna', pilgrims: 'tree', synod: 'hesper' },
+    { fence: 'tear', margins: 'burn', keeper: 'aldous', lawsuit: 'aldous', pilgrims: 'truth', synod: 'aldous' },
+    { fence: 'round', margins: 'adopt', keeper: 'village', lawsuit: 'self', pilgrims: 'hesper', synod: 'wenna' },
+  ];
+  const order = ['ch2_prologue', 'fence', 'margins', 'keeper', 'lawsuit', 'pilgrims', 'funeral', 'synod'];
+  for (const [n, path] of paths.entries()) {
+    const s = play(70 + n, { policy: 'adaptive', match: { mode: 'story', chapter: 'ch2' }, fixed: () => ({ __scenes: path }) });
+    if (s.chronicle.length < 24) continue;
+    const seen = s.seenScenes.filter((x) => !x.startsWith('rank:'));
+    assert.equal(new Set(s.seenScenes).size, s.seenScenes.length, 'a scene shown twice');
+    assert.deepEqual(seen.slice(0, order.length), order);
+    assert.ok(['won', 'lost'].includes(s.flags.lawsuit));
+    assert.equal(s.flags.synod, path.synod);
+    const me = s.gods[0];
+    assert.ok(!me.flock.some((f) => f.cast === 'odo'), 'Odo is gone after the funeral');
+    assert.ok(me.departed.some((d) => d.name === 'Odo'));
+    const names = s.gods.flatMap((g) => g.flock.map((f) => f.name));
+    assert.equal(new Set(names).size, names.length, 'an heir shares a name');
+    for (const g of s.gods) for (const t of g.tablets) for (const h of t.history) assert.ok(h.by && h.note);
+    assert.ok(s.gods.some((g) => g.tablets.some((t) => t.harmonised === 24)), 'the Synod touched nothing');
+  }
+});

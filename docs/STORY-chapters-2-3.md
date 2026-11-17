@@ -8,6 +8,15 @@ the engine support (chapters keyed in the story data, the legacy that carries
 Chapter 1 into Chapter 2 and on), and each chapter's prologue and first scene,
 written and playable. Everything else here is design, not yet written or built.
 
+**2026-11-17, later.** Chapter 2 is built to the Synod (season 24): the fence,
+the margins, who keeps the stone, the lawsuit, the pilgrims, Odo's funeral
+with the generation turning, and the Synod with the Harmonised Text
+(`src/engine/vale.js`, text in `src/data/content/chapters.data.js`). Seasons
+30 to 40 (Hurm's fence, the audit), the fates, and all of Chapter 3 after its
+first scene are still design. One change from the design below: the margins
+scene has no rival in it (Ysolde is not in Chapter 2), and asking whose notes
+they are finds Aldous.
+
 Read `docs/FRAME-story.md` first: Chapter 1's backstory, cast and scenes, which
 these chapters continue. The author has not yet given a verdict on Chapter 1's
 calibration; if that verdict changes the voice or the cast, this file changes

@@ -3,10 +3,12 @@
 // the rest of each chapter's scenes are designed there and not yet written.
 // Tokens as in story.data.js: {god}, {short}, {rival}.
 //
-// A page may be a string, or { legacy: { key: text } }: the text for how the
-// last chapter ended (src/engine/story.js legacyKey). Keys: the last choice's
-// id if that chapter was won, else rival_fell, passed_over, or lapsed
-// (absorbed or forgotten).
+// A page may be a string; { legacy: { key: text } }, the text for how the
+// last chapter ended (src/engine/story.js legacyKey: the last choice's id if
+// that chapter was won, else rival_fell, passed_over, or lapsed); or
+// { flag: name, is: { value: text }, else: text }, by this chapter's choices
+// (a page with no text for the value is left out). A choice's `after` may be
+// keyed by what its `do` returned.
 
 export const CHAPTER_STORIES = {
   ch2: {
@@ -17,6 +19,7 @@ export const CHAPTER_STORIES = {
       aldous: { name: 'Aldous', trade: 'clerk',     trait: 'ambitious',  household: 2, slot: 6 },
       hesper: { name: 'Hesper', trade: 'beekeeper', trait: 'poet',       household: 3, slot: 9 },
     },
+    priests: { hurm: { name: 'Master Pale', trait: 'literalist', cast: 'pale' } },
     review: { caps: 'The appointment', hint: 'The Registry names one Deity of the Vale after season {n}. What it will ask is on the World page.' },
     scenes: [
       {
@@ -50,6 +53,104 @@ export const CHAPTER_STORIES = {
           { id: 'gate', label: 'Bless the gate. A gate is a threshold', note: '1 Power. The gate is yours, and so is the argument.', effects: { power: -1, faith: 2 }, flag: { fence: 'gate' },
             after: 'The gate unsticks, and opens, and stays open, and will not close for Hurm\'s people however hard they push. Wenna walks through it as though she had always meant to. On the Registry\'s map the gate is now, technically, yours, and the fence on either side of it is now, technically, a dispute.' },
         ],
+      },
+      {
+        id: 'margins', when: 4, title: 'Margins', who: ['hesper'],
+        pages: [
+          'Somebody in the downriver village has copied out your Tablets, all of them, on good paper, and written in the margins. Beside the one about the eel, in a small neat hand: "Surely he means on feast days only." Beside another: "Unclear. Possibly about bees."',
+          'Hesper brings the copy to the stone, holding it the way you hold something the cat has brought in. "The notes are better," she says. "That is not the point. But they are."',
+        ],
+        choices: [
+          { id: 'burn', label: 'Burn the copy', note: 'Heresy falls. People notice what burns.', effects: { heresy: -1, devotion: -0.1 }, flag: { margins: 'burned' },
+            after: 'The copy goes on the fire at the stone. It burns slowly, being good paper. By the next market day there are four more copies downriver, each with a note in the margin about the burning.' },
+          { id: 'adopt', label: 'Adopt the notes', note: 'Faith rises. So does the argument.', effects: { faith: 3, heresy: 1 }, flag: { margins: 'adopted' },
+            after: 'From now on the eel is for feast days only, and one Tablet is officially about bees. Nobody downriver will say who wrote the notes. Several people upriver are sure it was them.' },
+          { id: 'ask', label: 'Ask whose notes they are', note: 'A dream. Somebody will be embarrassed.', effects: { mystery: 2 }, flag: { margins: 'aldous' },
+            after: 'You ask in a dream, and the answer arrives at the stone next morning, very red in the face. It is Aldous. He has been annotating the Tablets for years, "for clarity". He has three more copies, and an index.' },
+        ],
+      },
+      {
+        id: 'keeper', when: 8, title: 'Who keeps the stone', who: ['odo', 'wenna'],
+        pages: [
+          'Odo is at the stone earlier than usual, and sits down to pray, which he has never done. "I am eighty," he says. "Or near it. Somebody will have to keep the stone after me. Sweep it. Say the words. Know which way it faces."',
+          '"Wenna knows the words. Aldous knows the forms. And there is a view in the village that it should belong to all of us, which is the view of the people who do not want to sweep it."',
+        ],
+        choices: [
+          { id: 'wenna', label: 'Wenna', note: 'The words will be kept exactly as Odo says them.', effects: { devotion: 0.1 }, flag: { keeper: 'wenna' },
+            after: 'Odo nods as though you had told him the time. Wenna takes the broom next morning and has not put it down since. She says the words at the stone exactly as her father says them, including the cough.' },
+          { id: 'aldous', label: 'Aldous', note: 'Better accounts. A keeper with plans.', effects: { offerings: 3 }, flag: { keeper: 'aldous' },
+            after: 'Aldous accepts with a short speech he has clearly had ready for some years. By the end of the month the stone has a collecting box, a rota and a small sign giving its opening hours.' },
+          { id: 'village', label: 'Nobody. Let it belong to the village', note: 'Faith rises. Nobody sweeps.', effects: { faith: 2, mystery: 1 }, flag: { keeper: 'village' },
+            after: 'Odo looks at the stone for a while. "All of us, then," he says. Everybody agrees, warmly. The stone is not swept again for some time, moss starts on the north side, and somebody decides that is holy too.' },
+        ],
+      },
+      {
+        id: 'lawsuit', when: 12, title: 'The case of the river path', who: ['you'],
+        pages: [
+          { flag: 'fence', is: {
+            torn: 'Hurm has sued. The claim is for one fence, oak, three-railed, "removed by a party unknown, being {god}". Master Pale has itemised the posts.',
+            gate: 'Hurm has sued. The claim is that his fence has been "annexed by means of a gate", and that a gate is not a threshold but a part of a fence, as any child knows. Master Pale has supplied diagrams.',
+            round: 'Hurm has sued. The claim is that your people\'s new path round by the ford "passes within sight of the fence in a manner calculated to mock it". Master Pale has supplied a list of the looks.',
+          } },
+          'The Registry\'s court sits in a tent by the river. Clement is there, taking notes for the audit. You may send an advocate, or speak for yourself, which the court allows and does not recommend.',
+        ],
+        choices: [
+          { id: 'wenna', label: 'Send Wenna', note: 'A Literalist cites. Strong if the gate is yours, weak if you tore the fence down.', do: 'lawsuit',
+            after: { won: 'Wenna reads the court the relevant Tablets, word for word, slowly, twice. By the second reading Master Pale has stopped taking notes. The court finds for you, mainly so that she will stop.',
+              lost: 'Wenna reads the court the relevant Tablets, word for word. Unfortunately the words do not say what she thinks they say, and Master Pale reads them back to her, also word for word. The court finds for Hurm.' } },
+          { id: 'aldous', label: 'Send Aldous', note: 'He will ask for costs. Win more, lose more.', do: 'lawsuit',
+            after: { won: 'Aldous wins the case in an afternoon and spends the evening on his claim for costs, which is longer than the case. The court awards them, to be rid of him.',
+              lost: 'Aldous loses the case, and asks for costs anyway. The court awards them, to Hurm.' } },
+          { id: 'self', label: 'Speak for yourself', note: 'By Scripture: strong if your Tablets agree with each other and Hurm\'s do not.', do: 'lawsuit',
+            after: { won: 'You speak for yourself. Nobody in the tent can see you, but everyone can hear you, and the court has never been addressed by a party who is also, technically, weather. It finds for you.',
+              lost: 'You speak for yourself, and Master Pale reads your own Tablets back at you, one contradicting the next. The court finds for Hurm, and adds a note about the eel.' } },
+        ],
+      },
+      {
+        id: 'pilgrims', when: 16, title: 'The pilgrims', who: ['hesper'],
+        pages: [
+          'Hesper\'s hymns have got out. People are walking to Little Fretting from three valleys over to see the things in them: the stone, the door, the mill, the tree where the god sat down. There is no tree where the god sat down. Hesper needed a rhyme.',
+          'They have come a long way, and they would like to see the tree.',
+        ],
+        choices: [
+          { id: 'tree', label: 'Give them a tree', note: '3 Offerings. Faith rises.', effects: { offerings: -3, faith: 4 }, flag: { pilgrims: 'tree' },
+            after: 'An oak is moved, at some expense, to a spot by the stone. Within a year it has a fence, a stall, and a branch that is supposed to be the one. Hesper writes a new verse about it, which also mentions a well.' },
+          { id: 'truth', label: 'Tell them the truth', note: 'Heresy falls. Most of them go home.', effects: { heresy: -1, mystery: -2, devotion: 0.1 }, flag: { pilgrims: 'truth' },
+            after: 'Odo tells them, precisely: there is no tree. Most of the pilgrims go home. Three stay, on the grounds that a god who admits there is no tree is a god worth staying for.' },
+          { id: 'hesper', label: 'Let Hesper show them round', note: 'Faith rises. So does what did not happen.', effects: { faith: 2, heresy: 1 }, flag: { pilgrims: 'hesper' },
+            after: 'Hesper shows them the place where the tree was, and describes it so well that several of them weep. By evening there have been two trees, and a lake, and the god sat under both.' },
+        ],
+      },
+      {
+        id: 'funeral', when: 20, title: 'Odo', who: ['wenna'],
+        pages: [
+          { flag: 'keeper', is: {
+            wenna: 'Odo died in his sleep in the spring, with the mill wheel turning. Wenna swept the stone that morning anyway, because it was a Tuesday.',
+            aldous: 'Odo died in his sleep in the spring. Aldous arranged the funeral, which was excellent, and ran to an order of service of six pages, two of them about Aldous.',
+            village: 'Odo died in his sleep in the spring. The whole village came to the stone for him, which it had always said it would do on Sundays and had not.',
+          } },
+          'At the graveside Wenna says the Tablets over him, from memory, as he taught her. They are not quite the Tablets you gave. They are not quite the Tablets he said, either. They are the Tablets as they now are, and a whole generation is standing round the stone learning them that way.',
+          'Three more of the old ones go that year. Their children take their places, their trades, and their own way of getting things slightly wrong. Downriver, the other gods\' people are burying theirs.',
+        ],
+        choices: [{ id: 'continue', label: 'Continue', do: 'generation',
+          after: { none: 'Every one of your Tablets came through the generation as it was. Wenna checks, twice.', some: '{changed} of your Tablets came through the generation changed. The new words are on the Scripture page, with who said them.' } }],
+      },
+      {
+        id: 'synod', when: 24, title: 'The Synod of the Vale', who: ['you', 'pim'],
+        pages: [
+          'Clement has called a Synod. Three faiths in one Vale cannot go on with three Scriptures, he says, kindly, the way people say things that have already been decided. Each god sends a delegate. Each faith\'s two best Tablets will go round the table, through every delegate in turn, and what comes out will be the Harmonised Text of the Vale.',
+          { flag: 'margins', is: { aldous: 'Aldous has already prepared an index, and a seating plan.' } },
+          'Vellamine is sending Gisla. Hurm is sending Master Pale, who has brought his own ink. Your delegate goes first, and touches every text at the table, theirs as well as yours.',
+        ],
+        choices: [
+          { id: 'hesper', label: 'Send Hesper', note: 'A Poet: every text comes out lovelier, and less like a rule.', do: 'synod',
+            after: 'Hesper reads each text aloud before passing it on, and improves it slightly, as a favour.' },
+          { id: 'aldous', label: 'Send Aldous', note: 'Ambitious: every text comes out with a clause in his favour.', do: 'synod',
+            after: 'Aldous passes on each text with a small amendment, for clarity, mostly about who should be consulted.' },
+          { id: 'wenna', label: 'Send Wenna', note: 'A Literalist: every text comes out exactly. Possibly too exactly.', do: 'synod',
+            after: 'Wenna passes on each text exactly as she received it, then corrects Master Pale\'s copy, then her own.' },
+        ],
+        best: { 0: 'When the Harmonised Text is carved, your verses have come through it best.', other: 'When the Harmonised Text is carved, {best}\'s verses have come through it best. Clement notes it.' },
       },
     ],
     ending: {
@@ -133,3 +234,15 @@ export const CANON_LEGACY = {
   ch2: { chapter: 'ch1', outcome: 'ascended', final: 'stay', canonical: true },
   ch3: { chapter: 'ch2', outcome: 'ascended', final: 'stay', canonical: true },
 };
+
+// The case of the river path (Chapter 2, season 12): the chance each advocate
+// wins, and what winning and losing cost. Tuned, not measured.
+export const LAWSUIT = {
+  wenna:  { chance: 0.45, byFence: { gate: 0.3, torn: -0.15 }, min: 0.1, max: 0.9, won: { faith: 3 }, lost: { offerings: -2 } },
+  aldous: { chance: 0.5, min: 0.5, max: 0.5, won: { offerings: 5 }, lost: { offerings: -5 } },
+  self:   { chance: 0.5, perPoint: 0.08, min: 0.15, max: 0.85, won: { faith: 2, mystery: 3 }, lost: { devotion: -0.1, offerings: -2 } },
+  hurmLoses: -3,
+};
+
+// The generation turning (season 20) and the Synod (season 24).
+export const GENERATION = { dies: 4, synodTablets: 2 };

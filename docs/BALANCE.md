@@ -9,6 +9,26 @@ seeds, 7 at 400 and 8 at 300; a gap under it is not a result.
 Nothing here has been checked by a person playing. These are the numbers a
 careful playtest should argue with.
 
+## Round 6 (2026-11-17): Chapter 2 to the Synod
+
+Chapter 2 built to season 24 (the margins, the stone keeper, the lawsuit, the
+pilgrims, Odo's funeral and the generation, the Synod). Careful play, 200
+seeds each (floor ~10 points):
+
+| Chapter 2 | Win |
+|---|---|
+| As built | 35.0% ±3.4 |
+| Generation switched off (nobody dies) | 36.5% ±3.4 |
+| Synod delegate Hesper / Wenna / Aldous | 35.0% / 41.0% / 41.5% |
+| Lawsuit advocate Wenna / Aldous / yourself | 35.0% / 38.0% / 35.0% |
+
+The design's two questions: a whole generation's drift does not make the
+chapter swingy (1.5 points, under the floor; in a read-through game it
+changed all seven of your Tablets, some for the better); and no delegate is
+always right (6.5 points between them, under the floor). Round 5's fault is
+closed without tuning: Chapter 2 is now below Chapter 1 (44.8%), where a later
+chapter belongs. `hard` stays 1.
+
 ## Round 5 (2026-11-17): Chapters 2 and 3 open with a cast
 
 Chapters 2 and 3 now have a fixed cast and an opening scene

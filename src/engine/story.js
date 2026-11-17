@@ -21,6 +21,8 @@ import { gain, moveSouls } from './meters.js';
 import { fill } from './content.js';
 import { leaderAgainst, stronghold } from './world.js';
 import { shortName } from './book.js';
+import { streamFor } from './rng.js';
+import { lawsuit, generation, synod } from './vale.js';
 
 const CHAPTERS = {
   ch1: { cast: CAST, scenes: SCENES, ending: ENDING_LINES, final: FINAL_CHOICE,
@@ -85,6 +87,11 @@ export function castFlock(s, legacy = null) {
   const priest = s.gods[1].flock[0];
   for (const x of s.gods.flatMap((y) => y.flock)) if (x !== priest && x.name === RIVAL_PRIEST) x.name = NAMES.find((n) => !s.gods.some((y) => y.flock.some((z) => z.name === n)));
   priest.name = RIVAL_PRIEST; priest.cast = 'gisla';
+  // Other rivals' priests with a part in this chapter (Hurm's reeve, Master Pale).
+  for (const [persona, p] of Object.entries(story(s).priests || {})) {
+    const gi = s.gods.findIndex((g) => g.persona === persona);
+    if (gi > 0) Object.assign(s.gods[gi].flock[0], { name: p.name, traits: [p.trait], cast: p.cast });
+  }
   return s;
 }
 
@@ -118,9 +125,16 @@ export function currentScene(s) {
     return { id, title: R.title, who: ['pim'], pages: R.pages.map((p) => fill(p, t)), choices: [{ id: 'continue', label: 'Continue' }] };
   }
   const sc = story(s).scenes.find((x) => x.id === id);
-  const page = (p) => (typeof p === 'string' ? p : p.legacy[legacyKey(s.legacy)] || Object.values(p.legacy)[0]);
-  return { id, title: sc.title, who: sc.who, pages: sc.pages.map((p) => fill(page(p), t)),
+  return { id, title: sc.title, who: sc.who, pages: sc.pages.map((p) => pageText(s, p)).filter(Boolean).map((p) => fill(p, t)),
     choices: sc.choices.map((c) => ({ id: c.id, label: fill(c.label, t), note: c.note || null, effects: c.effects || {} })) };
+}
+
+/** A page as written: plain, by the last chapter's ending, or by a flag of this one ('' leaves it out). */
+function pageText(s, p) {
+  if (typeof p === 'string') return p;
+  if (p.legacy) return p.legacy[legacyKey(s.legacy)] || Object.values(p.legacy)[0];
+  const v = (s.flags || {})[p.flag];
+  return (p.is && p.is[v]) || p.else || '';
 }
 
 /** Make a choice in the scene now waiting. Returns the line that follows, if any. Mutates s. */
@@ -143,7 +157,16 @@ export function resolveScene(s, choiceId) {
     if (lead !== null) moveSouls(s, 0, lead, 2, 'the Correct left', stronghold(s, 0));
   }
   if (id === 'stone' && choiceId === 'unstick') { const odo = s.gods[0].flock.find((f) => f.cast === 'odo'); if (odo) odo.known = true; }
-  return c.after ? fill(c.after, t) : null;
+  // Chapter 2's mechanics (src/engine/vale.js), each on its own stream.
+  const rng = () => streamFor(s.seed, s.season, `scene-${id}`);
+  let after = c.after;
+  if (c.do === 'lawsuit') after = c.after[lawsuit(s, choiceId, rng())];
+  if (c.do === 'generation') { const n = generation(s, rng()); after = fill(c.after[n ? 'some' : 'none'], { changed: n }); }
+  if (c.do === 'synod') {
+    const top = synod(s, choiceId, rng());
+    after = `${c.after} ${fill(top === 0 ? sc.best[0] : sc.best.other, { best: s.gods[top].name })}`;
+  }
+  return after ? fill(after, t) : null;
 }
 
 /** What a standing committee does each season: order, at a price. */

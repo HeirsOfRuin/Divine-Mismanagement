@@ -49,6 +49,11 @@ const signed = (v) => (v > 0.05 ? `+${r1(v)}` : v < -0.05 ? `−${r1(-v)}` : '')
 const me = () => state.gods[0];
 const rivals = () => state.gods.map((g, i) => i).slice(1);
 const who = (id) => state.gods.flatMap((g) => g.flock).find((f) => f.id === id);
+// Who held a place at a given season: an heir keeps the place (and id) of whoever died (src/engine/vale.js).
+const nameAt = (id, season) => {
+  const gone = state.gods.flatMap((g) => g.departed || []).filter((d) => d.id === id && d.season > season).sort((a, b) => a.season - b.season)[0];
+  return gone ? gone.name : who(id)?.name;
+};
 const persona = (g) => RIVALS.find((p) => p.id === g.persona) || RIVALS[0];
 const traitLabel = (f) => (f.known ? f.traits.map((t) => TRAITS[t].label).join(', ') : 'not yet known');
 const sprite = (f, size = 32) => `<canvas data-sprite="f" data-id="${f.id}" width="16" height="20" style="width:${size}px;height:${size * 1.25}px"></canvas>`;
@@ -273,8 +278,8 @@ function tabletHtml(g, t, contra) {
     <div class="counts">${c.good ? '' : '<b class="down">Does no good.</b> '}${esc(c.text)} · heard by ${c.households} of 4 households</div>
     ${clash.length ? `<div class="clash">Contradicts ${clash.map((x) => esc(x.title)).join(', ')}: Heresy rises while both stand.</div>` : ''}
     <details><summary>You said: ${esc(t.said)}</summary>
-      ${t.steps.map((st) => `<p class="by">${esc(who(st.by)?.name)} (${TRAITS[st.trait].label}) ${esc(st.note || 'passed it on unchanged')}.</p>`).join('')}
-      ${t.history.map((h) => `<p class="by">Later, ${esc(who(h.by)?.name)} ${esc(h.note)} from the pulpit, and it stuck.</p>`).join('')}
+      ${t.steps.map((st) => `<p class="by">${esc(nameAt(st.by, t.season))} (${TRAITS[st.trait].label}) ${esc(st.note || 'passed it on unchanged')}.</p>`).join('')}
+      ${t.history.map((h) => `<p class="by">Later, ${esc(nameAt(h.by, h.season))} ${esc(h.note)} ${esc(h.where || 'from the pulpit')}, and it stuck.</p>`).join('')}
       ${t.after ? `<p class="by">${esc(t.after)}</p>` : ''}
     </details></article>`;
 }
@@ -303,7 +308,7 @@ function bookHtml() {
     const was = c.formerly && c.formerly.replace(/^the /, 'The ') !== c.title ? ` <small class="formerly">formerly ${esc(c.formerly)}</small>` : '';
     return `<section class="chapter"><div class="caps">${roman(i + 1)}. ${esc(c.title)}${was}</div>
       <p class="serif verse-text">${esc(renderVerse(c.verse))}</p>
-      <details class="footnote"><summary>What you actually said</summary><p>${esc(c.said)}</p>${c.notes.length ? `<p>${c.notes.map((n) => `${esc(who(n.by).name)} (${TRAITS[n.trait].label}) ${esc(n.note)} while copying it out`).join('; ')}.</p>` : ''}</details></section>`;
+      <details class="footnote"><summary>What you actually said</summary><p>${esc(c.said)}</p>${c.notes.length ? `<p>${c.notes.map((n) => `${esc(nameAt(n.by, state.book.season))} (${TRAITS[n.trait].label}) ${esc(n.note)} while copying it out`).join('; ')}.</p>` : ''}</details></section>`;
   }).join('');
   return `<div class="book">
     <h2 class="book-title">${esc(b.title)}</h2>

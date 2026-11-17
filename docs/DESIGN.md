@@ -404,3 +404,24 @@ its first page), first scene, ending lines and last choice. Not built: the
 rest of each chapter's scenes, fates, generations, the Harmonised Text, the
 lawsuit, the Church as an actor, the selection, schism, and the Book's opening
 for Chapters 2 and 3 (still the generic one).
+
+### Chapter 2 to the Synod (2026-11-17)
+
+`src/engine/vale.js` holds Chapter 2's mechanics, each called from a scene
+choice's `do` on its own RNG stream (`scene-<id>`):
+- `lawsuit(s, advocate, rng)`: the advocate sets the odds (`LAWSUIT` in
+  `chapters.data.js`: Wenna by how the fence went, Aldous a flat coin with
+  bigger stakes, yourself by your dispute score against Hurm's).
+- `generation(s, rng)`: in every faith four die (Odo first in yours; never a
+  cast member, Saint or High Prophet otherwise). Each heir keeps the dead
+  person's slot and id, trait, household, trade and office, with a season to
+  settle in; the dead go in `g.departed` with the season, so the screen names
+  whoever held a place at the time (`nameAt`). Every Tablet is then recited
+  once by one heir through `applyTrait`, and the result replaces it.
+- `synod(s, delegate, rng)`: each faith's two best Tablets pass through every
+  delegate (yours first, then each rival's priest), are replaced, and marked
+  `harmonised`; returns whose came through best.
+Tablet history entries carry `where` (the pulpit by default). Scene pages may
+be chosen by a flag of this chapter (`{ flag, is, else }`). Hurm's priest is a
+named Literalist, Master Pale (`priests` in the chapter data). A Story
+chapter may set `hard`, multiplying its souls line and so every threshold.

@@ -27,7 +27,7 @@ export function matchFrom(opts = {}) {
       label: `Custom: ${rivals} rival${rivals > 1 ? 's' : ''}, ${n} village${n > 1 ? 's' : ''}` };
   }
   const ch = STORY.find((c) => c.id === opts.chapter) || STORY[0];
-  return { mode: 'story', chapter: ch.id, rivals: ch.rivals, regions: ch.regions, villages: ch.villages, wealth: ch.wealth, seasons: ch.seasons, measured: ch.measured, guided, label: ch.label };
+  return { mode: 'story', chapter: ch.id, rivals: ch.rivals, regions: ch.regions, villages: ch.villages, wealth: ch.wealth, seasons: ch.seasons, measured: ch.measured, guided, label: ch.label, hard: ch.hard || 1 };
 }
 const clampTo = (list, v) => (list.includes(Number(v)) ? Number(v) : list[0]);
 
@@ -78,7 +78,9 @@ export const fairShare = (s) => population(s) / s.gods.length;
 // (Faith follows souls but decays), rank souls by k. Re-measured after
 // playtest 1, once the missionary could travel (docs/BALANCE.md round 3); the
 // earlier fair-share scaling was tuned to a bot that never left home.
-const reviewSouls = (s) => Math.ceil((CONFIG.review.souls / 36) * (2 / s.gods.length) ** 0.7 * population(s));
+// A Story chapter may set `hard`: its souls line (and so every threshold) times
+// that, tuned by measurement (docs/BALANCE.md). Chapter 1 and Custom: 1.
+const reviewSouls = (s) => Math.ceil((CONFIG.review.souls / 36) * (2 / s.gods.length) ** 0.7 * population(s) * (s.match.hard || 1));
 const kOf = (s) => reviewSouls(s) / CONFIG.review.souls;
 export const faithScale = (s) => kOf(s) ** 0.8;
 export const soulUnit = (s) => BASE_FAIR * kOf(s);
